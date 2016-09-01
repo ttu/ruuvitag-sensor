@@ -16,8 +16,8 @@ $ python ruuvitag_sensor [mac_address]
 ### Tests
 
 ```sh
-$ pip install -e .
-TODO
+$ pip install nose
+$ nosetests
 ```
 
 ### Requirements
