@@ -1,6 +1,8 @@
 # from gattlib import DiscoveryService
 # from gattlib import GATTRequester
 
+eddystoneUuid = "0000FEAA-0000-1000-8000-00805F9B34FB"
+
 
 class BleCommunication(object):
     '''Bluetooth LE communication'''
@@ -8,9 +10,10 @@ class BleCommunication(object):
     def init(self):
         pass
 
-    def get_data(self, mac):
+    @staticmethod
+    def get_data(mac):
         # req = GATTRequester(mac)
-        # steps = req.read_by_handle(0x15)[0]
+        # data = req.read_by_uuid(eddystoneUuid)[0]
         return '67WG3vbgg'
 
     def find_ruuvitags(self):

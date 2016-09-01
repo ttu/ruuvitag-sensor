@@ -10,7 +10,6 @@ class RuuviTagSensor(object):
 
     def __init__(self, mac, name):
         self._decoder = UrlDecoder()
-        self._ble = BleCommunication()
         self._mac = mac
         self._state = {}
         self._name = name
@@ -24,7 +23,7 @@ class RuuviTagSensor(object):
         return self._state
 
     def update(self):
-        data = self._ble.get_data(self._mac)
+        data = BleCommunication().get_data(self._mac)
         self._state = self._decoder.get_data(data)
         return self._state
 
