@@ -12,7 +12,7 @@ class RuuviTagSensor(object):
         self._decoder = UrlDecoder()
         self._ble = BleCommunication()
         self._mac = mac
-        self._state = None
+        self._state = {}
         self._name = name
 
     @property

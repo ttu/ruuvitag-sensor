@@ -7,7 +7,7 @@ class TestRuuviTagSensor(TestCase):
     def test_tag_update_is_valid(self):
         tag = RuuviTagSensor('01:01', 'test_sensor')
         state1 = tag.update()
-        state2 = tag.state()
+        state2 = tag.state
 
         self.assertEqual(state1['elapsed'], 5)
         self.assertEqual(state1['temperature'], -48.3)
