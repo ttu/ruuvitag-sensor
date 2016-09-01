@@ -1,18 +1,23 @@
 import logging
 
-from url_decoder import UrlDecoder
-from ble_communication import BleCommunication
+from ruuvitag_sensor.url_decoder import UrlDecoder
+from ruuvitag_sensor.ble_communication import BleCommunication
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class RuuviTagSensor(object):
 
-    def __init__(self, mac):
+    def __init__(self, mac, name):
         self._decoder = UrlDecoder()
         self._ble = BleCommunication()
         self._mac = mac
-        self._state = None
+        self._state = {}
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
 
     @property
     def state(self):
