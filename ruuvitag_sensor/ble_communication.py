@@ -1,7 +1,7 @@
 # from gattlib import DiscoveryService
 # from gattlib import GATTRequester
 
-eddystoneUuid = "0000FEAA-0000-1000-8000-00805F9B34FB"
+eddystoneUuid = '0000FEAA-0000-1000-8000-00805F9B34FB'
 
 
 class BleCommunication(object):
