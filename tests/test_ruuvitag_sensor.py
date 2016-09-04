@@ -30,7 +30,7 @@ class TestRuuviTagSensor(TestCase):
     def test_tag_correct_properties(self):
         orgMac = 'AA-2C-6A-1E-59-3D'
         orgName = 'mysensor'
-        tag = RuuviTagSensor(orgName, orgName)
+        tag = RuuviTagSensor(orgMac, orgName)
 
         name = tag.name
         mac = tag.mac
