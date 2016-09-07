@@ -1,6 +1,7 @@
 import logging
 import re
 import sys
+import os
 
 from ruuvitag_sensor.url_decoder import UrlDecoder
 
@@ -9,7 +10,8 @@ _LOGGER = logging.getLogger(__name__)
 macRegex = '[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 ruuviStart = 'ruuvi_'
 
-if sys.platform.startswith('win'):
+if sys.platform.startswith('win') or os.environ.get('CI') == 'True':
+    # Use BleCommunicationWin also for ci as can't use gattlib
     from ruuvitag_sensor.ble_communication import BleCommunicationWin
     ble = BleCommunicationWin()
 else:
