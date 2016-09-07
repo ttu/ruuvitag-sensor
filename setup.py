@@ -1,3 +1,4 @@
+import sys
 from setuptools import setup
 
 setup(name='ruuvitag_sensor',
@@ -8,10 +9,11 @@ setup(name='ruuvitag_sensor',
       author_email='tomi.tuhkanen@iki.fi',
       install_requires=[
         "base91",
-      ],
+      ]+([] if "win" in sys.platform else ["gattlib"]),
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,
-      setup_require=['pytest-runner'],
-      tests_require=['pytest'],
+      setup_require=['nose'],
+      tests_require=['nose'],
+      test_suite='nose.collector',
       zip_safe=False)

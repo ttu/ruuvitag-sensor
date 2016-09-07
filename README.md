@@ -9,6 +9,10 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 ### Installation
 
+```sh
+$ pip install -e .
+```
+
 ### Usage
 
 ```sh
@@ -20,11 +24,15 @@ $ python ruuvitag_sensor [mac_address]
 ```sh
 $ pip install nose
 $ nosetests
+# Or use setup.py
+$ python setup.py test
 ```
 
 ### Requirements
 
 * Python 3.x
+* Linux
+    * BLE doesn't work yet on Windows
 
 ### Eddystone
 
