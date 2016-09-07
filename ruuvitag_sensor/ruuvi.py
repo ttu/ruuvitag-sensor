@@ -1,12 +1,19 @@
 import logging
 import re
+import sys
 
 from ruuvitag_sensor.url_decoder import UrlDecoder
-from ruuvitag_sensor.ble_communication import BleCommunication
 
 _LOGGER = logging.getLogger(__name__)
 
 macRegex = '[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
+
+if sys.platform.startswith('win'):
+    from ruuvitag_sensor.ble_communication import BleCommunicationWin
+    ble = BleCommunicationWin()
+else:
+    from ruuvitag_sensor.ble_communication import BleCommunicationNix
+    ble = BleCommunicationNix()
 
 
 class RuuviTagSensor(object):
@@ -34,8 +41,6 @@ class RuuviTagSensor(object):
         return self._state
 
     def update(self):
-        data = BleCommunication().get_data(self._mac)
+        data = ble.get_data(self._mac)
         self._state = self._decoder.get_data(data)
         return self._state
-
-

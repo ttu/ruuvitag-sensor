@@ -9,7 +9,9 @@ class TestRuuviTagSensor(TestCase):
     def get_data(self, mac):
         return 'CtHsK0FKfA'
 
-    @patch('ruuvitag_sensor.ble_communication.BleCommunication.get_data',
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_data',
+           get_data)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationWin.get_data',
            get_data)
     def test_tag_update_is_valid(self):
         tag = RuuviTagSensor('48-2C-6A-1E-59-3D', 'test_sensor')
