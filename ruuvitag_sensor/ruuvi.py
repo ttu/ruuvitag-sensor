@@ -7,6 +7,7 @@ from ruuvitag_sensor.url_decoder import UrlDecoder
 _LOGGER = logging.getLogger(__name__)
 
 macRegex = '[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
+ruuviStart = 'ruuvi_'
 
 if sys.platform.startswith('win'):
     from ruuvitag_sensor.ble_communication import BleCommunicationWin
@@ -44,3 +45,8 @@ class RuuviTagSensor(object):
         data = ble.get_data(self._mac)
         self._state = self._decoder.get_data(data)
         return self._state
+
+    @staticmethod
+    def find_ruuvitags():
+        return [(address, name) for address, name in ble.find_ble_devices()
+                if name.startswith(ruuviStart)]

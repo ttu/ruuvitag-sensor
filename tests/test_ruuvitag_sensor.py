@@ -40,3 +40,17 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(name, orgName)
         self.assertEqual(mac, orgMac)
         self.assertEqual(state, {})
+
+    def get_ble_devices(self):
+        return [
+                ('AA-2C-6A-1E-59-3D', 'ruuvi_test'),
+                ('BB-2C-6A-1E-59-3D', 'someDevice'),
+                ('CC-2C-6A-1E-59-3D', 'ruuvi_device'),
+        ]
+
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationWin.find_ble_devices',
+           get_ble_devices)
+    def test_find_tags(self):
+        tags = RuuviTagSensor.find_ruuvitags()
+        self.assertEqual(2, len(tags))
+        self.assertEqual('ruuvi_device', tags[1][1])
