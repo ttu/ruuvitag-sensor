@@ -12,7 +12,7 @@ class BleCommunication(object):
         pass
 
     @abc.abstractmethod
-    def find_ble_devices(self):
+    def find_ble_devices():
         pass
 
 
@@ -24,7 +24,7 @@ class BleCommunicationWin(BleCommunication):
         return '67WG3vbgg'
 
     @staticmethod
-    def find_ble_devices(self):
+    def find_ble_devices():
         return [
                 ('BC-2C-6A-1E-59-3D', 'some_ble_device'),
                 ('AA-2C-6A-1E-59-3D', 'ruuvi_test')
@@ -44,7 +44,7 @@ class BleCommunicationNix(BleCommunication):
         return data
 
     @staticmethod
-    def find_ble_devices(self):
+    def find_ble_devices():
         # Do imports inside functions so they are not loaded during init
         from gattlib import DiscoveryService
 
