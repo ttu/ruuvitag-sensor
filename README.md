@@ -4,9 +4,6 @@
 
 RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](http://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
 
-* DONE: Url decode
-* TODO: BLE communication
-
 ### Installation
 
 ```sh
@@ -15,8 +12,19 @@ $ pip install -e .
 
 ### Usage
 
+```
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-l] [--version]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -g MAC_ADDRESS, --get MAC_ADDRESS
+                        Get data
+  -l, --list            List all devices
+  --version             show program's version number and exit
+```
+e.g.
 ```sh
-$ python ruuvitag_sensor [mac_address]
+$ python ruuvitag_sensor -l
 ```
 
 ### Tests
@@ -27,6 +35,10 @@ $ nosetests
 # Or use setup.py
 $ python setup.py test
 ```
+
+### CI
+
+Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can't install gattlib, so therefore can't use setup.py and have to use requirements_test.txt to be used with CI tests.
 
 ### Requirements
 
