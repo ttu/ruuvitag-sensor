@@ -1,8 +1,10 @@
 import sys
 from setuptools import setup
 
+import ruuvitag_sensor
+
 setup(name='ruuvitag_sensor',
-      version='0.1',
+      version=ruuvitag_sensor.__version__,
       description='Find RuuviTag sensors beacons and get data from selected ' +
                   'sensor beacon and decode sensor data from eddystone url',
       url='',
