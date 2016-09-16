@@ -5,9 +5,9 @@ import ruuvitag_sensor
 
 setup(name='ruuvitag_sensor',
       version=ruuvitag_sensor.__version__,
-      description='Find RuuviTag sensors beacons and get data from selected ' +
-                  'sensor beacon and decode sensor data from eddystone url',
-      url='',
+      description='Find RuuviTag sensor beacons and get data from selected ' +
+                  'sensor and decode data from eddystone url',
+      url='https://github.com/ttu/ruuvitag-sensor',
       author='Tomi Tuhkanen',
       author_email='tomi.tuhkanen@iki.fi',
       install_requires=[
@@ -16,7 +16,6 @@ setup(name='ruuvitag_sensor',
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,
-      setup_require=['nose'],
       tests_require=['nose'],
       test_suite='nose.collector',
-      zip_safe=False)
+      zip_safe=True)
