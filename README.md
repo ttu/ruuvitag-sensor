@@ -65,3 +65,7 @@ Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can'
 * Bluetooth Service UUID used by Eddystone
     * 16bit: 0xfeaa 
     * 64bit: 0000FEAA-0000-1000-8000-00805F9B34FB
+
+## License
+
+Licensed under the [MIT](LICENSE) License.
