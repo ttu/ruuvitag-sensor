@@ -49,7 +49,7 @@ $ python setup.py test
 
 ### CI
 
-Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can't install gattlib, so therefore can't use setup.py and have to use requirements_test.txt to be used with CI tests.
+Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can't install gattlib, so therefore can't use setup.py and have to use requirements_test.txt with CI tests.
 
 ### Requirements
 
