@@ -3,6 +3,9 @@ from setuptools import setup
 
 import ruuvitag_sensor
 
+if sys.version_info >= (3, 5):
+    sys.exit("Only Python version < 3.5 is supported")
+
 setup(name='ruuvitag_sensor',
       version=ruuvitag_sensor.__version__,
       description='Find RuuviTag sensor beacons and get data from selected ' +

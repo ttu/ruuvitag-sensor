@@ -53,7 +53,7 @@ Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can'
 
 ### Requirements
 
-* Python 2.7 & 3.4
+* Python < 3.5
     * gattlib won't install when using Python 3.5
 * Linux
     * BLE doesn't work yet on Windows
