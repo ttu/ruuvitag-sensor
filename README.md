@@ -19,7 +19,12 @@ $ pip install -e .
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 sensor = RuuviTagSensor('AA-2C-6A-1E-59-3D', 'tets_name')
+
+# update state from device
 state = sensor.update()
+
+# get latest state
+state = sensor.state
 ```
 
 If site-packages is in python path then ruuvitag_sensor can be used from commmand line:
