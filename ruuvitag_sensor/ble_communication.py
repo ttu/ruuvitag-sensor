@@ -21,13 +21,13 @@ class BleCommunicationWin(BleCommunication):
 
     @staticmethod
     def get_data(mac):
-        return '67WG3vbgg'
+        return '0x0201060303AAFE1616AAFE10EE037275752E7669232A6843744641424644'
 
     @staticmethod
     def find_ble_devices():
         return [
-                ('BC-2C-6A-1E-59-3D', 'some_ble_device'),
-                ('AA-2C-6A-1E-59-3D', 'ruuvi_test')
+                ('BC-2C-6A-1E-59-3D', ''),
+                ('AA-2C-6A-1E-59-3D', '')
         ]
 
 

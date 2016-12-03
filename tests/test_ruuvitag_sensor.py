@@ -7,7 +7,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 class TestRuuviTagSensor(TestCase):
 
     def get_data(self, mac):
-        return 'CtHsK0FKfA'
+        return '0x0201060303AAFE1616AAFE10EE037275752E7669232A6843744641424644'
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_data',
            get_data)
@@ -20,10 +20,10 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(state, {})
 
         state = tag.update()
-        self.assertEqual(state['elapsed'], 497)
-        self.assertEqual(state['temperature'], 26)
-        self.assertEqual(state['pressure'], 1016.58)
-        self.assertEqual(state['humidity'], 56)
+        self.assertEqual(state['elapsed'], 97)
+        self.assertEqual(state['temperature'], 22)
+        self.assertEqual(state['pressure'], 1012)
+        self.assertEqual(state['humidity'], 22)
 
     def test_false_mac_raise_error(self):
         with self.assertRaises(ValueError):
@@ -43,8 +43,8 @@ class TestRuuviTagSensor(TestCase):
 
     def get_ble_devices(self):
         return [
-                ('AA-2C-6A-1E-59-3D', 'ruuvi_test'),
-                ('BB-2C-6A-1E-59-3D', 'someDevice'),
+                ('AA-2C-6A-1E-59-3D', ''),
+                ('BB-2C-6A-1E-59-3D', ''),
                 ('CC-2C-6A-1E-59-3D', 'ruuvi_device'),
         ]
 
@@ -52,5 +52,5 @@ class TestRuuviTagSensor(TestCase):
            get_ble_devices)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        self.assertEqual(2, len(tags))
-        self.assertEqual('ruuvi_device', tags[1][1])
+        self.assertEqual(3, len(tags))
+        self.assertEqual('ruuvi_device', tags[2][1])
