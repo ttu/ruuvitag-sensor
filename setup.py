@@ -10,7 +10,7 @@ try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
     readme = readme.replace("\r", "")
-except OSError:
+except ImportError:
     print("Pandoc not found. README.md conversion failure.")
     import io
     with io.open('README.md', encoding="utf-8") as f:
