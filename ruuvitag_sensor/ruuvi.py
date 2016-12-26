@@ -10,10 +10,10 @@ _LOGGER = logging.getLogger(__name__)
 macRegex = '[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 ruuviStart = 'ruuvi_'
 
-if sys.platform.startswith('win') or os.environ.get('CI') == 'True':
-    # Use BleCommunicationWin also for ci as can't use gattlib
-    from ruuvitag_sensor.ble_communication import BleCommunicationWin
-    ble = BleCommunicationWin()
+if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
+    # Use BleCommunicationDummy also for CI as it can't use gattlib
+    from ruuvitag_sensor.ble_communication import BleCommunicationDummy
+    ble = BleCommunicationDummy()
 else:
     from ruuvitag_sensor.ble_communication import BleCommunicationNix
     ble = BleCommunicationNix()

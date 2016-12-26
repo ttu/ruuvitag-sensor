@@ -11,7 +11,7 @@ class TestRuuviTagSensor(TestCase):
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_data',
            get_data)
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationWin.get_data',
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_data',
            get_data)
     def test_tag_update_is_valid(self):
         tag = RuuviTagSensor('48-2C-6A-1E-59-3D', 'test_sensor')
@@ -48,7 +48,7 @@ class TestRuuviTagSensor(TestCase):
                 ('CC-2C-6A-1E-59-3D', 'ruuvi_device'),
         ]
 
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationWin.find_ble_devices',
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.find_ble_devices',
            get_ble_devices)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()

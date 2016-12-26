@@ -22,8 +22,8 @@ class BleCommunication(object):
         pass
 
 
-class BleCommunicationWin(BleCommunication):
-    '''TODO: Find some working BLE implementation for Windows'''
+class BleCommunicationDummy(BleCommunication):
+    '''TODO: Find some working BLE implementation for Windows and OSX'''
 
     @staticmethod
     def get_data(mac):
