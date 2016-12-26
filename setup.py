@@ -3,7 +3,7 @@ from setuptools import setup
 
 import ruuvitag_sensor
 
-if sys.version_info >= (3, 5):
+if sys.platform.startswith('linux') and sys.version_info >= (3, 5):
     sys.exit("Only Python version < 3.5 is supported")
 
 try:
@@ -22,7 +22,8 @@ setup(name='ruuvitag_sensor',
                   'sensor and decode data from eddystone url',
       long_description=readme,
       url='https://github.com/ttu/ruuvitag-sensor',
-      download_url='https://github.com/ttu/ruuvitag-sensor/tarball/0.1.1',
+      download_url='https://github.com/ttu/ruuvitag-sensor/tarball/' +
+                   ruuvitag_sensor.__version__,
       author='Tomi Tuhkanen',
       author_email='tomi.tuhkanen@iki.fi',
       platforms='any',
@@ -32,16 +33,12 @@ setup(name='ruuvitag_sensor',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.0',
-        'Programming Language :: Python :: 3.1',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4'
       ],
       keywords='RuuviTag BLE',
       install_requires=[
         "base91",
-      ]+([] if "win" in sys.platform else ["gattlib"]),
+      ]+(["gattlib"] if "linux" in sys.platform else []),
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,

@@ -4,12 +4,25 @@
 
 RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](http://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
 
+### Requirements
+
+* Python 2.7 and 3.4
+    * gattlib supports 2.7 and 3.4
+* Linux
+    * There is no working Windows BLE library for Python
+    * Package's Windows and OSX supports are only for testing and url decoding
+
 ### Installation
 
+Install latest released version
+```sh
+$ pip intall ruuvitag_sensor
+```
+
+Install latest developement version
 ```sh
 $ pip install git+https://github.com/ttu/ruuvitag-sensor
-
-# or clone the repository and install locally
+# Or clone this repository and install locally
 $ pip install -e .
 ```
 
@@ -55,14 +68,6 @@ $ python setup.py test
 ### CI
 
 Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can't install gattlib, so therefore can't use setup.py and have to use requirements_test.txt with CI tests.
-
-### Requirements
-
-* Python < 3.5
-    * gattlib won't install when using Python 3.5
-* Linux
-    * There is no working Windows BLE library for Python
-    * Package's Windows support is only for testing and url decoding
 
 ## License
 
