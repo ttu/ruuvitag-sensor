@@ -1,6 +1,12 @@
 import abc
 
-eddystoneUuid = '0000FEAA-0000-1000-8000-00805F9B34FB'
+# Eddystone Protocol specification
+# https://github.com/google/eddystone/blob/master/protocol-specification.md
+# Bluetooth Service UUID used by Eddystone
+#  16bit: 0xfeaa
+#  64bit: 0000FEAA-0000-1000-8000-00805F9B34FB
+
+eddystone_uuid = '0000FEAA-0000-1000-8000-00805F9B34FB'
 
 
 class BleCommunication(object):
@@ -40,7 +46,7 @@ class BleCommunicationNix(BleCommunication):
         from gattlib import GATTRequester
 
         req = GATTRequester(mac)
-        data = req.read_by_uuid(eddystoneUuid)[0]
+        data = req.read_by_uuid(eddystone_uuid)[0]
         return data
 
     @staticmethod
