@@ -54,3 +54,7 @@ class TestRuuviTagSensor(TestCase):
         tags = RuuviTagSensor.find_ruuvitags()
         self.assertEqual(3, len(tags))
         self.assertEqual('ruuvi_device', tags[2][1])
+
+    def test_decode_data_not_valid(self):
+        decoded = RuuviTagSensor.decode_data('not_valid')
+        self.assertIsNone(decoded)

@@ -50,21 +50,24 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def decode_data(raw):
-        line = raw[4:]
-        base16_split = [line[i:i + 2] for i in range(0, len(line), 2)]
-        characters = [chr(int(c, 16)) for c in base16_split]
-        data = ''.join(characters)
+        try:
+            line = raw[4:]
+            base16_split = [line[i:i + 2] for i in range(0, len(line), 2)]
+            characters = [chr(int(c, 16)) for c in base16_split]
+            data = ''.join(characters)
 
-        if 'ruu.vi' in data:
-            # take only part after ruu.vi#
-            return ''.join(characters[20:])
-        else:
+            if 'ruu.vi' in data:
+                # take only part after ruu.vi#
+                return ''.join(characters[20:])
+            else:
+                return None
+        except:
             return None
 
     @staticmethod
     def find_ruuvitags():
         return [(address, name) for address, name in ble.find_ble_devices()
-                if RuuviTagSensor.get_data(name) is not None]
+                if RuuviTagSensor.get_data(address) is not None]
 
     def update(self):
         data = RuuviTagSensor.get_data(self._mac)
