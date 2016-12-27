@@ -45,8 +45,14 @@ class BleCommunicationNix(BleCommunication):
         # Do imports inside functions so they are not loaded during init
         from gattlib import GATTRequester
 
-        req = GATTRequester(mac)
-        data = req.read_by_uuid(eddystone_uuid)[0]
+        try:
+            req = GATTRequester(mac, True)
+            data = req.read_by_uuid(eddystone_uuid)[0]
+            req.disconnect()
+        except Exception as ex:
+            print(ex)
+            data = None
+
         return data
 
     @staticmethod
