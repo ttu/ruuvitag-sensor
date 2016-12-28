@@ -7,10 +7,13 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 ### Requirements
 
 * Python 2.7 and 3.4
-    * gattlib supports 2.7 and 3.4
+    * Package uses [pygattlib](https://bitbucket.org/OscarAcena/pygattlib) for BLE communication and it supports versions 2.7 and 3.4
 * Linux
     * There is no working Windows BLE library for Python
     * Package's Windows and OSX supports are only for testing and url decoding
+* pygattlib
+    * Install [dependencies](https://bitbucket.org/OscarAcena/pygattlib/src/a858e8626a93cb9b4ad56f3fb980a6517a0702c6/DEPENDS?fileviewer=file-view-default) with `sudo apt-get install pkg-config libboost-python-dev libboost-thread-dev libbluetooth-dev libglib2.0-dev python-devs`
+* Allow non-root user access to Bluetooth LE with `sudo setcap cap_net_raw+eip $(eval readlink -f $(which python))`
 
 ### Installation
 
@@ -28,19 +31,37 @@ $ pip install -e .
 
 ### Usage
 
+#### Get data from sensor
+
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-sensor = RuuviTagSensor('AA-2C-6A-1E-59-3D', 'tets_name')
+sensor = RuuviTagSensor('AA:2C:6A:1E:59:3D')
 
-# update state from device
+# update state from the device
 state = sensor.update()
 
-# get latest state
+# get latest state (does not get it from the device)
 state = sensor.state
 ```
 
-ruuvitag_sensor can be used from commmand line. It is likely that you will need admin permissions for list command.
+You can get address of the devce e.g. with hcitool
+
+```sh
+$ hcitool lescan
+```
+
+#### List sensors
+
+NOTE: It is likely that you will need admin permissions for listing all available ruuvitags.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+sensors = RuuviTagSensor.find_ruuvitags()
+```
+
+#### Command line
 
 ```
 $ python ruuvitag_sensor -l
