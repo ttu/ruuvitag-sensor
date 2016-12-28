@@ -3,11 +3,11 @@ import abc
 # Eddystone Protocol specification
 # https://github.com/google/eddystone/blob/master/protocol-specification.md
 # Bluetooth Service UUID used by Eddystone
-#  16bit: 0xfeaa
+#  16bit: 0xfeaa (65194)
 #  64bit: 0000FEAA-0000-1000-8000-00805F9B34FB
 
 eddystone_uuid = '0000FEAA-0000-1000-8000-00805F9B34FB'
-
+eddystone_handle = 65194
 
 class BleCommunication(object):
     '''Bluetooth LE communication'''
@@ -32,8 +32,8 @@ class BleCommunicationDummy(BleCommunication):
     @staticmethod
     def find_ble_devices():
         return [
-                ('BC-2C-6A-1E-59-3D', ''),
-                ('AA-2C-6A-1E-59-3D', '')
+            ('BC-2C-6A-1E-59-3D', ''),
+            ('AA-2C-6A-1E-59-3D', '')
         ]
 
 
@@ -45,8 +45,11 @@ class BleCommunicationNix(BleCommunication):
         # Do imports inside functions so they are not loaded during init
         from gattlib import GATTRequester
 
+        print('Reading data from: ' + mac)
+
         try:
-            req = GATTRequester(mac, True)
+            req = GATTRequester(mac, False, "hci0")
+            req.connect()
             data = req.read_by_uuid(eddystone_uuid)[0]
             req.disconnect()
         except Exception as ex:
