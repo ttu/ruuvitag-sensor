@@ -7,8 +7,7 @@ from ruuvitag_sensor.url_decoder import UrlDecoder
 
 _LOGGER = logging.getLogger(__name__)
 
-macRegex = '[0-9a-f]{2}([-:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
-ruuviStart = 'ruuvi_'
+macRegex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
 if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
     # Use BleCommunicationDummy also for CI as it can't use gattlib
@@ -30,6 +29,7 @@ class RuuviTagSensor(object):
         self._mac = mac
         self._state = {}
         self._name = name
+        self._data = None
 
     @property
     def mac(self):
@@ -71,9 +71,15 @@ class RuuviTagSensor(object):
 
     def update(self):
         data = RuuviTagSensor.get_data(self._mac)
-        if data is None:
+
+        if data == self._data:
+            return self._state
+
+        self._data = data
+
+        if self._data is None:
             self._state = {}
         else:
-            self._state = self._decoder.get_data(data)
+            self._state = self._decoder.get_data(self._data)
 
         return self._state

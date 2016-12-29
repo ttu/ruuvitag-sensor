@@ -3,9 +3,6 @@ from setuptools import setup
 
 import ruuvitag_sensor
 
-if sys.platform.startswith('linux') and sys.version_info >= (3, 5):
-    sys.exit("Only Python version < 3.5 is supported")
-
 try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
@@ -33,12 +30,12 @@ setup(name='ruuvitag_sensor',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3'
       ],
       keywords='RuuviTag BLE',
       install_requires=[
         "base91",
-      ]+(["gattlib"] if "linux" in sys.platform else []),
+      ]+([] if "linux" in sys.platform else []),
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,

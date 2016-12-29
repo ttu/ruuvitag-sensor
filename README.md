@@ -6,14 +6,12 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 ### Requirements
 
-* Python 2.7 and 3.4
-    * Package uses [pygattlib](https://bitbucket.org/OscarAcena/pygattlib) for BLE communication and it supports versions 2.7 and 3.4
+* Python 2.7 and 3.x
 * Linux
     * There is no working Windows BLE library for Python
     * Package's Windows and OSX supports are only for testing and url decoding
-* pygattlib
-    * Install [dependencies](https://bitbucket.org/OscarAcena/pygattlib/src/a858e8626a93cb9b4ad56f3fb980a6517a0702c6/DEPENDS?fileviewer=file-view-default) with `sudo apt-get install pkg-config libboost-python-dev libboost-thread-dev libbluetooth-dev libglib2.0-dev python-devs`
-* Allow non-root user access to Bluetooth LE with `sudo setcap cap_net_raw+eip $(eval readlink -f $(which python))`
+* Bluez
+    * `sudo apt-get install bluez bluez-hcidump`
 
 ### Installation
 
@@ -51,7 +49,25 @@ You can get address of the devce e.g. with hcitool
 $ hcitool lescan
 ```
 
+#### Parse data
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.url_decoder import UrlDecoder
+
+full_data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'
+data = full_data[26:]
+
+decoded = RuuviTagSensor.decode_data(data)
+
+url_decoder = UrlDecoder()
+sensor_data = url_decoder.get_data(decoded)
+print(sensor_data)
+```
+
 #### List sensors
+
+**TODO:** List not working at the moment
 
 NOTE: It is likely that you will need admin permissions for listing all available ruuvitags.
 
