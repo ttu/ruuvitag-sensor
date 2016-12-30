@@ -1,5 +1,7 @@
 import abc
 import subprocess
+import sys
+import os
 
 # Eddystone Protocol specification
 # https://github.com/google/eddystone/blob/master/protocol-specification.md
@@ -42,7 +44,12 @@ class BleCommunicationNix(BleCommunication):
     @staticmethod
     def start():
         print('Start receiving broadcasts')
-        return subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
+        DEVNULL = subprocess.DEVNULL if sys.version_info > (3, 0) else open(os.devnull, 'wb')
+
+        subprocess.call("sudo hciconfig hci0 reset", shell = True, stdout = DEVNULL)
+        hcitool = subprocess.Popen(["sudo", "-n", "hcitool", "lescan", "--duplicates"], stdout = DEVNULL)
+        hcidump = subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
+        return (hcitool, hcidump)
 
     @staticmethod
     def get_lines(hcidump):
@@ -58,31 +65,38 @@ class BleCommunicationNix(BleCommunication):
                 else:
                     if data:
                         data += line.strip().replace(' ', '')
+        except KeyboardInterrupt as ex:
+            return
         except Exception as ex:
             print(ex)
+            return
 
     @staticmethod
-    def stop(hcidump):
+    def stop(hcitool, hcidump):
         print('Stop receiving broadcasts')
         subprocess.call(['sudo', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
+        subprocess.call(["sudo", "-n", "kill", str(hcitool.pid), "-s", "SIGINT"])
 
     @staticmethod
     def get_data(mac):
-        hcidump = BleCommunicationNix.start()
+        procs = BleCommunicationNix.start()
 
-        line_iter = BleCommunicationNix.get_lines(hcidump)
-        for data in line_iter:
+        data = None
+        for line in BleCommunicationNix.get_lines(procs[1]):
             try:
-                reverse_mac = data[14:][:12]
+                reverse_mac = line[14:][:12]
                 correct_mac = ''.join(
                     reversed([reverse_mac[i:i + 2] for i in range(0, len(reverse_mac), 2)]))
             except:
                 continue
 
             if mac.replace(':', '') == correct_mac:
-                line_iter.send(StopIteration)
-                BleCommunicationNix.stop(hcidump)
-                return data[26:]
+                print('Data found')
+                data = line[26:]
+                break
+
+        BleCommunicationNix.stop(procs[0], procs[1])
+        return data
 
     @staticmethod
     def find_ble_devices():
