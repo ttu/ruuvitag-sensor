@@ -41,6 +41,7 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def start():
+        print('Start receiving broadcasts')
         return subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
 
     @staticmethod
@@ -62,23 +63,24 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def stop(hcidump):
+        print('Stop receiving broadcasts')
         subprocess.call(['sudo', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
 
     @staticmethod
     def get_data(mac):
         hcidump = BleCommunicationNix.start()
 
-        it = BleCommunicationNix.get_lines(hcidump)
-        for data in it:
+        line_iter = BleCommunicationNix.get_lines(hcidump)
+        for data in line_iter:
             try:
-                data_mac = data[14:][:12]
-                rev_mac = ''.join(
-                    reversed([data_mac[i:i + 2] for i in range(0, len(data_mac), 2)]))
+                reverse_mac = data[14:][:12]
+                correct_mac = ''.join(
+                    reversed([reverse_mac[i:i + 2] for i in range(0, len(reverse_mac), 2)]))
             except:
                 continue
 
-            if mac.replace(':', '') == rev_mac:
-                it.send(StopIteration)
+            if mac.replace(':', '') == correct_mac:
+                line_iter.send(StopIteration)
                 BleCommunicationNix.stop(hcidump)
                 return data[26:]
 
