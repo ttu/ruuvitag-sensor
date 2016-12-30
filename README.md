@@ -94,18 +94,16 @@ optional arguments:
   --version             show program's version number and exit
 ```
 
-### Tests
+## Tests
+
+Run with nosetests
 
 ```sh
 $ pip install nose
 $ nosetests
-# Or use setup.py
-$ python setup.py test
 ```
 
-### CI
-
-Tests are ran automatically with Codeship.
+Run with setup
 
 ```sh
 $ python setup.py test
