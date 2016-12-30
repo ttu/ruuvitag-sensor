@@ -6,9 +6,10 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 ### Requirements
 
+* RuuviTag with Weather Station firmware
+    * Configuration [Guide](https://ruu.vi/configure/)
 * Python 2.7 and 3.x
 * Linux
-    * There is no working Windows BLE library for Python
     * Package's Windows and OSX supports are only for testing and url decoding
 * Bluez
     * `sudo apt-get install bluez bluez-hcidump`
@@ -104,7 +105,11 @@ $ python setup.py test
 
 ### CI
 
-Tests are ran automatically with Codeship. Codeship's Linux Virtual machine can't install gattlib, so therefore can't use setup.py and have to use requirements_test.txt with CI tests.
+Tests are ran automatically with Codeship.
+
+```sh
+$ python setup.py test
+```
 
 ## License
 
