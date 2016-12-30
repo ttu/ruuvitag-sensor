@@ -1,8 +1,5 @@
 import abc
-import time
 import subprocess
-import sys
-import os
 
 # Eddystone Protocol specification
 # https://github.com/google/eddystone/blob/master/protocol-specification.md
@@ -34,8 +31,8 @@ class BleCommunicationDummy(BleCommunication):
     @staticmethod
     def find_ble_devices():
         return [
-            ('BC-2C-6A-1E-59-3D', ''),
-            ('AA-2C-6A-1E-59-3D', '')
+            ('BC:2C:6A:1E:59:3D', ''),
+            ('AA:2C:6A:1E:59:3D', '')
         ]
 
 
@@ -44,7 +41,7 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def start():
-        return subprocess.Popen(["sudo", "-n", "hcidump", "--raw"], stdout=subprocess.PIPE)
+        return subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
 
     @staticmethod
     def get_lines(hcidump):
@@ -65,7 +62,7 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def stop(hcidump):
-        subprocess.call(["sudo", "kill", str(hcidump.pid), "-s", "SIGINT"])
+        subprocess.call(['sudo', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
 
     @staticmethod
     def get_data(mac):
@@ -75,7 +72,7 @@ class BleCommunicationNix(BleCommunication):
         for data in it:
             try:
                 data_mac = data[14:][:12]
-                rev_mac = "".join(
+                rev_mac = ''.join(
                     reversed([data_mac[i:i + 2] for i in range(0, len(data_mac), 2)]))
             except:
                 continue
