@@ -46,10 +46,16 @@ class BleCommunicationNix(BleCommunication):
         print('Start receiving broadcasts')
         DEVNULL = subprocess.DEVNULL if sys.version_info > (3, 0) else open(os.devnull, 'wb')
 
-        subprocess.call("sudo hciconfig hci0 reset", shell = True, stdout = DEVNULL)
-        hcitool = subprocess.Popen(["sudo", "-n", "hcitool", "lescan", "--duplicates"], stdout = DEVNULL)
+        subprocess.call('sudo hciconfig hci0 reset', shell = True, stdout = DEVNULL)
+        hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout = DEVNULL)
         hcidump = subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
         return (hcitool, hcidump)
+
+    @staticmethod
+    def stop(hcitool, hcidump):
+        print('Stop receiving broadcasts')
+        subprocess.call(['sudo', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
+        subprocess.call(['sudo', '-n', 'kill', str(hcitool.pid), '-s', "SIGINT"])
 
     @staticmethod
     def get_lines(hcidump):
@@ -72,30 +78,36 @@ class BleCommunicationNix(BleCommunication):
             return
 
     @staticmethod
-    def stop(hcitool, hcidump):
-        print('Stop receiving broadcasts')
-        subprocess.call(['sudo', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
-        subprocess.call(["sudo", "-n", "kill", str(hcitool.pid), "-s", "SIGINT"])
-
-    @staticmethod
-    def get_data(mac):
+    def get_datas():
         procs = BleCommunicationNix.start()
 
         data = None
         for line in BleCommunicationNix.get_lines(procs[1]):
             try:
-                reverse_mac = line[14:][:12]
-                correct_mac = ''.join(
-                    reversed([reverse_mac[i:i + 2] for i in range(0, len(reverse_mac), 2)]))
+                found_mac = line[14:][:12]
+                reversed_mac = ''.join(
+                    reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
+                mac = ':'.join(a+b for a,b in zip(reversed_mac[::2], reversed_mac[1::2]))
+                data = line[26:]
+                yield (mac, data)
+            except GeneratorExit:
+                break
             except:
                 continue
 
-            if mac.replace(':', '') == correct_mac:
+        BleCommunicationNix.stop(procs[0], procs[1])
+
+    @staticmethod
+    def get_data(mac):
+        data = None
+        data_iter = BleCommunicationNix.get_datas()
+        for data in data_iter:
+            if mac == data[0]:
                 print('Data found')
-                data = line[26:]
+                data_iter.send(StopIteration)
+                data = data[1]
                 break
 
-        BleCommunicationNix.stop(procs[0], procs[1])
         return data
 
     @staticmethod

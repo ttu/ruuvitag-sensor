@@ -63,19 +63,18 @@ decoded = RuuviTagSensor.decode_data(data)
 
 url_decoder = UrlDecoder()
 sensor_data = url_decoder.get_data(decoded)
+
 print(sensor_data)
 ```
 
 #### List sensors
 
-**TODO:** List not working at the moment
-
-NOTE: It is likely that you will need admin permissions for listing all available ruuvitags.
-
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 sensors = RuuviTagSensor.find_ruuvitags()
+
+print(sensors)
 ```
 
 #### Command line

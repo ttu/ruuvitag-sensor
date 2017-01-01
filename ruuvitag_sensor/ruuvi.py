@@ -25,7 +25,6 @@ class RuuviTagSensor(object):
         if not re.match(macRegex, mac.lower()):
             raise ValueError('{} is not valid mac address'.format(mac))
 
-        self._decoder = UrlDecoder()
         self._mac = mac
         self._state = {}
         self._name = name
@@ -66,8 +65,18 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def find_ruuvitags():
-        return [(address, name) for address, name in ble.find_ble_devices()
-                if RuuviTagSensor.get_data(address) is not None]
+        print('Finding RuuviTags. Stop with Ctrl+C.')
+        datas = dict()
+        for ble_data in ble.get_datas():
+            decoded = RuuviTagSensor.decode_data(ble_data[1])
+            if decoded is not None:
+                state = UrlDecoder().get_data(decoded)
+                if not ble_data[0] in datas:
+                    datas[ble_data[0]] = state
+                    print(ble_data[0])
+                    print(state)
+
+        return datas
 
     def update(self):
         data = RuuviTagSensor.get_data(self._mac)
@@ -80,6 +89,6 @@ class RuuviTagSensor(object):
         if self._data is None:
             self._state = {}
         else:
-            self._state = self._decoder.get_data(self._data)
+            self._state = UrlDecoder().get_data(self._data)
 
         return self._state
