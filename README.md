@@ -67,7 +67,7 @@ sensor_data = url_decoder.get_data(decoded)
 print(sensor_data)
 ```
 
-#### List sensors
+#### Find sensors
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -82,14 +82,13 @@ print(sensors)
 ```
 $ python ruuvitag_sensor -l
 
-
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-l] [--version]
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
-  -l, --list            List all devices
+  -f, --find            Find broadcasting RuuviTags
   --version             show program's version number and exit
 ```
 
