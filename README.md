@@ -8,11 +8,13 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 * RuuviTag with Weather Station firmware
     * Configuration [Guide](https://ruu.vi/configure/)
-* Python 2.7 and 3.x
+* Python 2.7 and 3
 * Linux
     * Package's Windows and OSX supports are only for testing and url decoding
 * Bluez
     * `sudo apt-get install bluez bluez-hcidump`
+* Superuser rights
+    * Package uses internally hciconf, hcitool and hcidump, which require superuser rights
 
 ### Installation
 
@@ -57,8 +59,6 @@ $ hcitool lescan
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 sensors = RuuviTagSensor.find_ruuvitags()
-
-print(sensors)
 ```
 
 #### Parse data

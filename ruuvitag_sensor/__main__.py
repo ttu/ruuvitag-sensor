@@ -28,7 +28,6 @@ if __name__ == '__main__':
         state = sensor.update()
         print(state)
     elif args.find_action:
-        tags = RuuviTagSensor.find_ruuvitags()
-        print(tags)
+        RuuviTagSensor.find_ruuvitags()
     else:
         parser.print_usage()
