@@ -68,14 +68,15 @@ class RuuviTagSensor(object):
         print('Finding RuuviTags. Stop with Ctrl+C.')
         datas = dict()
         for ble_data in ble.get_datas():
+            if ble_data[0] in datas:
+                continue
             decoded = RuuviTagSensor.decode_data(ble_data[1])
             if decoded is not None:
                 state = UrlDecoder().get_data(decoded)
                 if state is not None:
-                    if not ble_data[0] in datas:
-                        datas[ble_data[0]] = state
-                        print(ble_data[0])
-                        print(state)
+                    datas[ble_data[0]] = state
+                    print(ble_data[0])
+                    print(state)
 
         return datas
 
