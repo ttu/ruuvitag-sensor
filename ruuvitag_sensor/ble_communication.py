@@ -19,7 +19,7 @@ class BleCommunication(object):
         pass
 
     @abc.abstractmethod
-    def find_ble_devices():
+    def get_datas():
         pass
 
 
@@ -31,10 +31,10 @@ class BleCommunicationDummy(BleCommunication):
         return '0x0201060303AAFE1616AAFE10EE037275752E7669232A6843744641424644'
 
     @staticmethod
-    def find_ble_devices():
+    def get_datas():
         return [
-            ('BC:2C:6A:1E:59:3D', ''),
-            ('AA:2C:6A:1E:59:3D', '')
+            ('BC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'),
+            ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9')
         ]
 
 
@@ -109,7 +109,3 @@ class BleCommunicationNix(BleCommunication):
                 break
 
         return data
-
-    @staticmethod
-    def find_ble_devices():
-        pass

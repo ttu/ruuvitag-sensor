@@ -41,19 +41,18 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(mac, orgMac)
         self.assertEqual(state, {})
 
-    def get_ble_devices(self):
+    def get_datas(self):
         return [
-                ('AA:2C:6A:1E:59:3D', ''),
-                ('BB:2C:6A:1E:59:3D', ''),
-                ('CC:2C:6A:1E:59:3D', 'ruuvi_device'),
+                ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'),
+                ('BB:2C:6A:1E:59:3D', 'some other device'),
+                ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'),
         ]
 
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.find_ble_devices',
-           get_ble_devices)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        self.assertEqual(3, len(tags))
-        self.assertEqual('ruuvi_device', tags[2][1])
+        self.assertEqual(2, len(tags))
 
     def test_decode_data_not_valid(self):
         decoded = RuuviTagSensor.decode_data('not_valid')
