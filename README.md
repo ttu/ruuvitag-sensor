@@ -32,13 +32,15 @@ $ pip install -e .
 
 ### Usage
 
+RuuviTag sensors can be identified using MAC addresses.
+
 ##### Find sensors
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 sensors = RuuviTagSensor.find_ruuvitags()
-# Prints mac and state of a sensor when it is found
+# Prints the mac address and the state of a sensor when it is found
 ```
 
 ##### Get data from sensor

@@ -33,9 +33,7 @@ setup(name='ruuvitag_sensor',
         'Programming Language :: Python :: 3'
       ],
       keywords='RuuviTag BLE',
-      install_requires=[
-        "base91",
-      ]+([] if "linux" in sys.platform else []),
+      install_requires=[]+([] if "linux" in sys.platform else []),
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,

@@ -8,18 +8,16 @@ class TestUrlDecoder(TestCase):
 
     def test_decode_is_valid(self):
         decoder = UrlDecoder()
-        data = decoder.get_data('67WG3vbgg')
+        data = decoder.get_data('AjwYAMFc')
 
-        self.assertEqual(data['elapsed'], 5)
-        self.assertEqual(data['temperature'], -48.3)
-        self.assertEqual(data['pressure'], 985.79)
-        self.assertEqual(data['humidity'], 10.5)
+        self.assertEqual(data['temperature'], 24)
+        self.assertEqual(data['pressure'], 995)
+        self.assertEqual(data['humidity'], 30)
 
     def test_decode_is_valid_case2(self):
         decoder = UrlDecoder()
-        data = decoder.get_data('CtHsK0FKfA')
+        data = decoder.get_data('AjgbAMFc')
 
-        self.assertEqual(data['elapsed'], 497)
-        self.assertEqual(data['temperature'], 26)
-        self.assertEqual(data['pressure'], 1016.58)
-        self.assertEqual(data['humidity'], 56)
+        self.assertEqual(data['temperature'], 27)
+        self.assertEqual(data['pressure'], 995)
+        self.assertEqual(data['humidity'], 28)

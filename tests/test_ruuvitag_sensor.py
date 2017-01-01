@@ -7,7 +7,9 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 class TestRuuviTagSensor(TestCase):
 
     def get_data(self, mac):
-        return '0x0201060303AAFE1616AAFE10EE037275752E7669232A6843744641424644'
+        # https://ruu.vi/#AjwYAMFc
+        data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
+        return data[26:]
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_data',
            get_data)
@@ -20,10 +22,9 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(state, {})
 
         state = tag.update()
-        self.assertEqual(state['elapsed'], 97)
-        self.assertEqual(state['temperature'], 22)
-        self.assertEqual(state['pressure'], 1012)
-        self.assertEqual(state['humidity'], 22)
+        self.assertEqual(state['temperature'], 23)
+        self.assertEqual(state['pressure'], 994)
+        self.assertEqual(state['humidity'], 34)
 
     def test_false_mac_raise_error(self):
         with self.assertRaises(ValueError):
@@ -43,9 +44,9 @@ class TestRuuviTagSensor(TestCase):
 
     def get_datas(self):
         return [
-                ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'),
+                ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
                 ('BB:2C:6A:1E:59:3D', 'some other device'),
-                ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'),
+                ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
         ]
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',

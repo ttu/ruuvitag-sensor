@@ -47,14 +47,18 @@ class RuuviTagSensor(object):
     @staticmethod
     def decode_data(raw):
         try:
-            line = raw[4:]
-            base16_split = [line[i:i + 2] for i in range(0, len(line), 2)]
+            # TODO: Figure out how to do this properly
+            base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
             characters = [chr(int(c, 16)) for c in base16_split]
             data = ''.join(characters)
+            data = str(data.encode("utf-8"))
 
             if 'ruu.vi' in data:
-                # take only part after ruu.vi#
-                return ''.join(characters[20:])
+                index = data.index('ruu.vi/#') + 8
+                part = data[index:]
+                end = part.index('\\x')
+                # take only part between ruu.vi/# and last \x
+                return part[:end]
             else:
                 return None
         except:

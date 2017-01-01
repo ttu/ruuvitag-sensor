@@ -1,4 +1,4 @@
-import base91
+import base64
 
 
 class UrlDecoder(object):
@@ -23,8 +23,8 @@ class UrlDecoder(object):
 
     def _get_temperature(self, decoded):
         '''Return temperature in celsius'''
-        temp = (((decoded[3] & 127) << 8) | decoded[2])
-        sign = (decoded[3] >> 7) & 1
+        temp = (((decoded[2] & 127) << 8) | decoded[3])
+        sign = (decoded[2] >> 7) & 1
         if sign == 0:
             return round(temp / 256.0, 1)
         return round(-1 * temp / 256.0, 1)
@@ -35,24 +35,17 @@ class UrlDecoder(object):
 
     def _get_pressure(self, decoded):
         '''Return air pressure hPa'''
-        pres = ((decoded[5] << 8) + decoded[4]) + 50000
+        pres = ((decoded[4] << 8) + decoded[5]) + 50000
         return pres / 100
-
-    def _get_time_elapsed(self, decoded):
-        '''Return time in seconds'''
-        if len(decoded) > 7:
-            return (decoded[7] << 8) + decoded[6]
-        return decoded[6]
 
     def get_data(self, encoded):
         '''Get decoded sensor values in dictionary'''
         try:
-            decoded = base91.decode(encoded)
+            decoded = base64.b64decode(encoded.encode('ascii'))
             return {
                 'temperature': self._get_temperature(decoded),
                 'humidity': self._get_humidity(decoded),
-                'pressure': self._get_pressure(decoded),
-                'elapsed': self._get_time_elapsed(decoded)
+                'pressure': self._get_pressure(decoded)
             }
         except:
             return None
