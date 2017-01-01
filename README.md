@@ -44,10 +44,21 @@ state = sensor.update()
 state = sensor.state
 ```
 
-You can get address of the devce e.g. with hcitool
+You can get address of the devce e.g. find sensors command or with hcitool
 
 ```sh
+$ python ruuvitag_sensor -f
 $ hcitool lescan
+```
+
+#### Find sensors
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+sensors = RuuviTagSensor.find_ruuvitags()
+
+print(sensors)
 ```
 
 #### Parse data
@@ -67,20 +78,10 @@ sensor_data = url_decoder.get_data(decoded)
 print(sensor_data)
 ```
 
-#### Find sensors
-
-```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
-sensors = RuuviTagSensor.find_ruuvitags()
-
-print(sensors)
-```
-
 #### Command line
 
 ```
-$ python ruuvitag_sensor -l
+$ python ruuvitag_sensor -h
 
 usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [--version]
 

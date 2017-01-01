@@ -15,7 +15,6 @@ def my_excepthook(exctype, value, traceback):
 sys.excepthook = my_excepthook
 
 if __name__ == '__main__':
-    raise RuntimeError("Test unhandled")
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--get', dest='mac_address', help='Get data')
     parser.add_argument('-f', '--find', action='store_true',
