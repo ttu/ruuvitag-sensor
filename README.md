@@ -7,7 +7,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 ### Requirements
 
 * RuuviTag with Weather Station firmware
-    * Configuration [Guide](https://ruu.vi/configure/)
+    * Setup [guide](https://ruu.vi/setup/)
 * Python 2.7 and 3
 * Linux
     * Package's Windows and OSX supports are only for testing and url decoding
@@ -32,7 +32,16 @@ $ pip install -e .
 
 ### Usage
 
-#### Get data from sensor
+##### Find sensors
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+sensors = RuuviTagSensor.find_ruuvitags()
+# Prints mac and state of a sensor when it is found
+```
+
+##### Get data from sensor
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -44,24 +53,11 @@ state = sensor.update()
 
 # get latest state (does not get it from the device)
 state = sensor.state
+
+print(state)
 ```
 
-You can get address of the devce e.g. find sensors command or with hcitool
-
-```sh
-$ python ruuvitag_sensor -f
-$ hcitool lescan
-```
-
-#### Find sensors
-
-```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
-sensors = RuuviTagSensor.find_ruuvitags()
-```
-
-#### Parse data
+##### Parse data
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -78,7 +74,7 @@ sensor_data = url_decoder.get_data(decoded)
 print(sensor_data)
 ```
 
-#### Command line
+##### Command line
 
 ```
 $ python ruuvitag_sensor -h
