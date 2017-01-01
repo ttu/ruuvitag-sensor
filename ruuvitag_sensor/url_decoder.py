@@ -46,11 +46,14 @@ class UrlDecoder(object):
 
     def get_data(self, encoded):
         '''Get decoded sensor values in dictionary'''
-        decoded = base91.decode(encoded)
+        try:
+            decoded = base91.decode(encoded)
+            return {
+                'temperature': self._get_temperature(decoded),
+                'humidity': self._get_humidity(decoded),
+                'pressure': self._get_pressure(decoded),
+                'elapsed': self._get_time_elapsed(decoded)
+            }
+        except:
+            return None
 
-        return {
-            'temperature': self._get_temperature(decoded),
-            'humidity': self._get_humidity(decoded),
-            'pressure': self._get_pressure(decoded),
-            'elapsed': self._get_time_elapsed(decoded)
-        }

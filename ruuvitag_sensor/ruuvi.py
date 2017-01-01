@@ -71,10 +71,11 @@ class RuuviTagSensor(object):
             decoded = RuuviTagSensor.decode_data(ble_data[1])
             if decoded is not None:
                 state = UrlDecoder().get_data(decoded)
-                if not ble_data[0] in datas:
-                    datas[ble_data[0]] = state
-                    print(ble_data[0])
-                    print(state)
+                if state is not None:
+                    if not ble_data[0] in datas:
+                        datas[ble_data[0]] = state
+                        print(ble_data[0])
+                        print(state)
 
         return datas
 
