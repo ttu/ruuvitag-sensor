@@ -1,11 +1,8 @@
-import logging
 import re
 import sys
 import os
 
 from ruuvitag_sensor.url_decoder import UrlDecoder
-
-_LOGGER = logging.getLogger(__name__)
 
 macRegex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 

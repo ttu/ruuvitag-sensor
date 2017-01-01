@@ -3,8 +3,19 @@ import argparse
 
 import ruuvitag_sensor
 from ruuvi import RuuviTagSensor
+from log import logger
+
+
+def my_excepthook(exctype, value, traceback):
+    sys.__excepthook__(exctype, value, traceback)
+
+    if not issubclass(exctype, KeyboardInterrupt):
+        logger.critical(value)
+
+sys.excepthook = my_excepthook
 
 if __name__ == '__main__':
+    raise RuntimeError("Test unhandled")
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--get', dest='mac_address', help='Get data')
     parser.add_argument('-f', '--find', action='store_true',
