@@ -41,7 +41,7 @@ class UrlDecoder(object):
     def get_data(self, encoded):
         '''Get decoded sensor values in dictionary'''
         try:
-            decoded = base64.b64decode(encoded.encode('ascii'))
+            decoded = bytearray(base64.b64decode(encoded))
             return {
                 'temperature': self._get_temperature(decoded),
                 'humidity': self._get_humidity(decoded),

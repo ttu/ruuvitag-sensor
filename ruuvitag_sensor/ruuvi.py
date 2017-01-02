@@ -49,16 +49,13 @@ class RuuviTagSensor(object):
         try:
             # TODO: Figure out how to do this properly
             base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
-            characters = [chr(int(c, 16)) for c in base16_split]
+            selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
+            characters = [chr(int(c, 16)) for c in selected_hexs]
             data = ''.join(characters)
-            data = str(data.encode("utf-8"))
-
-            if 'ruu.vi' in data:
-                index = data.index('ruu.vi/#') + 8
-                part = data[index:]
-                end = part.index('\\x')
-                # take only part between ruu.vi/# and last \x
-                return part[:end]
+            # take only part after ruu.vi/#
+            index = data.index('ruu.vi/#') + 8
+            if index > -1:
+                return data[index:]
             else:
                 return None
         except:

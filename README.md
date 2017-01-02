@@ -93,6 +93,8 @@ optional arguments:
 
 ## Tests
 
+Tests use unittest.mock library, so Python 3.3. or newer is required.
+
 Run with nosetests
 
 ```sh
