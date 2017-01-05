@@ -108,6 +108,10 @@ Run with setup
 $ python setup.py test
 ```
 
+## Change log
+
+[Change Log](CHANGELOG.md)
+
 ## License
 
 Licensed under the [MIT](LICENSE) License.
