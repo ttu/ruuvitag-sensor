@@ -1,10 +1,11 @@
 import re
 import sys
 import os
+import time
 
 from ruuvitag_sensor.url_decoder import UrlDecoder
 
-macRegex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
+mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
 if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
     # Use BleCommunicationDummy also for CI as it can't use gattlib
@@ -15,11 +16,13 @@ else:
     ble = BleCommunicationNix()
 
 
+# TODO: Split this class to common functions and RuuviTagSensor
+
 class RuuviTagSensor(object):
 
     def __init__(self, mac, name):
 
-        if not re.match(macRegex, mac.lower()):
+        if not re.match(mac_regex, mac.lower()):
             raise ValueError('{} is not valid mac address'.format(mac))
 
         self._mac = mac
@@ -66,15 +69,47 @@ class RuuviTagSensor(object):
         print('Finding RuuviTags. Stop with Ctrl+C.')
         datas = dict()
         for ble_data in ble.get_datas():
+            # If mac already in datas continue
             if ble_data[0] in datas:
                 continue
             decoded = RuuviTagSensor.decode_data(ble_data[1])
+            # Check that decoded data is valid ruuvitag data it is sensor data
             if decoded is not None:
                 state = UrlDecoder().get_data(decoded)
                 if state is not None:
                     datas[ble_data[0]] = state
                     print(ble_data[0])
                     print(state)
+
+        return datas
+
+    @staticmethod
+    def get_data_for_sensors(macs, search_duratio_sec=5):
+        """
+        Get lates data for sensors in the macs list.
+        Search duration is search_duratio_sec seconds. Default 5 seconds.
+        """
+
+        print('Get latest data for sensors. Search duration is {}s'.format(search_duratio_sec))
+        print('MACs: {}'.format(macs))
+
+        start_time = time.time()
+        datas = dict()
+        data_iter = ble.get_datas()
+
+        for ble_data in data_iter:
+            if time.time() - start_time > search_duratio_sec:
+                data_iter.send(StopIteration)
+                break
+            # If mac in whitelist
+            if not ble_data[0] in macs:
+                continue
+            decoded = RuuviTagSensor.decode_data(ble_data[1])
+            # Check that decoded data is valid ruuvitag data it is sensor data
+            if decoded is not None:
+                state = UrlDecoder().get_data(decoded)
+                if state is not None:
+                    datas[ble_data[0]] = state
 
         return datas
 

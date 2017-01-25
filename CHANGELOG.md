@@ -1,7 +1,10 @@
 ## Change Log
 
 ### [Unreleased]
-* 
+* -
+
+## [0.2.3] - 2017-01-25
+* Get latest data for specified sensors 
 
 ## [0.2.2] - 2017-01-03
 * Python 2.7 support

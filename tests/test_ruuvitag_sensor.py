@@ -43,17 +43,31 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(state, {})
 
     def get_datas(self):
-        return [
-                ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-                ('BB:2C:6A:1E:59:3D', 'some other device'),
-                ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+        datas = [
+            ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('BB:2C:6A:1E:59:3D', 'some other device'),
+            ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('BB:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
         ]
+
+        for data in datas:
+            yield data
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        self.assertEqual(2, len(tags))
+        self.assertEqual(3, len(tags))
+
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    def test_get_data_for_sensors(self):
+        macs = ['CC:2C:6A:1E:59:3D', 'BB:2C:6A:1E:59:3D']
+        data = RuuviTagSensor.get_data_for_sensors(macs, 4)
+        self.assertEqual(2, len(data))
+        self.assertTrue('CC:2C:6A:1E:59:3D' in data)
+        self.assertTrue('BB:2C:6A:1E:59:3D' in data)
+        self.assertTrue(data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0)
 
     def test_decode_data_not_valid(self):
         decoded = RuuviTagSensor.decode_data('not_valid')

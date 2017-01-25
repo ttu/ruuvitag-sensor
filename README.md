@@ -40,7 +40,8 @@ RuuviTag sensors can be identified using MAC addresses.
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 sensors = RuuviTagSensor.find_ruuvitags()
-# Prints the mac address and the state of a sensor when it is found
+# find_ruuvitags function will print the mac address and the state of a sensor when it is found
+# find_ruuvitags function returns same information in a dictionary
 ```
 
 ##### Get data from sensor
@@ -59,6 +60,23 @@ state = sensor.state
 print(state)
 ```
 
+##### Get data for specified sensors
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+# List macs of sensors which data will be collected
+macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+# get_data_for_sensors will look data for duration of timeout_in_sec
+timeout_in_sec = 4
+
+datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+
+# Dictionary will have lates data for each sensor
+print(datas['AA:2C:6A:1E:59:3D'])
+print(datas['CC:2C:6A:1E:59:3D'])
+```
+
 ##### Parse data
 
 ```python
@@ -70,8 +88,7 @@ data = full_data[26:]
 
 decoded = RuuviTagSensor.decode_data(data)
 
-url_decoder = UrlDecoder()
-sensor_data = url_decoder.get_data(decoded)
+sensor_data = UrlDecoder().get_data(decoded)
 
 print(sensor_data)
 ```

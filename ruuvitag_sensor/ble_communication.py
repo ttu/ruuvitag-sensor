@@ -32,10 +32,13 @@ class BleCommunicationDummy(BleCommunication):
 
     @staticmethod
     def get_datas():
-        return [
+        datas = [
             ('BC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
         ]
+
+        for data in datas:
+            yield data
 
 
 class BleCommunicationNix(BleCommunication):
