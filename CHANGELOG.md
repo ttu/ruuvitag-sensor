@@ -3,7 +3,7 @@
 ### [Unreleased]
 * -
 
-## [0.2.3] - 2017-01-25
+## [0.3.0] - 2017-01-27
 * Get latest data for specified sensors 
 
 ## [0.2.2] - 2017-01-03

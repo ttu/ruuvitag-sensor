@@ -38,8 +38,13 @@ class UrlDecoder(object):
         pres = ((decoded[4] << 8) + decoded[5]) + 50000
         return pres / 100
 
-    def get_data(self, encoded):
-        '''Get decoded sensor values in dictionary'''
+    def decode_data(self, encoded):
+        '''
+        Decode sensor data.
+
+        Returns:
+            Sensor values in dictionary
+        '''
         try:
             decoded = bytearray(base64.b64decode(encoded))
             return {

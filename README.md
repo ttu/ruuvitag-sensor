@@ -65,9 +65,9 @@ print(state)
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-# List macs of sensors which data will be collected
+# List of macs of sensors which data will be collected
 macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
-# get_data_for_sensors will look data for duration of timeout_in_sec
+# get_data_for_sensors will look data for the duration of timeout_in_sec
 timeout_in_sec = 4
 
 datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
@@ -86,9 +86,9 @@ from ruuvitag_sensor.url_decoder import UrlDecoder
 full_data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'
 data = full_data[26:]
 
-decoded = RuuviTagSensor.decode_data(data)
+encoded = RuuviTagSensor.convert_data(data)
 
-sensor_data = UrlDecoder().get_data(decoded)
+sensor_data = UrlDecoder().decode_data(encoded)
 
 print(sensor_data)
 ```

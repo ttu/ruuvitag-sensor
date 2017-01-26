@@ -8,7 +8,7 @@ class TestUrlDecoder(TestCase):
 
     def test_decode_is_valid(self):
         decoder = UrlDecoder()
-        data = decoder.get_data('AjwYAMFc')
+        data = decoder.decode_data('AjwYAMFc')
 
         self.assertEqual(data['temperature'], 24)
         self.assertEqual(data['pressure'], 995)
@@ -16,7 +16,7 @@ class TestUrlDecoder(TestCase):
 
     def test_decode_is_valid_case2(self):
         decoder = UrlDecoder()
-        data = decoder.get_data('AjgbAMFc')
+        data = decoder.decode_data('AjgbAMFc')
 
         self.assertEqual(data['temperature'], 27)
         self.assertEqual(data['pressure'], 995)

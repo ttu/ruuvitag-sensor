@@ -45,10 +45,16 @@ class RuuviTagSensor(object):
     @staticmethod
     def get_data(mac):
         raw = ble.get_data(mac)
-        return RuuviTagSensor.decode_data(raw)
+        return RuuviTagSensor.convert_data(raw)
 
     @staticmethod
-    def decode_data(raw):
+    def convert_data(raw):
+        """
+        Convert hexadcimal data to string and validate that data is from RuuviTag.
+
+        Returns:
+            Encoded sensor data part in string
+        """
         try:
             # TODO: Figure out how to do this properly
             base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
@@ -66,16 +72,24 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def find_ruuvitags():
+        """
+        Find all RuuviTags. Function will print the mac and the state of the sensors when found.
+        Function will execute as long as it is  stopped. Stop ecexution with Crtl+C.
+
+        Returns:
+            Dictionary containing mac and state of found sensors
+        """
+
         print('Finding RuuviTags. Stop with Ctrl+C.')
         datas = dict()
         for ble_data in ble.get_datas():
             # If mac already in datas continue
             if ble_data[0] in datas:
                 continue
-            decoded = RuuviTagSensor.decode_data(ble_data[1])
-            # Check that decoded data is valid ruuvitag data it is sensor data
-            if decoded is not None:
-                state = UrlDecoder().get_data(decoded)
+            encoded = RuuviTagSensor.convert_data(ble_data[1])
+            # Check that encoded data is valid ruuvitag data it is sensor data
+            if encoded is not None:
+                state = UrlDecoder().decode_data(encoded)
                 if state is not None:
                     datas[ble_data[0]] = state
                     print(ble_data[0])
@@ -87,7 +101,12 @@ class RuuviTagSensor(object):
     def get_data_for_sensors(macs, search_duratio_sec=5):
         """
         Get lates data for sensors in the macs list.
-        Search duration is search_duratio_sec seconds. Default 5 seconds.
+
+        Args:
+            macs: List of mac addresses
+            search_duratio_sec: Search duration in seconds. Default 5.
+        Returns:
+            Dictionary containing mac and state of found sensors
         """
 
         print('Get latest data for sensors. Search duration is {}s'.format(search_duratio_sec))
@@ -104,16 +123,23 @@ class RuuviTagSensor(object):
             # If mac in whitelist
             if not ble_data[0] in macs:
                 continue
-            decoded = RuuviTagSensor.decode_data(ble_data[1])
-            # Check that decoded data is valid ruuvitag data it is sensor data
-            if decoded is not None:
-                state = UrlDecoder().get_data(decoded)
+            encoded = RuuviTagSensor.convert_data(ble_data[1])
+            # Check that encoded data is valid ruuvitag data it is sensor data
+            if encoded is not None:
+                state = UrlDecoder().decode_data(encoded)
                 if state is not None:
                     datas[ble_data[0]] = state
 
         return datas
 
     def update(self):
+        """
+        Get lates data from the sensor and update own state.
+
+        Returns:
+            Latest state
+        """
+
         data = RuuviTagSensor.get_data(self._mac)
 
         if data == self._data:
@@ -124,6 +150,6 @@ class RuuviTagSensor(object):
         if self._data is None:
             self._state = {}
         else:
-            self._state = UrlDecoder().get_data(self._data)
+            self._state = UrlDecoder().decode_data(self._data)
 
         return self._state

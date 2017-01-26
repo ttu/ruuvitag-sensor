@@ -31,15 +31,15 @@ class TestRuuviTagSensor(TestCase):
             RuuviTagSensor('48:2C:6A:1E', 'test_sensor')
 
     def test_tag_correct_properties(self):
-        orgMac = 'AA:2C:6A:1E:59:3D'
-        orgName = 'mysensor'
-        tag = RuuviTagSensor(orgMac, orgName)
+        org_mac = 'AA:2C:6A:1E:59:3D'
+        org_name = 'mysensor'
+        tag = RuuviTagSensor(org_mac, org_name)
 
         name = tag.name
         mac = tag.mac
         state = tag.state
-        self.assertEqual(name, orgName)
-        self.assertEqual(mac, orgMac)
+        self.assertEqual(name, org_name)
+        self.assertEqual(mac, org_mac)
         self.assertEqual(state, {})
 
     def get_datas(self):
@@ -47,7 +47,7 @@ class TestRuuviTagSensor(TestCase):
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('BB:2C:6A:1E:59:3D', 'some other device'),
             ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('BB:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
+            ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
         ]
 
         for data in datas:
@@ -62,13 +62,13 @@ class TestRuuviTagSensor(TestCase):
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
     def test_get_data_for_sensors(self):
-        macs = ['CC:2C:6A:1E:59:3D', 'BB:2C:6A:1E:59:3D']
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
         data = RuuviTagSensor.get_data_for_sensors(macs, 4)
         self.assertEqual(2, len(data))
         self.assertTrue('CC:2C:6A:1E:59:3D' in data)
-        self.assertTrue('BB:2C:6A:1E:59:3D' in data)
+        self.assertTrue('DD:2C:6A:1E:59:3D' in data)
         self.assertTrue(data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0)
 
-    def test_decode_data_not_valid(self):
-        decoded = RuuviTagSensor.decode_data('not_valid')
-        self.assertIsNone(decoded)
+    def test_convert_data_not_valid(self):
+        encoded = RuuviTagSensor.convert_data('not_valid')
+        self.assertIsNone(encoded)
