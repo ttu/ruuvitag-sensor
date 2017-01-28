@@ -6,13 +6,12 @@ Press Ctrl+C to quit.
 2017-02-02 13:45:25.233400
 Sensor - F4:A5:74:89:16:57
 Temperature: 10
-Humidity:    2
+Humidity:    28
 Pressure:    689
 '''
 
 import time
 import os
-import random
 from datetime import datetime
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -22,14 +21,14 @@ mac = 'F4:A5:74:89:16:57'
 
 print('Starting')
 
-sensor = RuuviTagSensor(mac, '')
+sensor = RuuviTagSensor(mac)
 
 while True:
     data = sensor.update()
 
     line_sen = str.format('Sensor - {0}', mac)
     line_tem = str.format('Temperature: {0} C', data['temperature'])
-    line_hum = str.format('Humidity:   {0}', data['humidity'])
+    line_hum = str.format('Humidity:    {0}', data['humidity'])
     line_pre = str.format('Pressure:    {0}', data['pressure'])
 
     # Clear screen and print sensor data

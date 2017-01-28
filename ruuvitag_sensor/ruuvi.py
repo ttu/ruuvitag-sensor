@@ -20,23 +20,18 @@ else:
 
 class RuuviTagSensor(object):
 
-    def __init__(self, mac, name):
+    def __init__(self, mac):
 
         if not re.match(mac_regex, mac.lower()):
             raise ValueError('{} is not valid mac address'.format(mac))
 
         self._mac = mac
         self._state = {}
-        self._name = name
         self._data = None
 
     @property
     def mac(self):
         return self._mac
-
-    @property
-    def name(self):
-        return self._name
 
     @property
     def state(self):

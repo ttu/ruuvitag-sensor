@@ -16,7 +16,7 @@ class TestRuuviTagSensor(TestCase):
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_data',
            get_data)
     def test_tag_update_is_valid(self):
-        tag = RuuviTagSensor('48:2C:6A:1E:59:3D', 'test_sensor')
+        tag = RuuviTagSensor('48:2C:6A:1E:59:3D')
 
         state = tag.state
         self.assertEqual(state, {})
@@ -28,17 +28,14 @@ class TestRuuviTagSensor(TestCase):
 
     def test_false_mac_raise_error(self):
         with self.assertRaises(ValueError):
-            RuuviTagSensor('48:2C:6A:1E', 'test_sensor')
+            RuuviTagSensor('48:2C:6A:1E')
 
     def test_tag_correct_properties(self):
         org_mac = 'AA:2C:6A:1E:59:3D'
-        org_name = 'mysensor'
-        tag = RuuviTagSensor(org_mac, org_name)
+        tag = RuuviTagSensor(org_mac)
 
-        name = tag.name
         mac = tag.mac
         state = tag.state
-        self.assertEqual(name, org_name)
         self.assertEqual(mac, org_mac)
         self.assertEqual(state, {})
 

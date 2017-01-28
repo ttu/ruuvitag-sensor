@@ -2,7 +2,6 @@
 Get data from sensors and post it to specified url in json-format
 '''
 
-import json
 from urllib.parse import quote
 import requests
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -25,4 +24,4 @@ datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
 for key, value in datas.items():
     # url e.g.: http://localhost:8000/data/F4%3AA5%3A74%3A89%3A16%3A57
     # json e.g.: {"temperature": 24.0, "humidity": 38.0, "pressure": 1018.0}
-    requests.post(url + quote(key), json=json.dumps(value))
+    requests.post(url + quote(key), json=value)
