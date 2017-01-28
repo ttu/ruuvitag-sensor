@@ -125,6 +125,10 @@ Run with setup
 $ python setup.py test
 ```
 
+## Examples
+
+Examples are in examples directory.
+
 ## Change log
 
 [Change Log](CHANGELOG.md)
