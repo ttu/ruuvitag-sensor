@@ -51,21 +51,27 @@ class RuuviTagSensor(object):
     def convert_data(raw):
         """
         Convert hexadcimal data to string and validate that data is from RuuviTag.
+        Encoded data part is after ruu.vi/# or r/
 
         Returns:
             Encoded sensor data part in string
         """
         try:
-            # TODO: Figure out how to do this properly
+            # TODO: Fix conversion so convered data will show https://ruu.vi/# and htts://r/
+            # Now it has e.g. ▲☻☺♠♥♥■■►♥ruu.vi/#AjwYAMFc
             base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
             selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
             characters = [chr(int(c, 16)) for c in selected_hexs]
             data = ''.join(characters)
-            # take only part after ruu.vi/#
+
+            # take only part after ruu.vi/# or r/
             index = data.index('ruu.vi/#') + 8
             if index > -1:
                 return data[index:]
             else:
+                index = data.index('r/') + 2
+                if index > -1:
+                    return data[index:]
                 return None
         except:
             return None

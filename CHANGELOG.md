@@ -3,8 +3,9 @@
 ### [Unreleased]
 * -
 
-## [0.3.0] - 2017-01-27
+## [0.3.0] - 2017-01-29
 * Get latest data for specified sensors 
+* Accept ruu.vi/# and r/ as RuuviTag datas in conversion
 
 ## [0.2.2] - 2017-01-03
 * Python 2.7 support
