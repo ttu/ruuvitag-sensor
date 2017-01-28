@@ -65,13 +65,13 @@ class RuuviTagSensor(object):
             data = ''.join(characters)
 
             # take only part after ruu.vi/# or r/
-            index = data.index('ruu.vi/#') + 8
+            index = data.find('ruu.vi/#')
             if index > -1:
-                return data[index:]
+                return data[(index + 8):]
             else:
-                index = data.index('r/') + 2
+                index = data.find('r/')
                 if index > -1:
-                    return data[index:]
+                    return data[(index + 2):]
                 return None
         except:
             return None
@@ -115,7 +115,8 @@ class RuuviTagSensor(object):
             Dictionary containing mac and state of found sensors
         """
 
-        print('Get latest data for sensors. Search duration is {}s'.format(search_duratio_sec))
+        print('Get latest data for sensors. Search duration is {}s'.format(
+            search_duratio_sec))
         print('MACs: {}'.format(macs))
 
         start_time = time.time()
