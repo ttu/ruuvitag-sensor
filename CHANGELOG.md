@@ -3,6 +3,9 @@
 ### [Unreleased]
 * -
 
+## [0.3.1] - 2017-01-29
+* Fix for hcitool subprocess kill
+
 ## [0.3.0] - 2017-01-29
 * Get latest data for specified sensors 
 * Accept ruu.vi/# and r/ as RuuviTag datas in conversion
