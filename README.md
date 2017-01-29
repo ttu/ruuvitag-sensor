@@ -131,8 +131,8 @@ Examples are in examples directory.
 
 ## Change log
 
-[Change Log](CHANGELOG.md)
+[Change Log](https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md)
 
 ## License
 
-Licensed under the [MIT](LICENSE) License.
+Licensed under the [MIT](https://github.com/ttu/ruuvitag-sensor/blob/master/LICENSE) License.
