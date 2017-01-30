@@ -3,6 +3,9 @@
 ### [Unreleased]
 * -
 
+## [0.3.2] - 2017-01-30
+* Use psutil to find correct process to kill
+
 ## [0.3.1] - 2017-01-29
 * Fix for hcitool subprocess kill
 

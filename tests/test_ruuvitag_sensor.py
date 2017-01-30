@@ -52,11 +52,15 @@ class TestRuuviTagSensor(TestCase):
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
+           get_datas)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
         self.assertEqual(3, len(tags))
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
            get_datas)
     def test_get_data_for_sensors(self):
         macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']

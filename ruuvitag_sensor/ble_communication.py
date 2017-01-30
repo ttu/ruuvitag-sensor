@@ -56,9 +56,22 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def stop(hcitool, hcidump):
+        # import psutil here so as long as all implementations are in the same file, all will work
+        import psutil
+        
         print('Stop receiving broadcasts')
-        subprocess.call(['sudo', '-n', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
-        subprocess.call(['sudo', '-n', 'kill', str(hcitool.pid), '-s', "SIGINT"])
+
+        def kill_child_processes(parent_pid):
+            try:
+                parent = psutil.Process(parent_pid)
+            except psutil.NoSuchProcess:
+                return
+
+            for process in parent.children(recursive=True):
+                subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(process.pid)])
+
+        kill_child_processes(hcitool.pid)
+        kill_child_processes(hcidump.pid)
 
     @staticmethod
     def get_lines(hcidump):
@@ -97,7 +110,7 @@ class BleCommunicationNix(BleCommunication):
                 break
             except:
                 continue
-
+        
         BleCommunicationNix.stop(procs[0], procs[1])
 
     @staticmethod
