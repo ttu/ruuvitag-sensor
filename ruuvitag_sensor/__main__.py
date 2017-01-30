@@ -24,7 +24,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mac_address:
-        sensor = RuuviTagSensor(args.mac_address, '')
+        sensor = RuuviTagSensor(args.mac_address)
         state = sensor.update()
         print(state)
     elif args.find_action:
