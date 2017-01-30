@@ -57,8 +57,8 @@ class BleCommunicationNix(BleCommunication):
     @staticmethod
     def stop(hcitool, hcidump):
         print('Stop receiving broadcasts')
-        subprocess.call(['sudo', '-n', 'kill', str(hcidump.pid), '-s', 'SIGINT'])
-        subprocess.call(['sudo', '-n', 'kill', str(hcitool.pid), '-s', "SIGINT"])
+        subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(hcidump.pid)])
+        subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(hcitool.pid)])
 
     @staticmethod
     def get_lines(hcidump):
