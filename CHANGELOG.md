@@ -3,6 +3,9 @@
 ### [Unreleased]
 * -
 
+## [0.3.3] - 2017-01-31
+* Use subprocess.DEVNULL starting with Python 3.3
+
 ## [0.3.2] - 2017-01-30
 * Use psutil to find correct process to kill
 

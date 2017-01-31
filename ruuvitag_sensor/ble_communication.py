@@ -47,7 +47,7 @@ class BleCommunicationNix(BleCommunication):
     @staticmethod
     def start():
         print('Start receiving broadcasts')
-        DEVNULL = subprocess.DEVNULL if sys.version_info > (3, 0) else open(os.devnull, 'wb')
+        DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         subprocess.call('sudo hciconfig hci0 reset', shell = True, stdout = DEVNULL)
         hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout = DEVNULL)
