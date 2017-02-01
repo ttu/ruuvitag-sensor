@@ -3,6 +3,9 @@
 ### [Unreleased]
 * -
 
+## [0.3.4] - 2017-02-01
+* Fix temperature decimal calculation 
+
 ## [0.3.3] - 2017-01-31
 * Use subprocess.DEVNULL starting with Python 3.3
 
