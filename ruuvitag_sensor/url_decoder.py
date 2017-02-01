@@ -23,11 +23,11 @@ class UrlDecoder(object):
 
     def _get_temperature(self, decoded):
         '''Return temperature in celsius'''
-        temp = (((decoded[2] & 127) << 8) | decoded[3])
+        temp = (decoded[2] & 127) + decoded[3]/100
         sign = (decoded[2] >> 7) & 1
         if sign == 0:
-            return round(temp / 256.0, 1)
-        return round(-1 * temp / 256.0, 1)
+            return round(temp, 2)
+        return round(-1 * temp, 2)
 
     def _get_humidity(self, decoded):
         '''Return humidity %'''
