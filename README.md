@@ -30,6 +30,8 @@ $ pip install git+https://github.com/ttu/ruuvitag-sensor
 $ pip install -e .
 ```
 
+Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruuvitag-sensor/blob/master/install_guide_pi.md)
+
 ### Usage
 
 RuuviTag sensors can be identified using MAC addresses.
