@@ -1,4 +1,10 @@
-# Raspbian Jessie 2017-01-11
+# Raspbian
+
+Tested with Raspbian Jessie 2017-01-11. 
+
+RuuviTag is a Bluetooth Low Energy device, so Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 has integrated Bluetooth which support BLE devices. For older models Bluetooth adapter is required.
+
+### Start
 
 Plug display and keyboard
 
@@ -40,7 +46,7 @@ $ sudo apt-get upgrade
 
 ### Bluetooth
 
-List bluetooth devices and check that you can see device hci0 on the list
+List Bluetooth devices and check that you can see device hci0 on the list
 ```sh
 $ hcitool dev
 ```
@@ -50,25 +56,25 @@ If not, try to reboot and check again
 $ reboot
 ```
 
-If still nothing, install bluetooth again
+If still nothing, install Bluetooth again
 ```sh
 $ sudo apt-get install bluetooth bluez blueman
 $ reboot
 ```
 
-### Install Ruuvitag-sensor package
+### Install ruuvitag-sensor package
 
 In this example we use default installed version of Python 3, which is 3.4.2. Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option
 ```sh
 $ python3 --version
 ```
 
-Ruuvitag-sensor package requires bluez and bluez-hcidump. Bluez is the Linux Bluetooth system and allows a Raspberry Pi to communicate with Bluetooth classic and Bluetooth low energy (LE) devices. Hcidump is a tool which prints data broadcasted by bluetooth devices to console. Bluez is already installed on Raspbian, so install only bluez-hcidump
+Ruuvitag-sensor package requires bluez and bluez-hcidump. Bluez is the Linux Bluetooth system and allows a Raspberry Pi to communicate with Bluetooth classic and Bluetooth low energy (LE) devices. Hcidump is a tool which prints data broadcasted by Bluetooth devices to console. Bluez is already installed on Raspbian, so install only bluez-hcidump
 ```sh
 $ sudo apt-get install bluez-hcidump
 ```
 
-Install ruuvitag-sensor package from python package index with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add user option to install for current user
+Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add user option to install for current user
 ```sh
 $ pip3 install --user ruuvitag-sensor
 ```
