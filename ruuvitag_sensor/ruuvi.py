@@ -53,7 +53,7 @@ class RuuviTagSensor(object):
         """
         try:
             # TODO: Fix conversion so convered data will show https://ruu.vi/# and htts://r/
-            # Now it has e.g. ▲☻☺♠♥♥■■►♥ruu.vi/#AjwYAMFc
+            # Now it has e.g. [Non_ASCII characters]ruu.vi/#AjwYAMFc
             base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
             selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
             characters = [chr(int(c, 16)) for c in selected_hexs]
