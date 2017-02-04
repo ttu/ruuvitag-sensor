@@ -64,7 +64,7 @@ $ reboot
 
 ### Install ruuvitag-sensor package
 
-In this example we use default installed version of Python 3, which is 3.4.2. Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option
+In this example we use default installed version of Python 3, which is 3.4.2. Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
 ```sh
 $ python3 --version
 ```
