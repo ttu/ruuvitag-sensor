@@ -106,4 +106,4 @@ Execute script we just created. Should get the same result as from find all tags
 $ python3 tag_test.py
 ```
 
-Now you are all set!
+Now you are all set! Remember to check examples from the [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.

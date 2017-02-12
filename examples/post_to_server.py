@@ -1,5 +1,8 @@
 '''
 Get data from sensors and post it to specified url in json-format
+
+Requires:
+    Requests - pip install requests
 '''
 
 from urllib.parse import quote
