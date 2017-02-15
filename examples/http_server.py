@@ -28,19 +28,22 @@ tags = {
     'BB:2C:6A:1E:59:3D': 'livingroom'
 }
 
+timeout_in_sec = 5
+
 
 def run_get_data_background(macs, queue):
+    """
+    Background process from RuuviTag Sensors
+    """
     while True:
-        timeout_in_sec = 5
         datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
-        q.put(datas)
-
-
-executor = ThreadPoolExecutor(1)
-executor.submit(run_get_data_background, list(tags.keys()), q)
+        queue.put(datas)
 
 
 def update_data():
+    """
+    Update data sent by background process to global allData
+    """
     global allData
     while not q.empty():
         allData = q.get()
@@ -64,4 +67,9 @@ def get_data(mac):
 
 
 if __name__ == '__main__':
+    # Start background process
+    executor = ThreadPoolExecutor(1)
+    executor.submit(run_get_data_background, list(tags.keys()), q)
+
+    # Strt Flask application
     app.run(host='0.0.0.0', port=5000)
