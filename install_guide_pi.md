@@ -62,6 +62,26 @@ $ sudo apt-get install bluetooth bluez blueman
 $ reboot
 ```
 
+### Update Python 3 version (optional)
+
+You might want't to update default version of Python 3 to a newer version. Newer version must be installed from the sources. This will take around 20min to complete.
+
+Install dependencies so SSL will work with newly compiled pip (not sure if all of these are needed)
+```sh
+$ sudo apt-get install libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev
+```
+
+This example installs version 3.6.0
+```sh
+$ wget https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tgz
+$ tar xzvf Python-3.6.0.tgz
+$ cd Python-3.6.0/
+$ ./configure
+$ make
+$ sudo make install
+$ reboot
+```
+
 ### Install ruuvitag-sensor package
 
 In this example we use default installed version of Python 3, which is 3.4.2. Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
@@ -79,7 +99,7 @@ Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (P
 $ pip3 install --user ruuvitag-sensor
 ```
 
-Try installed package from command line. Should show help from ruuvitag_sensor. If not, change the minor version from the path to match Python's minor version.
+Try installed package from command line. Should show help from ruuvitag_sensor. If not, change the minor version from the path to match Python's minor version, e.g. if you updated Python to version 3.6. then path is /home/pi/.local/lib/python3.6/...
 ```sh
 $ python3 /home/pi/.local/lib/python3.4/site-packages/ruuvitag_sensor -h
 ```
