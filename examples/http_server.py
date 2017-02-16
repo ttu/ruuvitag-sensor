@@ -11,14 +11,15 @@ Requires:
 '''
 
 import json
-from multiprocessing import Queue
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Manager
+from concurrent.futures import ProcessPoolExecutor
 from flask import Flask, abort
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 app = Flask(__name__)
 
-q = Queue()
+m = Manager()
+q = m.Queue()
 
 allData = {}
 
@@ -68,7 +69,7 @@ def get_data(mac):
 
 if __name__ == '__main__':
     # Start background process
-    executor = ThreadPoolExecutor(1)
+    executor = ProcessPoolExecutor(1)
     executor.submit(run_get_data_background, list(tags.keys()), q)
 
     # Strt Flask application

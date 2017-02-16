@@ -12,12 +12,13 @@ Requires:
 '''
 
 import asyncio
-from multiprocessing import Queue
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Manager
+from concurrent.futures import ProcessPoolExecutor
 from aiohttp import web
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-q = Queue()
+m = Manager()
+q = m.Queue()
 
 allData = {}
 
@@ -71,7 +72,7 @@ def setup_routes(app):
 
 if __name__ == '__main__':
     # Start background process
-    executor = ThreadPoolExecutor(1)
+    executor = ProcessPoolExecutor(1)
     executor.submit(run_get_data_background, list(tags.keys()), q)
 
     loop = asyncio.get_event_loop()
