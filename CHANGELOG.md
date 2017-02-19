@@ -4,7 +4,8 @@
 * -
 
 ## [0.4.0] - 2017-02-19
-* Get RuuviTag datas with callback
+* get_datas function for handling RuuviTag broadcasts with callback function
+* MAC list to optional in get_data_for_sensors function
 
 ## [0.3.4] - 2017-02-01
 * Fix temperature decimal calculation 
