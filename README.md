@@ -64,6 +64,43 @@ state = sensor.state
 print(state)
 ```
 
+##### Get sensor datas with callback
+
+Callback is called every time when RuuviTag sensor broadcasts data
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+def handle_data(found_data):
+    print('MAC ' + found_data[0])
+    print(found_data[1])
+
+RuuviTagSensor.get_datas(handle_data)
+```
+
+Optional list of macs and run flag can be passed to the get_datas function. Callback is called only for macs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+
+counter = 10
+# RunFlag for stopping execution at desired time
+run_flag = RunFlag()
+
+def handle_data(found_data):
+    print('MAC ' + found_data[0])
+    print(found_data[1])
+    global counter
+    counter = counter - 1
+    if counter < 0:
+        run_flag.running = False
+
+# List of macs of sensors which will execute callback function
+macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+
+RuuviTagSensor.get_datas(handle_data, macs, run_flag)
+```
+
 ##### Get data for specified sensors
 
 ```python
@@ -102,13 +139,14 @@ print(sensor_data)
 ```
 $ python ruuvitag_sensor -h
 
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [--version]
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-s] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
   -f, --find            Find broadcasting RuuviTags
+  -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
 ```
 

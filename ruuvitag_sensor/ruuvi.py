@@ -16,6 +16,17 @@ else:
     ble = BleCommunicationNix()
 
 
+class RunFlag(object):
+    """
+    Wrapper for boolean run flag
+
+    Attributes:
+        running: Defines if function should continue execution
+    """
+
+    running = True
+
+
 # TODO: Split this class to common functions and RuuviTagSensor
 
 class RuuviTagSensor(object):
@@ -133,6 +144,36 @@ class RuuviTagSensor(object):
                     datas[ble_data[0]] = state
 
         return datas
+
+    @staticmethod
+    def get_datas(callback, macs=[], run_flag=RunFlag()):
+        """
+        Get data for all ruuvitag sensors or sensors in the macs list.
+
+        Args:
+            callback: callback funcion to be called when new data is received
+            macs: List of mac addresses
+            run_flag: RunFlag object. Function executes while run_flag.running
+        """
+
+        print('Get latest data for sensors. Stop with Ctrl+C.')
+        print('MACs: {}'.format(macs))
+
+        data_iter = ble.get_datas()
+
+        for ble_data in data_iter:
+            if not run_flag.running:
+                data_iter.send(StopIteration)
+                break
+            # If mac list is not empty and mac not in list then skip
+            if macs and ble_data[0] not in macs:
+                continue
+            encoded = RuuviTagSensor.convert_data(ble_data[1])
+            # Check that encoded data is valid ruuvitag data it is sensor data
+            if encoded is not None:
+                state = UrlDecoder().decode_data(encoded)
+                if state is not None:
+                    callback((ble_data[0], state))
 
     def update(self):
         """

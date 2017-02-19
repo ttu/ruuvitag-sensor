@@ -3,6 +3,9 @@
 ### [Unreleased]
 * -
 
+## [0.4.0] - 2017-02-19
+* Get RuuviTag datas with callback
+
 ## [0.3.4] - 2017-02-01
 * Fix temperature decimal calculation 
 

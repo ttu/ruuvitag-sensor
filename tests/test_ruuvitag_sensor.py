@@ -73,3 +73,22 @@ class TestRuuviTagSensor(TestCase):
     def test_convert_data_not_valid(self):
         encoded = RuuviTagSensor.convert_data('not_valid')
         self.assertIsNone(encoded)
+
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
+           get_datas)
+    def test_get_datas(self):
+        datas = []
+        RuuviTagSensor.get_datas(lambda x: datas.append(x))
+        self.assertEqual(3, len(datas))
+
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
+           get_datas)
+    def test_get_datas_with_macs(self):
+        datas = []
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
+        RuuviTagSensor.get_datas(lambda x: datas.append(x), macs)
+        self.assertEqual(2, len(datas))
