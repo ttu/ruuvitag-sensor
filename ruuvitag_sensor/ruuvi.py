@@ -93,19 +93,15 @@ class RuuviTagSensor(object):
         """
 
         print('Finding RuuviTags. Stop with Ctrl+C.')
+
         datas = dict()
-        for ble_data in ble.get_datas():
-            # If mac already in datas continue
-            if ble_data[0] in datas:
+
+        for new_data in RuuviTagSensor._get_ruuvitag_datas():
+            if new_data[0] in datas:
                 continue
-            encoded = RuuviTagSensor.convert_data(ble_data[1])
-            # Check that encoded data is valid ruuvitag data it is sensor data
-            if encoded is not None:
-                state = UrlDecoder().decode_data(encoded)
-                if state is not None:
-                    datas[ble_data[0]] = state
-                    print(ble_data[0])
-                    print(state)
+            datas[new_data[0]] = new_data[1]
+            print(new_data[0])
+            print(new_data[1])
 
         return datas
 
@@ -125,23 +121,10 @@ class RuuviTagSensor(object):
         print('Stops automatically in {}s'.format(search_duratio_sec))
         print('MACs: {}'.format(macs))
 
-        start_time = time.time()
         datas = dict()
-        data_iter = ble.get_datas()
 
-        for ble_data in data_iter:
-            if time.time() - start_time > search_duratio_sec:
-                data_iter.send(StopIteration)
-                break
-            # If mac in whitelist
-            if macs and not ble_data[0] in macs:
-                continue
-            encoded = RuuviTagSensor.convert_data(ble_data[1])
-            # Check that encoded data is valid ruuvitag data it is sensor data
-            if encoded is not None:
-                state = UrlDecoder().decode_data(encoded)
-                if state is not None:
-                    datas[ble_data[0]] = state
+        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, search_duratio_sec):
+            datas[new_data[0]] = new_data[1]
 
         return datas
 
@@ -159,21 +142,8 @@ class RuuviTagSensor(object):
         print('Get latest data for sensors. Stop with Ctrl+C.')
         print('MACs: {}'.format(macs))
 
-        data_iter = ble.get_datas()
-
-        for ble_data in data_iter:
-            if not run_flag.running:
-                data_iter.send(StopIteration)
-                break
-            # If mac list is not empty and mac not in list then skip
-            if macs and ble_data[0] not in macs:
-                continue
-            encoded = RuuviTagSensor.convert_data(ble_data[1])
-            # Check that encoded data is valid ruuvitag data it is sensor data
-            if encoded is not None:
-                state = UrlDecoder().decode_data(encoded)
-                if state is not None:
-                    callback((ble_data[0], state))
+        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, None, run_flag):
+            callback(new_data)
 
     def update(self):
         """
@@ -196,3 +166,39 @@ class RuuviTagSensor(object):
             self._state = UrlDecoder().decode_data(self._data)
 
         return self._state
+
+    @staticmethod
+    def _get_ruuvitag_datas(macs=[], search_duratio_sec=None, run_flag=RunFlag()):
+        """
+        Get data from BluetoothCommunication and handle data encoding.
+
+        Args:
+            macs (list): MAC addresses. Default empty list.
+            search_duratio_sec (int): Search duration in seconds. Default None.
+            run_flag (object): RunFlag object. Function executes while run_flag.running. Default new RunFlag.
+
+        Yields:
+            tuple: MAC and State of RuuviTag sensor data
+        """
+
+        start_time = time.time()
+        data_iter = ble.get_datas()
+
+        for ble_data in data_iter:
+            # Check duration
+            if search_duratio_sec and time.time() - start_time > search_duratio_sec:
+                data_iter.send(StopIteration)
+                break
+            # Check running flag
+            if not run_flag.running:
+                data_iter.send(StopIteration)
+                break
+            # Check MAC whitelist
+            if macs and not ble_data[0] in macs:
+                continue
+            encoded = RuuviTagSensor.convert_data(ble_data[1])
+            # Check that encoded data is valid RuuviTag data and it is sensor data
+            if encoded is not None:
+                state = UrlDecoder().decode_data(encoded)
+                if state is not None:
+                    yield (ble_data[0], state)
