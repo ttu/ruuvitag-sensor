@@ -21,7 +21,7 @@ class RunFlag(object):
     Wrapper for boolean run flag
 
     Attributes:
-        running: Defines if function should continue execution
+        running (bool): Defines if function should continue execution
     """
 
     running = True
@@ -60,7 +60,7 @@ class RuuviTagSensor(object):
         Encoded data part is after ruu.vi/# or r/
 
         Returns:
-            Encoded sensor data part in string
+            string: Encoded sensor data
         """
         try:
             # TODO: Fix conversion so convered data will show https://ruu.vi/# and htts://r/
@@ -86,10 +86,10 @@ class RuuviTagSensor(object):
     def find_ruuvitags():
         """
         Find all RuuviTags. Function will print the mac and the state of the sensors when found.
-        Function will execute as long as it is  stopped. Stop ecexution with Crtl+C.
+        Function will execute as long as it is stopped. Stop ecexution with Crtl+C.
 
         Returns:
-            Dictionary containing mac and state of found sensors
+            dict: MAC and state of found sensors
         """
 
         print('Finding RuuviTags. Stop with Ctrl+C.')
@@ -110,19 +110,19 @@ class RuuviTagSensor(object):
         return datas
 
     @staticmethod
-    def get_data_for_sensors(macs, search_duratio_sec=5):
+    def get_data_for_sensors(macs=[], search_duratio_sec=5):
         """
-        Get lates data for sensors in the macs list.
+        Get lates data for sensors in the MAC's list.
 
         Args:
-            macs: List of mac addresses
-            search_duratio_sec: Search duration in seconds. Default 5.
+            macs (array): MAC addresses
+            search_duratio_sec (int): Search duration in seconds. Default 5.
         Returns:
-            Dictionary containing mac and state of found sensors
+            dict: MAC and state of found sensors
         """
 
-        print('Get latest data for sensors. Search duration is {}s'.format(
-            search_duratio_sec))
+        print('Get latest data for sensors. Stop with Ctrl+C.')
+        print('Stops automatically in {}s'.format(search_duratio_sec))
         print('MACs: {}'.format(macs))
 
         start_time = time.time()
@@ -134,7 +134,7 @@ class RuuviTagSensor(object):
                 data_iter.send(StopIteration)
                 break
             # If mac in whitelist
-            if not ble_data[0] in macs:
+            if macs and not ble_data[0] in macs:
                 continue
             encoded = RuuviTagSensor.convert_data(ble_data[1])
             # Check that encoded data is valid ruuvitag data it is sensor data
@@ -148,12 +148,12 @@ class RuuviTagSensor(object):
     @staticmethod
     def get_datas(callback, macs=[], run_flag=RunFlag()):
         """
-        Get data for all ruuvitag sensors or sensors in the macs list.
+        Get data for all ruuvitag sensors or sensors in the MAC's list.
 
         Args:
-            callback: callback funcion to be called when new data is received
-            macs: List of mac addresses
-            run_flag: RunFlag object. Function executes while run_flag.running
+            callback (func): callback funcion to be called when new data is received
+            macs (list): MAC addresses
+            run_flag (object): RunFlag object. Function executes while run_flag.running
         """
 
         print('Get latest data for sensors. Stop with Ctrl+C.')
@@ -180,7 +180,7 @@ class RuuviTagSensor(object):
         Get lates data from the sensor and update own state.
 
         Returns:
-            Latest state
+            dict: Latest state
         """
 
         data = RuuviTagSensor.get_data(self._mac)

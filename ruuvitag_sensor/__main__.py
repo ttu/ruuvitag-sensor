@@ -19,6 +19,8 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--get', dest='mac_address', help='Get data')
     parser.add_argument('-f', '--find', action='store_true',
                         dest='find_action', help='Find broadcasting RuuviTags')
+    parser.add_argument('-l', '--latest', action='store_true',
+                        dest='latest_action', help='Get latest data for found RuuviTags')
     parser.add_argument('-s', '--stream', action='store_true',
                         dest='stream_action', help='Stream broadcasts from all RuuviTags')
     parser.add_argument('--version', action='version',
@@ -31,6 +33,9 @@ if __name__ == '__main__':
         print(state)
     elif args.find_action:
         RuuviTagSensor.find_ruuvitags()
+    elif args.latest_action:
+        datas = RuuviTagSensor.get_data_for_sensors()
+        print(datas)
     elif args.stream_action:
         RuuviTagSensor.get_datas(lambda x: print('%s - %s' % (x[0], x[1])))
     else:

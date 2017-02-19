@@ -38,15 +38,6 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 RuuviTag sensors can be identified using MAC addresses.
 
-##### Find sensors
-
-```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
-sensors = RuuviTagSensor.find_ruuvitags()
-# find_ruuvitags function will print the mac address and the state of a sensor when it is found
-# find_ruuvitags function returns same information in a dictionary
-```
 
 ##### Get data from sensor
 
@@ -66,7 +57,7 @@ print(state)
 
 ##### Get sensor datas with callback
 
-Callback is called every time when RuuviTag sensor broadcasts data
+`get_datas` calls the callback every time when a RuuviTag sensor broadcasts data
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -103,10 +94,13 @@ RuuviTagSensor.get_datas(handle_data, macs, run_flag)
 
 ##### Get data for specified sensors
 
+`get_data_for_sensors` will collect latest data from sensors for specified duration.
+
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # List of macs of sensors which data will be collected
+# If list is empty, data will be collected for all found sensors
 macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
 # get_data_for_sensors will look data for the duration of timeout_in_sec
 timeout_in_sec = 4
@@ -116,6 +110,16 @@ datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
 # Dictionary will have lates data for each sensor
 print(datas['AA:2C:6A:1E:59:3D'])
 print(datas['CC:2C:6A:1E:59:3D'])
+```
+
+##### Find sensors
+
+`find_ruuvitags` function will exeute forever and when new RuuviTag sensor is found it will print it's MAC address and state at that moment. This function can be used with a command line applications.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+RuuviTagSensor.find_ruuvitags()
 ```
 
 ##### Parse data
@@ -139,13 +143,14 @@ print(sensor_data)
 ```
 $ python ruuvitag_sensor -h
 
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-s] [--version]
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-l] [-s] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
   -f, --find            Find broadcasting RuuviTags
+  -l, --latest          Get latest data for found RuuviTags
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
 ```
@@ -169,7 +174,7 @@ $ python setup.py test
 
 ## Examples
 
-Examples are in examples directory.
+Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
 
 ## Change log
 
