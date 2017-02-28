@@ -32,7 +32,7 @@ setup(name='ruuvitag_sensor',
         'Programming Language :: Python :: 3'
       ],
       keywords='RuuviTag BLE',
-      install_requires=[]+(['psutil'] if "linux" in sys.platform else []),
+      install_requires=[]+(['psutil', 'rx'] if "linux" in sys.platform else ['rx']),
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,
