@@ -1,7 +1,8 @@
 ## Change Log
 
 ### [Unreleased]
-* -
+* RuuviTagReactive: reactive wrapper and background process for RuuviTagSensor get_datas 
+* Fix for hcitool and hcidump subprocess kill
 
 ## [0.4.0] - 2017-02-19
 * get_datas function for handling RuuviTag broadcasts with callback function
