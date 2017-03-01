@@ -1,5 +1,7 @@
 import base64
 
+from ruuvitag_sensor.log import logger
+
 
 class UrlDecoder(object):
     '''
@@ -46,12 +48,13 @@ class UrlDecoder(object):
             Sensor values in dictionary
         '''
         try:
-            decoded = bytearray(base64.b64decode(encoded))
+            decoded = bytearray(base64.b64decode(encoded, '-_'))
             return {
                 'temperature': self._get_temperature(decoded),
                 'humidity': self._get_humidity(decoded),
                 'pressure': self._get_pressure(decoded)
             }
         except:
+            logger.exception('Encoded value: {} not valid'.format(encoded))
             return None
 
