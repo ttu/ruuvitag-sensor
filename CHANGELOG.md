@@ -1,6 +1,9 @@
 ## Change Log
 
 ### [Unreleased]
+
+
+## [0.5.0] - 2017-03-01
 * RuuviTagReactive: reactive wrapper and background process for RuuviTagSensor get_datas 
 * Fix for hcitool and hcidump subprocess kill
 * Fix data decode. Use minus and underscore as altchars as encoding is url-safe
