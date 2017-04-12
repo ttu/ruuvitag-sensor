@@ -48,11 +48,16 @@ class UrlDecoder(object):
             Sensor values in dictionary
         '''
         try:
+            identifier = None
+            if len(encoded) > 8:
+                identifier = encoded[8:]
+                encoded = encoded[:8]
             decoded = bytearray(base64.b64decode(encoded, '-_'))
             return {
                 'temperature': self._get_temperature(decoded),
                 'humidity': self._get_humidity(decoded),
-                'pressure': self._get_pressure(decoded)
+                'pressure': self._get_pressure(decoded),
+                'identifier': identifier
             }
         except:
             logger.exception('Encoded value: {} not valid'.format(encoded))

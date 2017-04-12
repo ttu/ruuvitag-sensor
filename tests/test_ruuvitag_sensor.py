@@ -44,7 +44,8 @@ class TestRuuviTagSensor(TestCase):
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('BB:2C:6A:1E:59:3D', 'some other device'),
             ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
+            ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('EE:2C:6A:1E:59:3D', '1F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3')
         ]
 
         for data in datas:
@@ -56,19 +57,21 @@ class TestRuuviTagSensor(TestCase):
            get_datas)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        self.assertEqual(3, len(tags))
+        self.assertEqual(4, len(tags))
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
            get_datas)
     def test_get_data_for_sensors(self):
-        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D']
         data = RuuviTagSensor.get_data_for_sensors(macs, 4)
-        self.assertEqual(2, len(data))
+        self.assertEqual(3, len(data))
         self.assertTrue('CC:2C:6A:1E:59:3D' in data)
         self.assertTrue('DD:2C:6A:1E:59:3D' in data)
         self.assertTrue(data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0)
+        self.assertTrue(data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12)
+        self.assertTrue(data['EE:2C:6A:1E:59:3D']['identifier'] == '0')
 
     def test_convert_data_not_valid(self):
         encoded = RuuviTagSensor.convert_data('not_valid')
@@ -81,7 +84,7 @@ class TestRuuviTagSensor(TestCase):
     def test_get_datas(self):
         datas = []
         RuuviTagSensor.get_datas(lambda x: datas.append(x))
-        self.assertEqual(3, len(datas))
+        self.assertEqual(4, len(datas))
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
