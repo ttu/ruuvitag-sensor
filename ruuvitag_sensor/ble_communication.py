@@ -14,10 +14,12 @@ class BleCommunication(object):
     '''Bluetooth LE communication'''
     __metaclass__ = abc.ABCMeta
 
+    @staticmethod
     @abc.abstractmethod
     def get_data(mac):
         pass
 
+    @staticmethod
     @abc.abstractmethod
     def get_datas():
         pass
@@ -49,8 +51,8 @@ class BleCommunicationNix(BleCommunication):
         print('Start receiving broadcasts')
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
-        subprocess.call('sudo hciconfig hci0 reset', shell = True, stdout = DEVNULL)
-        hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout = DEVNULL)
+        subprocess.call('sudo hciconfig hci0 reset', shell=True, stdout=DEVNULL)
+        hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout=DEVNULL)
         hcidump = subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
         return (hcitool, hcidump)
 
@@ -105,14 +107,14 @@ class BleCommunicationNix(BleCommunication):
                 found_mac = line[14:][:12]
                 reversed_mac = ''.join(
                     reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
-                mac = ':'.join(a+b for a,b in zip(reversed_mac[::2], reversed_mac[1::2]))
+                mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
                 data = line[26:]
                 yield (mac, data)
             except GeneratorExit:
                 break
             except:
                 continue
-        
+
         BleCommunicationNix.stop(procs[0], procs[1])
 
     @staticmethod

@@ -25,7 +25,7 @@ class UrlDecoder(object):
 
     def _get_temperature(self, decoded):
         '''Return temperature in celsius'''
-        temp = (decoded[2] & 127) + decoded[3]/100
+        temp = (decoded[2] & 127) + decoded[3] / 100
         sign = (decoded[2] >> 7) & 1
         if sign == 0:
             return round(temp, 2)
@@ -60,6 +60,5 @@ class UrlDecoder(object):
                 'identifier': identifier
             }
         except:
-            logger.exception('Encoded value: {} not valid'.format(encoded))
+            logger.exception('Encoded value: %s not valid', encoded)
             return None
-

@@ -33,7 +33,8 @@ class RuuviTagReactive(object):
         while run_flag.running:
             while not queue.empty():
                 data = queue.get()
-                [s.on_next(data) for s in subjects]
+                for s in subjects:
+                    s.on_next(data)
             time.sleep(0.1)
 
     def __init__(self, macs=[]):
@@ -77,4 +78,5 @@ class RuuviTagReactive(object):
         """
 
         self.run_flag.running = False
-        [s.dispose() for s in self.subjects]
+        for s in self.subjects:
+            s.dispose()

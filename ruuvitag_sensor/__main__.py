@@ -3,7 +3,7 @@ import argparse
 
 import ruuvitag_sensor
 from ruuvi import RuuviTagSensor
-from log import logger
+from log import logger  # pylint: disable=E0611
 
 
 def my_excepthook(exctype, value, traceback):
