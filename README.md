@@ -8,6 +8,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 * RuuviTag with Weather Station firmware
     * Setup [guide](https://ruu.vi/setup/)
+    * Supports [Data Format 2 & 4](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Python 2.7 and 3
     * psutil
         * Package uses psutil to start and stop processes. Psutil requires `sudo apt-get install python-dev` or `sudo apt-get install python3-dev`
@@ -166,6 +167,17 @@ encoded = RuuviTagSensor.convert_data(data)
 sensor_data = UrlDecoder().decode_data(encoded)
 
 print(sensor_data)
+```
+
+##### Data Formats
+
+Example data has data from 2 sensors. First sensor has firmware that supports Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data. Second sensor has firmware that supports Data Fromat 4 and it has an identifier character.
+
+```python
+{
+'CA:F7:44:DE:EB:E1': { 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None }, 
+'F4:A5:74:89:16:57': { 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' }
+}
 ```
 
 ##### Command line
