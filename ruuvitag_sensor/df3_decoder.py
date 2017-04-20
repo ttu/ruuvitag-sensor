@@ -11,7 +11,7 @@ class Df3Decoder(object):
     def _get_temperature(self, data):
         '''Return temperature in celsius'''
         temp = (data[1] << 1 >> 1) + (data[2] / 100)
-        sign = (data[1] >> 7)
+        sign = (data[1] >> 7) & 1
         if sign == 0:
             return round(temp, 2)
         return round(-1 * temp, 2)
@@ -26,16 +26,15 @@ class Df3Decoder(object):
         return pres / 100
 
     def _get_acceleration(self, data):
-        '''Return air pressure hPa'''
-        acc_x = ((data[6] << 8) + data[7])
-        acc_y = ((data[8] << 8) + data[9])
-        acc_z = ((data[10] << 8) + data[11])
+        '''Return acceleration mG'''
+        acc_x = ((data[5] << 8) + data[6])
+        acc_y = ((data[7] << 8) + data[8])
+        acc_z = ((data[9] << 8) + data[10])
         return (acc_x, acc_y, acc_z)
 
     def _get_battery(self, data):
-        '''Return air pressure hPa'''
-        battery = ((data[12] << 8) + data[13])
-        return battery
+        '''Return battery mV'''
+        return (data[11] << 8) + data[12]
 
     def decode_data(self, data):
         '''
