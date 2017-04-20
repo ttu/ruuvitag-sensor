@@ -75,7 +75,8 @@ class TestRuuviTagSensor(TestCase):
 
     def test_convert_data_not_valid(self):
         encoded = RuuviTagSensor.convert_data('not_valid')
-        self.assertIsNone(encoded)
+        self.assertIsNone(encoded[0])
+        self.assertIsNone(encoded[1])
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)
