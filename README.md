@@ -8,7 +8,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 * RuuviTag with Weather Station firmware
     * Setup [guide](https://ruu.vi/setup/)
-    * Supports [Data Format 2 & 4](https://github.com/ruuvi/ruuvi-sensor-protocols)
+    * Supports [Data Format 2, 3 and 4](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Python 2.7 and 3
     * psutil
         * Package uses psutil to start and stop processes. Psutil requires `sudo apt-get install python-dev` or `sudo apt-get install python3-dev`
@@ -157,7 +157,7 @@ RuuviTagSensor.find_ruuvitags()
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.url_decoder import UrlDecoder
+from ruuvitag_sensor.decoder import UrlDecoder
 
 full_data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'
 data = full_data[26:]
@@ -171,12 +171,16 @@ print(sensor_data)
 
 ##### Data Formats
 
-Example data has data from 2 sensors. First sensor has firmware that supports Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data. Second sensor has firmware that supports Data Fromat 4 and it has an identifier character.
+Example data has data from 3 sensors with different firmwares. 
+* 1st is Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data.
+* 2nd is Data Format 4 and it has an identifier character.
+* 3rd is Data Format 3.
 
 ```python
 {
 'CA:F7:44:DE:EB:E1': { 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None }, 
-'F4:A5:74:89:16:57': { 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' }
+'F4:A5:74:89:16:57': { 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' },
+'A3:GE:2D:91:A4:1F': {'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'temperature': 26.3}
 }
 ```
 
