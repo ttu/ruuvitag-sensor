@@ -3,8 +3,7 @@ import sys
 import os
 import time
 
-from ruuvitag_sensor.url_decoder import UrlDecoder
-from ruuvitag_sensor.df3_decoder import Df3Decoder
+from ruuvitag_sensor.decoder import get_decoder
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
@@ -156,10 +155,7 @@ class RuuviTagSensor(object):
         if self._data is None:
             self._state = {}
         else:
-            if data_format == 2:
-                self._state = UrlDecoder().decode_data(self._data)
-            else:
-                self._state = Df3Decoder().decode_data(self._data)
+            self._state = get_decoder(data_format).decode_data(self._data)
 
         return self._state
 
@@ -195,10 +191,7 @@ class RuuviTagSensor(object):
             (data_format, data) = RuuviTagSensor.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
             if data is not None:
-                if data_format == 2:
-                    state = UrlDecoder().decode_data(data)
-                else:
-                    state = Df3Decoder().decode_data(data)
+                state = get_decoder(data_format).decode_data(data)
                 if state is not None:
                     yield (ble_data[0], state)
 
@@ -246,6 +239,6 @@ class RuuviTagSensor(object):
             if raw[16:18] != '03':
                 return None
 
-            return raw[18:]
+            return raw[16:]
         except:
             return None
