@@ -104,12 +104,17 @@ class Df3Decoder(object):
         pres = (data[4] << 8) + data[5] + 50000
         return pres / 100
 
+    def _twos_complement(self, value, bits):
+        if (value & (1 << (bits - 1))) != 0:
+            value = value - (1 << bits)
+        return value
+
     def _get_acceleration(self, data):
         '''Return acceleration mG'''
-        acc_x = ((data[6] << 8) | data[7])
-        acc_y = ((data[8] << 8) | data[9])
-        acc_z = ((data[10] << 8) | data[11])
-        return math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z)
+        acc_x = self._twos_complement((data[6] << 8) + data[7], 16)
+        acc_y = self._twos_complement((data[8] << 8) + data[9], 16)
+        acc_z = self._twos_complement((data[10] << 8) + data[11], 16)
+        return (acc_x, acc_y, acc_z)
 
     def _get_battery(self, data):
         '''Return battery mV'''
@@ -124,11 +129,15 @@ class Df3Decoder(object):
         '''
         try:
             byte_data = bytearray.fromhex(data)
+            acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'humidity': self._get_humidity(byte_data),
                 'temperature': self._get_temperature(byte_data),
                 'pressure': self._get_pressure(byte_data),
-                'acceleration': self._get_acceleration(byte_data),
+                'acceleration': math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
+                'acceleration_x': acc_x,
+                'acceleration_y': acc_y,
+                'acceleration_z': acc_z,
                 'battery': self._get_battery(byte_data)
             }
         except Exception as e:
