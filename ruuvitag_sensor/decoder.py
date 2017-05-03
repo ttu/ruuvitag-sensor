@@ -1,3 +1,5 @@
+from __future__ import division
+
 import base64
 import math
 
@@ -121,7 +123,7 @@ class Df3Decoder(object):
             dict: Sensor values
         '''
         try:
-            byte_data = bytes.fromhex(data)
+            byte_data = bytearray.fromhex(data)
             return {
                 'humidity': self._get_humidity(byte_data),
                 'temperature': self._get_temperature(byte_data),
