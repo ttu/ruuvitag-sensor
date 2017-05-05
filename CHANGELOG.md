@@ -1,6 +1,9 @@
 ## Change Log
 
 ### [Unreleased]
+*
+
+## [0.6.0] - 2017-05-05
 * Support for Data Format 3 and 4
 * Fix data decoder Python2 support
 
