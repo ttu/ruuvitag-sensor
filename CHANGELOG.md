@@ -1,7 +1,8 @@
 ## Change Log
 
 ### [Unreleased]
-* Data Format 4 support
+* Support for Data Format 3 and 4
+* Fix data decoder Python2 support
 
 ## [0.5.0] - 2017-03-01
 * RuuviTagReactive: reactive wrapper and background process for RuuviTagSensor get_datas 
