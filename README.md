@@ -180,7 +180,7 @@ Example data has data from 3 sensors with different firmwares.
 {
 'CA:F7:44:DE:EB:E1': { 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None }, 
 'F4:A5:74:89:16:57': { 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' },
-'A3:GE:2D:91:A4:1F': {'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'temperature': 26.3}
+'A3:GE:2D:91:A4:1F': { 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3}
 }
 ```
 
