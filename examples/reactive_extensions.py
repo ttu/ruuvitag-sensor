@@ -30,7 +30,6 @@ ruuvi_rx.get_subject().\
 # Print only last updated every 10 seconds for every foud sensor
 ruuvi_rx.get_subject().\
     group_by(lambda x: x[0]).\
-    map(lambda x: x).\
     subscribe(lambda x: x.sample(10000).subscribe(print))
 
 # Print all from the last 10 seconds for F4:A5:74:89:16:57
