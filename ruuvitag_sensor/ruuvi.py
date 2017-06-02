@@ -49,8 +49,8 @@ class RuuviTagSensor(object):
         return self._state
 
     @staticmethod
-    def get_data(mac):
-        raw = ble.get_data(mac)
+    def get_data(mac, verbose=True):
+        raw = ble.get_data(mac, verbose)
         return RuuviTagSensor.convert_data(raw)
 
     @staticmethod
@@ -75,7 +75,7 @@ class RuuviTagSensor(object):
         return (None, None)
 
     @staticmethod
-    def find_ruuvitags():
+    def find_ruuvitags(verbose=True):
         """
         Find all RuuviTags. Function will print the mac and the state of the sensors when found.
         Function will execute as long as it is stopped. Stop ecexution with Crtl+C.
@@ -83,12 +83,13 @@ class RuuviTagSensor(object):
         Returns:
             dict: MAC and state of found sensors
         """
-
-        print('Finding RuuviTags. Stop with Ctrl+C.')
+        
+        if verbose:
+            print('Finding RuuviTags. Stop with Ctrl+C.')
 
         datas = dict()
 
-        for new_data in RuuviTagSensor._get_ruuvitag_datas():
+        for new_data in RuuviTagSensor._get_ruuvitag_datas(verbose=verbose):
             if new_data[0] in datas:
                 continue
             datas[new_data[0]] = new_data[1]
@@ -98,9 +99,9 @@ class RuuviTagSensor(object):
         return datas
 
     @staticmethod
-    def get_data_for_sensors(macs=[], search_duratio_sec=5):
+    def get_data_for_sensors(macs=[], search_duratio_sec=5, verbose=True):
         """
-        Get lates data for sensors in the MAC's list.
+        Get latest data for sensors in the MAC's list.
 
         Args:
             macs (array): MAC addresses
@@ -109,19 +110,20 @@ class RuuviTagSensor(object):
             dict: MAC and state of found sensors
         """
 
-        print('Get latest data for sensors. Stop with Ctrl+C.')
-        print('Stops automatically in {}s'.format(search_duratio_sec))
-        print('MACs: {}'.format(macs))
+        if verbose:
+            print('Get latest data for sensors. Stop with Ctrl+C.')
+            print('Stops automatically in {}s'.format(search_duratio_sec))
+            print('MACs: {}'.format(macs))
 
         datas = dict()
 
-        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, search_duratio_sec):
+        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, search_duratio_sec, verbose=verbose):
             datas[new_data[0]] = new_data[1]
 
         return datas
 
     @staticmethod
-    def get_datas(callback, macs=[], run_flag=RunFlag()):
+    def get_datas(callback, macs=[], run_flag=RunFlag(), verbose=True):
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -131,8 +133,9 @@ class RuuviTagSensor(object):
             run_flag (object): RunFlag object. Function executes while run_flag.running
         """
 
-        print('Get latest data for sensors. Stop with Ctrl+C.')
-        print('MACs: {}'.format(macs))
+        if verbose:
+            print('Get latest data for sensors. Stop with Ctrl+C.')
+            print('MACs: {}'.format(macs))
 
         for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, None, run_flag):
             callback(new_data)
@@ -160,7 +163,7 @@ class RuuviTagSensor(object):
         return self._state
 
     @staticmethod
-    def _get_ruuvitag_datas(macs=[], search_duratio_sec=None, run_flag=RunFlag()):
+    def _get_ruuvitag_datas(macs=[], search_duratio_sec=None, run_flag=RunFlag(), verbose=True):
         """
         Get data from BluetoothCommunication and handle data encoding.
 
@@ -174,7 +177,7 @@ class RuuviTagSensor(object):
         """
 
         start_time = time.time()
-        data_iter = ble.get_datas()
+        data_iter = ble.get_datas(verbose)
 
         for ble_data in data_iter:
             # Check duration
