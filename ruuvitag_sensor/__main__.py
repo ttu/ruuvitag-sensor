@@ -2,6 +2,7 @@ import sys
 import argparse
 
 import ruuvitag_sensor
+import ruuvitag_sensor.log
 from ruuvi import RuuviTagSensor
 from log import logger  # pylint: disable=E0611
 
@@ -15,6 +16,8 @@ def my_excepthook(exctype, value, traceback):
 sys.excepthook = my_excepthook
 
 if __name__ == '__main__':
+    ruuvitag_sensor.log.printToConsole()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--get', dest='mac_address', help='Get data')
     parser.add_argument('-f', '--find', action='store_true',
@@ -30,13 +33,13 @@ if __name__ == '__main__':
     if args.mac_address:
         sensor = RuuviTagSensor(args.mac_address)
         state = sensor.update()
-        print(state)
+        logger.info(state)
     elif args.find_action:
         RuuviTagSensor.find_ruuvitags()
     elif args.latest_action:
         datas = RuuviTagSensor.get_data_for_sensors()
-        print(datas)
+        logger.info(datas)
     elif args.stream_action:
-        RuuviTagSensor.get_datas(lambda x: print('%s - %s' % (x[0], x[1])))
+        RuuviTagSensor.get_datas(lambda x: logger.info('%s - %s' % (x[0], x[1])))
     else:
         parser.print_usage()

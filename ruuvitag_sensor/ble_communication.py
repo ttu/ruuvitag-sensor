@@ -3,6 +3,8 @@ import subprocess
 import sys
 import os
 
+from ruuvitag_sensor.log import logger  # pylint: disable=E0611
+
 # Eddystone Protocol specification
 # https://github.com/google/eddystone/blob/master/protocol-specification.md
 # Bluetooth Service UUID used by Eddystone
@@ -48,7 +50,7 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def start():
-        print('Start receiving broadcasts')
+        logger.info('Start receiving broadcasts')
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         subprocess.call('sudo hciconfig hci0 reset', shell=True, stdout=DEVNULL)
@@ -61,7 +63,7 @@ class BleCommunicationNix(BleCommunication):
         # import psutil here so as long as all implementations are in the same file, all will work
         import psutil
 
-        print('Stop receiving broadcasts')
+        logger.info('Stop receiving broadcasts')
 
         def kill_child_processes(parent_pid):
             try:
@@ -94,7 +96,7 @@ class BleCommunicationNix(BleCommunication):
         except KeyboardInterrupt as ex:
             return
         except Exception as ex:
-            print(ex)
+            logger.info(ex)
             return
 
     @staticmethod
@@ -123,7 +125,7 @@ class BleCommunicationNix(BleCommunication):
         data_iter = BleCommunicationNix.get_datas()
         for data in data_iter:
             if mac == data[0]:
-                print('Data found')
+                logger.info('Data found')
                 data_iter.send(StopIteration)
                 data = data[1]
                 break
