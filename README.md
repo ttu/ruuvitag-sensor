@@ -186,7 +186,7 @@ Example data has data from 3 sensors with different firmwares.
 
 ##### Print to console
 
-Console print can be enabled by calling `ruuvitag_sensor.log.enableConsole()`.
+Console print can be enabled by calling `ruuvitag_sensor.log.enableConsole()`. Command line application has console loggin enabled by default.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -199,7 +199,7 @@ datas = RuuviTagSensor.get_data_for_sensors()
 print(datas)
 ```
 
-##### Command line
+##### Command line application
 
 ```
 $ python ruuvitag_sensor -h
