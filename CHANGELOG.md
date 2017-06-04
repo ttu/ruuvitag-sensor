@@ -1,7 +1,8 @@
 ## Change Log
 
 ### [Unreleased]
-*
+* Replace print-functions with logging
+* Log to console disabled by default
 
 ## [0.6.0] - 2017-05-05
 * Support for Data Format 3 and 4
