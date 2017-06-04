@@ -4,18 +4,19 @@ logger = logging.getLogger('ruuvitag_sensor')
 logger.setLevel(logging.INFO)
 
 # create a file handler
-fh = logging.FileHandler('ruuvitag_sensor.log')
-fh.setLevel(logging.ERROR)
+file_handler = logging.FileHandler('ruuvitag_sensor.log')
+file_handler.setLevel(logging.ERROR)
 
 # create a logging format
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-fh.setFormatter(formatter)
+file_handler.setFormatter(formatter)
 
 # add the handlers to the logger
-logger.addHandler(fh)
+logger.addHandler(file_handler)
 
 
-def printToConsole():
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    logger.addHandler(ch)
+def enableConsole():
+    if len(logger.handlers) != 2:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        logger.addHandler(console_handler)

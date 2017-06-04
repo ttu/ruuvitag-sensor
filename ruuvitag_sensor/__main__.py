@@ -16,7 +16,7 @@ def my_excepthook(exctype, value, traceback):
 sys.excepthook = my_excepthook
 
 if __name__ == '__main__':
-    ruuvitag_sensor.log.printToConsole()
+    ruuvitag_sensor.log.enableConsole()
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--get', dest='mac_address', help='Get data')
