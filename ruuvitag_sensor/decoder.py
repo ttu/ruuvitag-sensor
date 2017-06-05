@@ -2,8 +2,9 @@ from __future__ import division
 
 import base64
 import math
+import logging
 
-from ruuvitag_sensor.log import logger
+log = logging.getLogger('ruuvitag_sensor')
 
 
 def get_decoder(data_type):
@@ -76,7 +77,7 @@ class UrlDecoder(object):
                 'identifier': identifier
             }
         except:
-            logger.exception('Encoded value: %s not valid', encoded)
+            log.exception('Encoded value: %s not valid', encoded)
             return None
 
 
@@ -140,7 +141,6 @@ class Df3Decoder(object):
                 'acceleration_z': acc_z,
                 'battery': self._get_battery(byte_data)
             }
-        except Exception as e:
-            print(e)
-            logger.exception('Value: %s not valid', data)
+        except Exception:
+            log.exception('Value: %s not valid', data)
             return None
