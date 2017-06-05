@@ -1,6 +1,7 @@
 ## Change Log
 
 ### [Unreleased]
+* Fix module logging
 * Replace print-functions with logging
 * Log to console disabled by default
 

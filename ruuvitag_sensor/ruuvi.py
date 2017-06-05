@@ -2,9 +2,11 @@ import re
 import sys
 import os
 import time
+import logging
 
 from ruuvitag_sensor.decoder import get_decoder
-from ruuvitag_sensor.log import logger  # pylint: disable=E0611
+
+log = logging.getLogger('ruuvitag_sensor')
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
@@ -85,7 +87,7 @@ class RuuviTagSensor(object):
             dict: MAC and state of found sensors
         """
 
-        logger.info('Finding RuuviTags. Stop with Ctrl+C.')
+        log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
         datas = dict()
 
@@ -93,8 +95,8 @@ class RuuviTagSensor(object):
             if new_data[0] in datas:
                 continue
             datas[new_data[0]] = new_data[1]
-            logger.info(new_data[0])
-            logger.info(new_data[1])
+            log.info(new_data[0])
+            log.info(new_data[1])
 
         return datas
 
@@ -110,9 +112,9 @@ class RuuviTagSensor(object):
             dict: MAC and state of found sensors
         """
 
-        logger.info('Get latest data for sensors. Stop with Ctrl+C.')
-        logger.info('Stops automatically in {}s'.format(search_duratio_sec))
-        logger.info('MACs: {}'.format(macs))
+        log.info('Get latest data for sensors. Stop with Ctrl+C.')
+        log.info('Stops automatically in {}s'.format(search_duratio_sec))
+        log.info('MACs: {}'.format(macs))
 
         datas = dict()
 
@@ -132,8 +134,8 @@ class RuuviTagSensor(object):
             run_flag (object): RunFlag object. Function executes while run_flag.running
         """
 
-        logger.info('Get latest data for sensors. Stop with Ctrl+C.')
-        logger.info('MACs: {}'.format(macs))
+        log.info('Get latest data for sensors. Stop with Ctrl+C.')
+        log.info('MACs: {}'.format(macs))
 
         for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, None, run_flag):
             callback(new_data)
