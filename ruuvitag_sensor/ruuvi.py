@@ -6,7 +6,7 @@ import logging
 
 from ruuvitag_sensor.decoder import get_decoder
 
-log = logging.getLogger('ruuvitag_sensor')
+log = logging.getLogger(__name__)
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 

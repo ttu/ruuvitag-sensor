@@ -145,10 +145,13 @@ Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxP
 
 ##### Find sensors
 
-`find_ruuvitags` function will exeute forever and when new RuuviTag sensor is found it will print it's MAC address and state at that moment. This function can be used with a command line applications.
+`find_ruuvitags` function will exeute forever and when new RuuviTag sensor is found it will print it's MAC address and state at that moment. This function can be used with a command line applications. Logging must be enabled and set to print to console.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+import ruuvitag_sensor.log
+
+ruuvitag_sensor.log.enable_console()
 
 RuuviTagSensor.find_ruuvitags()
 ```
@@ -186,13 +189,13 @@ Example data has data from 3 sensors with different firmwares.
 
 ##### Logging and Print to console
 
-Logging can be enabled by calling `configureLog()`. Console print can be enabled by calling `configureLog(True)`. Command line application has console logging enabled by default.
+Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. Command line application has console logging enabled by default.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.log import configureLog
+import ruuvitag_sensor.log
 
-configureLog(True)
+ruuvitag_sensor.log.enable_console()
 
 datas = RuuviTagSensor.get_data_for_sensors()
 

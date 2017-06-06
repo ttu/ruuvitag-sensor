@@ -4,7 +4,7 @@ import sys
 import os
 import logging
 
-log = logging.getLogger('ruuvitag_sensor')
+log = logging.getLogger(__name__)
 
 
 # Eddystone Protocol specification

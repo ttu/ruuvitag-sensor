@@ -4,7 +4,7 @@ import base64
 import math
 import logging
 
-log = logging.getLogger('ruuvitag_sensor')
+log = logging.getLogger(__name__)
 
 
 def get_decoder(data_type):

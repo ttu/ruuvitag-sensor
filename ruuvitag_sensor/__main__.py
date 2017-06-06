@@ -1,15 +1,11 @@
 import sys
 import argparse
-import logging
 
 import ruuvitag_sensor
-import ruuvitag_sensor.log
+from ruuvitag_sensor.log import log
 from ruuvi import RuuviTagSensor
-from log import configureLog  # pylint: disable=E0611
 
-configureLog(True)
-
-log = logging.getLogger('ruuvitag_sensor')
+ruuvitag_sensor.log.enable_console()
 
 
 def my_excepthook(exctype, value, traceback):
