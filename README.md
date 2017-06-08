@@ -162,14 +162,16 @@ RuuviTagSensor.find_ruuvitags()
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.decoder import UrlDecoder
 
-full_data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692341412C3E672B49246AB9'
+full_data = '043E2A0201030157168974A51F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'
 data = full_data[26:]
 
+# convert_data returns tuple which has Data Format type and encoded data
 encoded = RuuviTagSensor.convert_data(data)
 
-sensor_data = UrlDecoder().decode_data(encoded)
+sensor_data = UrlDecoder().decode_data(encoded[1])
 
 print(sensor_data)
+# {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
 ##### Data Formats
