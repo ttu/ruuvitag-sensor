@@ -3,7 +3,7 @@ import argparse
 
 import ruuvitag_sensor
 from ruuvitag_sensor.log import log
-from ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 ruuvitag_sensor.log.enable_console()
 
