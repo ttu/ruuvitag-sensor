@@ -242,9 +242,9 @@ $ python setup.py test
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
 
-## Change log
+## Changelog
 
-[Change Log](https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md)
+[Changelog](https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md)
 
 ## License
 
