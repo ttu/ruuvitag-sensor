@@ -29,37 +29,26 @@ Add new graph to dashboard
 '''
 
 from influxdb import InfluxDBClient
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+
+def convert_to_influx(mac, payload):
+    return {
+        "measurement": "ruuvitag",
+        "tags": {
+            "mac": mac
+        },
+        "fields": {
+            "temperature": payload["temperature"],
+            "humidity": payload["humidity"],
+            "pressure": payload["pressure"]
+        }
+    }
+
 
 client = InfluxDBClient(host="localhost", port=8086, database="tag_data")
 
-tags = {
-    'FE:52:F7:B3:65:CC': 'kitchen',
-    'CA:F7:44:DE:EB:E1': 'bedroom',
-    'BB:2C:6A:1E:59:3D': 'livingroom'
-}
-
-
-def write_to_influxdb(received_data):
-    json_body = [
-        {
-            "measurement": "ruuvitag",
-            "tags": {
-                "mac": received_data[0]
-            },
-            "fields": {
-                "temperature": received_data[1]["temperature"],
-                "humidity": received_data[1]["humidity"],
-                "pressure": received_data[1]["pressure"]
-            }
-        }
-    ]
-
+while True:
+    datas = RuuviTagSensor.get_data_for_sensors()
+    json_body = [convert_to_influx(mac, payload) for mac, payload in datas.items()]
     client.write_points(json_body)
-
-ruuvi_rx = RuuviTagReactive(list(tags.keys()))
-
-# Write data to InfluxDB from every tag every 5 sec
-ruuvi_rx.get_subject().\
-    group_by(lambda x: x[0]).\
-    subscribe(lambda x: x.sample(5000).subscribe(write_to_influxdb))
