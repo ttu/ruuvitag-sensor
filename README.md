@@ -240,7 +240,11 @@ $ python setup.py test
 
 ## Examples
 
-Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
+Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
+
+* Keep track of each sensors current status and send updated data to server. [Sync](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_sync.py) and [async](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_async.py) version.
+* Send found sensor data to InfluxDB. [Reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb_rx.py) and [non-reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb.py) version.
+* Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with Rx](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
 
 ## Changelog
 
