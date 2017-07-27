@@ -25,7 +25,7 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_datas():
+    def get_datas(blacklist=[]):
         pass
 
 
@@ -37,7 +37,7 @@ class BleCommunicationDummy(BleCommunication):
         return '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
 
     @staticmethod
-    def get_datas():
+    def get_datas(blacklist=[]):
         datas = [
             ('BC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
@@ -102,7 +102,7 @@ class BleCommunicationNix(BleCommunication):
             return
 
     @staticmethod
-    def get_datas():
+    def get_datas(blacklist=[]):
         procs = BleCommunicationNix.start()
 
         data = None
@@ -112,6 +112,8 @@ class BleCommunicationNix(BleCommunication):
                 reversed_mac = ''.join(
                     reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
                 mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
+                if mac in blacklist:
+                    continue
                 data = line[26:]
                 yield (mac, data)
             except GeneratorExit:

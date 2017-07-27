@@ -40,7 +40,7 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(mac, org_mac)
         self.assertEqual(state, {})
 
-    def get_datas(self):
+    def get_datas(self, blacklist=[]):
         datas = [
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('BB:2C:6A:1E:59:3D', 'some other device'),

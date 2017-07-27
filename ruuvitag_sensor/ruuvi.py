@@ -20,7 +20,7 @@ else:
 
 class RuuviTagSensor(object):
     """
-    RuuviTag communication functionality
+    RuuviTag communication and data convert functionality
     """
 
     @staticmethod
@@ -127,8 +127,9 @@ class RuuviTagSensor(object):
             tuple: MAC and State of RuuviTag sensor data
         """
 
+        mac_blacklist = []
         start_time = time.time()
-        data_iter = ble.get_datas()
+        data_iter = ble.get_datas(mac_blacklist)
 
         for ble_data in data_iter:
             # Check duration
@@ -144,10 +145,13 @@ class RuuviTagSensor(object):
                 continue
             (data_format, data) = RuuviTagSensor.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
+            # If data is not valid RuuviTag data add MAC to blacklist
             if data is not None:
                 state = get_decoder(data_format).decode_data(data)
                 if state is not None:
                     yield (ble_data[0], state)
+            else:
+                mac_blacklist.append(ble_data[0])
 
     @staticmethod
     def _get_data_format_2and4(raw):
