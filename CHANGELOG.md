@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+* Breaking change code refactoring if used RuuviTagSensor as an object or RunFlag
+    * Split RuuviTagSensor class to static functions (RuuviTagSensor) and RuuviTag sensor object (RuuviTag)
+    * Move RunFlag to common.py
 
 ## [0.7.0] - 2017-06-28
 * Fix module logging

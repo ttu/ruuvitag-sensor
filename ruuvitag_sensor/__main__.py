@@ -4,6 +4,7 @@ import argparse
 import ruuvitag_sensor
 from ruuvitag_sensor.log import log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 ruuvitag_sensor.log.enable_console()
 
@@ -30,7 +31,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.mac_address:
-        sensor = RuuviTagSensor(args.mac_address)
+        sensor = RuuviTag(args.mac_address)
         state = sensor.update()
         log.info(state)
     elif args.find_action:

@@ -14,14 +14,14 @@ import time
 import os
 from datetime import datetime
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # Change here your own device's mac-address
 mac = 'F4:A5:74:89:16:57'
 
 print('Starting')
 
-sensor = RuuviTagSensor(mac)
+sensor = RuuviTag(mac)
 
 while True:
     data = sensor.update()

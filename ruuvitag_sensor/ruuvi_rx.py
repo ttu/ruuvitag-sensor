@@ -5,7 +5,8 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 from rx.subjects import Subject
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.common import RunFlag
 
 
 class RuuviTagReactive(object):

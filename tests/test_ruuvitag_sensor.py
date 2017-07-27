@@ -2,6 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 
 class TestRuuviTagSensor(TestCase):
@@ -16,7 +17,7 @@ class TestRuuviTagSensor(TestCase):
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_data',
            get_data)
     def test_tag_update_is_valid(self):
-        tag = RuuviTagSensor('48:2C:6A:1E:59:3D')
+        tag = RuuviTag('48:2C:6A:1E:59:3D')
 
         state = tag.state
         self.assertEqual(state, {})
@@ -28,11 +29,11 @@ class TestRuuviTagSensor(TestCase):
 
     def test_false_mac_raise_error(self):
         with self.assertRaises(ValueError):
-            RuuviTagSensor('48:2C:6A:1E')
+            RuuviTag('48:2C:6A:1E')
 
     def test_tag_correct_properties(self):
         org_mac = 'AA:2C:6A:1E:59:3D'
-        tag = RuuviTagSensor(org_mac)
+        tag = RuuviTag(org_mac)
 
         mac = tag.mac
         state = tag.state

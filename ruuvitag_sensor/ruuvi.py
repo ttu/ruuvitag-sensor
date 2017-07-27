@@ -1,17 +1,16 @@
-import re
 import sys
 import os
 import time
 import logging
 
 from ruuvitag_sensor.decoder import get_decoder
+from ruuvitag_sensor.common import RunFlag
 
 log = logging.getLogger(__name__)
 
-mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
 if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
-    # Use BleCommunicationDummy also for CI as it can't use gattlib
+    # Use BleCommunicationDummy also for CI as it can't use bluez
     from ruuvitag_sensor.ble_communication import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
@@ -19,37 +18,10 @@ else:
     ble = BleCommunicationNix()
 
 
-class RunFlag(object):
-    """
-    Wrapper for boolean run flag
-
-    Attributes:
-        running (bool): Defines if function should continue execution
-    """
-
-    running = True
-
-
-# TODO: Split this class to common functions and RuuviTagSensor
-
 class RuuviTagSensor(object):
-
-    def __init__(self, mac):
-
-        if not re.match(mac_regex, mac.lower()):
-            raise ValueError('{} is not valid mac address'.format(mac))
-
-        self._mac = mac
-        self._state = {}
-        self._data = None
-
-    @property
-    def mac(self):
-        return self._mac
-
-    @property
-    def state(self):
-        return self._state
+    """
+    RuuviTag communication functionality
+    """
 
     @staticmethod
     def get_data(mac):
@@ -140,28 +112,6 @@ class RuuviTagSensor(object):
 
         for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, None, run_flag):
             callback(new_data)
-
-    def update(self):
-        """
-        Get lates data from the sensor and update own state.
-
-        Returns:
-            dict: Latest state
-        """
-
-        (data_format, data) = RuuviTagSensor.get_data(self._mac)
-
-        if data == self._data:
-            return self._state
-
-        self._data = data
-
-        if self._data is None:
-            self._state = {}
-        else:
-            self._state = get_decoder(data_format).decode_data(self._data)
-
-        return self._state
 
     @staticmethod
     def _get_ruuvitag_datas(macs=[], search_duratio_sec=None, run_flag=RunFlag()):
