@@ -2,9 +2,8 @@
 
 ### [Unreleased]
 * Blacklist MACs of BLE devices that are not RuuviTag sensors
-* Breaking change code refactoring if used RuuviTagSensor as an object or RunFlag
-    * Split RuuviTagSensor class to static functions (RuuviTagSensor) and RuuviTag sensor object (RuuviTag)
-    * Move RunFlag to common.py
+* Breaking change code refactor if RuuviTagSensor was used as an object
+    * Split RuuviTagSensor class to RuuviTag sensor object (RuuviTag) and static functions (RuuviTagSensor) 
 
 ## [0.7.0] - 2017-06-28
 * Fix module logging

@@ -73,8 +73,7 @@ RuuviTagSensor.get_datas(handle_data)
 Optional list of macs and run flag can be passed to the get_datas function. Callback is called only for macs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
 
 ```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.common import RunFlag
+from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 counter = 10
 # RunFlag for stopping execution at desired time

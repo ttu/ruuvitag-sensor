@@ -4,7 +4,6 @@ import time
 import logging
 
 from ruuvitag_sensor.decoder import get_decoder
-from ruuvitag_sensor.common import RunFlag
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +15,17 @@ if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
 else:
     from ruuvitag_sensor.ble_communication import BleCommunicationNix
     ble = BleCommunicationNix()
+
+
+class RunFlag(object):
+    """
+    Wrapper for boolean run flag
+
+    Attributes:
+        running (bool): Defines if function should continue execution
+    """
+
+    running = True
 
 
 class RuuviTagSensor(object):
