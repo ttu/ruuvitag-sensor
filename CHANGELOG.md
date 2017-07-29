@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [0.8.0] - 2017-07-29
 * Blacklist MACs of BLE devices that are not RuuviTag sensors
 * Breaking change code refactor if RuuviTagSensor was used as an object
     * Split RuuviTagSensor class to RuuviTag sensor object (RuuviTag) and static functions (RuuviTagSensor) 
