@@ -43,7 +43,7 @@ RuuviTag sensors can be identified using MAC addresses.
 ##### Get data from sensor
 
 ```python
-from ruuvitag_sensor.ruuvi import RuuviTag
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 sensor = RuuviTag('AA:2C:6A:1E:59:3D')
 
