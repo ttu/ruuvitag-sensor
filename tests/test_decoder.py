@@ -50,3 +50,24 @@ class TestDecoder(TestCase):
         self.assertEqual(data['acceleration_x'], -1000)
         self.assertNotEqual(data['acceleration_y'], 0)
         self.assertNotEqual(data['acceleration_z'], 0)
+
+    def test_df3decode_temperature(self):
+        decoder = Df3Decoder()
+        humidity = '29'
+        temp = 'FF00'
+        pressure = 'CE1E'
+        accX = 'FC18'
+        accY = '03E8'
+        accZ = '02CA'
+        batt = '0B53'
+        data = decoder.decode_data('03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
+            humidity=humidity, temp=temp, pressure=pressure, accX=accX, accY=accY, accZ=accZ, batt=batt))
+
+        self.assertEqual(data['temperature'], -127.00)
+        self.assertEqual(data['pressure'], 1027.66)
+        self.assertEqual(data['humidity'], 20.5)
+        self.assertEqual(data['battery'], 2899)
+        self.assertNotEqual(data['acceleration'], 0)
+        self.assertEqual(data['acceleration_x'], -1000)
+        self.assertEqual(data['acceleration_y'], 1000)
+        self.assertNotEqual(data['acceleration_z'], 0)
