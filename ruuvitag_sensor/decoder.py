@@ -90,7 +90,7 @@ class Df3Decoder(object):
 
     def _get_temperature(self, data):
         '''Return temperature in celsius'''
-        temp = (data[2] << 1 >> 1) + (data[3] / 100)
+        temp = (data[2] & ~(1 << 7)) + (data[3] / 100)
         sign = (data[2] >> 7) & 1
         if sign == 0:
             return round(temp, 2)
