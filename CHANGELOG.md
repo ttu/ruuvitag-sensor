@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-
+* Fix Data Format 3 temperature's integer part when handling negative values
 
 ## [0.8.0] - 2017-07-29
 * Blacklist MACs of BLE devices that are not RuuviTag sensors
