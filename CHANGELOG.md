@@ -3,7 +3,10 @@
 ### [Unreleased]
 
 
-## [0.8.1] - 2017-09-09
+## [0.8.2] - 2017-09-09
+* Fixed pypi documentation format
+
+## [0.8.2] - 2017-09-09
 * Fix Data Format 3 temperature decode for negative values
 
 ## [0.8.0] - 2017-07-29
