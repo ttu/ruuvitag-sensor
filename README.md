@@ -250,6 +250,10 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 
 [Changelog](https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md)
 
+### Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
 ## License
 
 Licensed under the [MIT](https://github.com/ttu/ruuvitag-sensor/blob/master/LICENSE) License.
