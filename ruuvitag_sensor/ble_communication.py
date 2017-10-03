@@ -20,12 +20,12 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(mac):
+    def get_data(mac, bt_device=''):
         pass
 
     @staticmethod
     @abc.abstractmethod
-    def get_datas(blacklist=[]):
+    def get_datas(blacklist=[], bt_device=''):
         pass
 
 
@@ -33,11 +33,11 @@ class BleCommunicationDummy(BleCommunication):
     '''TODO: Find some working BLE implementation for Windows and OSX'''
 
     @staticmethod
-    def get_data(mac):
+    def get_data(mac, bt_device=''):
         return '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
 
     @staticmethod
-    def get_datas(blacklist=[]):
+    def get_datas(blacklist=[], bt_device=''):
         datas = [
             ('BC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
@@ -51,11 +51,19 @@ class BleCommunicationNix(BleCommunication):
     '''Bluetooth LE communication for Linux'''
 
     @staticmethod
-    def start():
-        log.info('Start receiving broadcasts')
+    def start(bt_device=''):
+        '''
+        Attributes:
+           device (string): BLE device (default hci0)
+        '''
+
+        if not bt_device:
+            bt_device = 'hci0'
+
+        log.info('Start receiving broadcasts (device %s)', bt_device)
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
-        subprocess.call('sudo hciconfig hci0 reset', shell=True, stdout=DEVNULL)
+        subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
         hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout=DEVNULL)
         hcidump = subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
         return (hcitool, hcidump)
@@ -102,8 +110,8 @@ class BleCommunicationNix(BleCommunication):
             return
 
     @staticmethod
-    def get_datas(blacklist=[]):
-        procs = BleCommunicationNix.start()
+    def get_datas(blacklist=[], bt_device=''):
+        procs = BleCommunicationNix.start(bt_device)
 
         data = None
         for line in BleCommunicationNix.get_lines(procs[1]):
@@ -124,9 +132,9 @@ class BleCommunicationNix(BleCommunication):
         BleCommunicationNix.stop(procs[0], procs[1])
 
     @staticmethod
-    def get_data(mac):
+    def get_data(mac, bt_device=''):
         data = None
-        data_iter = BleCommunicationNix.get_datas()
+        data_iter = BleCommunicationNix.get_datas(bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')

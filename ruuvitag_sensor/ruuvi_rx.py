@@ -8,7 +8,7 @@ from rx.subjects import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
-def _run_get_data_background(macs, queue, shared_data):
+def _run_get_data_background(macs, queue, shared_data, bt_device):
     """
     Background process function for RuuviTag Sensors
     """
@@ -22,7 +22,7 @@ def _run_get_data_background(macs, queue, shared_data):
         data[1]['time'] = str(datetime.now())
         queue.put(data)
 
-    RuuviTagSensor.get_datas(add_data, macs, run_flag)
+    RuuviTagSensor.get_datas(add_data, macs, run_flag, bt_device)
 
 
 class RuuviTagReactive(object):
@@ -42,12 +42,13 @@ class RuuviTagReactive(object):
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs=[]):
+    def __init__(self, macs=[], bt_device=''):
         """
         Start background process for get_datas and async task for notifying all subscribed observers
 
         Args:
             macs (list): MAC addresses
+            bt_device (string): Bluetooth device id
         """
 
         self._run_flag = RunFlag()
@@ -66,7 +67,7 @@ class RuuviTagReactive(object):
 
         # Start background process
         executor = ProcessPoolExecutor(1)
-        executor.submit(_run_get_data_background, macs, q, self._shared_data)
+        executor.submit(_run_get_data_background, macs, q, self._shared_data, bt_device)
 
     def get_subject(self):
         """

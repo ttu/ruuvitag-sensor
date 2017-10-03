@@ -11,7 +11,7 @@ class RuuviTag(object):
     RuuviTag Sensors object
     """
 
-    def __init__(self, mac):
+    def __init__(self, mac, bt_device=''):
 
         if not re.match(mac_regex, mac.lower()):
             raise ValueError('{} is not valid mac address'.format(mac))
@@ -19,6 +19,7 @@ class RuuviTag(object):
         self._mac = mac
         self._state = {}
         self._data = None
+        self._bt_device = bt_device
 
     @property
     def mac(self):
@@ -36,7 +37,7 @@ class RuuviTag(object):
             dict: Latest state
         """
 
-        (data_format, data) = RuuviTagSensor.get_data(self._mac)
+        (data_format, data) = RuuviTagSensor.get_data(self._mac, self._bt_device)
 
         if data == self._data:
             return self._state

@@ -7,7 +7,7 @@ from ruuvitag_sensor.ruuvitag import RuuviTag
 
 class TestRuuviTagSensor(TestCase):
 
-    def get_data(self, mac):
+    def get_data(self, mac, bt_device):
         # https://ruu.vi/#AjwYAMFc
         data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
         return data[26:]
@@ -40,7 +40,7 @@ class TestRuuviTagSensor(TestCase):
         self.assertEqual(mac, org_mac)
         self.assertEqual(state, {})
 
-    def get_datas(self, blacklist=[]):
+    def get_datas(self, blacklist=[], bt_device=''):
         datas = [
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('BB:2C:6A:1E:59:3D', 'some other device'),
