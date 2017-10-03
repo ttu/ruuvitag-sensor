@@ -8,22 +8,27 @@ from rx.subjects import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
+def _run_get_data_background(macs, queue, shared_data):
+    """
+    Background process function for RuuviTag Sensors
+    """
+
+    run_flag = RunFlag()
+
+    def add_data(data):
+        if not shared_data['run_flag']:
+            run_flag.running = False
+
+        data[1]['time'] = str(datetime.now())
+        queue.put(data)
+
+    RuuviTagSensor.get_datas(add_data, macs, run_flag)
+
+
 class RuuviTagReactive(object):
     """
     Reactive wrapper and background process for RuuviTagSensor get_datas
     """
-
-    @staticmethod
-    def _run_get_data_background(macs, queue, run_flag):
-        """
-        Background process from RuuviTag Sensors
-        """
-
-        def add_data(data):
-            data[1]['time'] = str(datetime.now())
-            queue.put(data)
-
-        RuuviTagSensor.get_datas(add_data, macs, run_flag)
 
     @staticmethod
     def _data_update(subjects, queue, run_flag):
@@ -33,8 +38,8 @@ class RuuviTagReactive(object):
         while run_flag.running:
             while not queue.empty():
                 data = queue.get()
-                for s in subjects:
-                    s.on_next(data)
+                for subject in [s for s in subjects if not s.is_disposed]:
+                    subject.on_next(data)
             time.sleep(0.1)
 
     def __init__(self, macs=[]):
@@ -45,19 +50,23 @@ class RuuviTagReactive(object):
             macs (list): MAC addresses
         """
 
-        self.subjects = []
-        self.run_flag = RunFlag()
+        self._run_flag = RunFlag()
+        self._subjects = []
 
         m = Manager()
         q = m.Queue()
 
+        # Use Manager dict to share data between processes
+        self._shared_data = m.dict()
+        self._shared_data['run_flag'] = True
+
         # Start data updater
-        notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self.subjects, q, self.run_flag))
+        notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self._subjects, q, self._run_flag))
         notify_thread.start()
 
         # Start background process
         executor = ProcessPoolExecutor(1)
-        executor.submit(RuuviTagReactive._run_get_data_background, macs, q, self.run_flag)
+        executor.submit(_run_get_data_background, macs, q, self._shared_data)
 
     def get_subject(self):
         """
@@ -65,11 +74,11 @@ class RuuviTagReactive(object):
             subject : Reactive Extension Subject
         """
 
-        if not self.run_flag.running:
+        if not self._run_flag.running:
             raise Exception('RuuviTagReactive stopped')
 
         subject = Subject()
-        self.subjects.append(subject)
+        self._subjects.append(subject)
         return subject
 
     def stop(self):
@@ -77,6 +86,8 @@ class RuuviTagReactive(object):
         Stop get_datas
         """
 
-        self.run_flag.running = False
-        for s in self.subjects:
+        self._run_flag.running = False
+        self._shared_data['run_flag'] = False
+
+        for s in self._subjects:
             s.dispose()
