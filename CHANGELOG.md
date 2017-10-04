@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * Fix sharing run_flag with rx and ruuvitag processes
+* Fix RuuviTagReactive Python2.7 support
 
 ## [0.8.2] - 2017-09-09
 * Fixed pypi documentation format

@@ -138,7 +138,11 @@ ruuvi_rx.get_subject().\
     map(lambda x: x[1]['temperature']).\
     distinct_until_changed().\
     subscribe(lambda x: print('Temperature changed: {}'.format(x)))
+
+# Close all connections and stop bluetooth communication
+ruuvi_rx.stop()
 ```
+
 More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/rx.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
 
 Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
