@@ -227,7 +227,9 @@ optional arguments:
 
 ## Tests
 
-Tests use unittest.mock library, so Python 3.3. or newer is required.
+### Unit Tests
+
+Unit tests use unittest.mock library, so Python 3.3. or newer is required.
 
 Run with nosetests
 
@@ -240,6 +242,15 @@ Run with setup
 
 ```sh
 $ python setup.py test
+```
+
+### Verification Test
+
+Verification test sciprt executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
+
+```sh
+$ chmod +x verification.sh
+$ ./verification.sh
 ```
 
 ## Examples
