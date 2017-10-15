@@ -160,6 +160,23 @@ ruuvitag_sensor.log.enable_console()
 RuuviTagSensor.find_ruuvitags()
 ```
 
+##### Using different Bluetooth device
+
+If you have multiple Bluetooth devices installed, device to be used might not be the default (Linux: hci0). Device can be passed with `bt_device` parameter.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTag
+
+sensor = RuuviTag('F4:A5:74:89:16:57', 'hci1')
+
+RuuviTagSensor.find_ruuvitags('hci1')
+
+datas = RuuviTagSensor.get_data_for_sensors(bt_device='hci1')
+
+RuuviTagSensor.get_datas(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=device))
+```
+
 ##### Parse data
 
 ```python
@@ -213,12 +230,14 @@ print(datas)
 ```
 $ python ruuvitag_sensor -h
 
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-l] [-s] [--version]
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-d BT_DEVICE] [-f] [-l] [-s] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
+  -d BT_DEVICE, --device BT_DEVICE
+                        Set Bluetooth device id (default hci0)
   -f, --find            Find broadcasting RuuviTags
   -l, --latest          Get latest data for found RuuviTags
   -s, --stream          Stream broadcasts from all RuuviTags
