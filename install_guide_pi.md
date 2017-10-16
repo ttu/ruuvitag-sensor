@@ -113,8 +113,9 @@ Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (P
 ```sh
 $ pip3 install --user ruuvitag-sensor
 ```
+This library includes a command line utility.
 
-Try displaying the help from command line. 
+Try displaying the help. 
 ```sh
 $ python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor --help
 ```
