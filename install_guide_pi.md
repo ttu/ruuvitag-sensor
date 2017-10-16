@@ -131,7 +131,7 @@ optional arguments:
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
 ```
- If this fails with a Traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6. then path is /home/pi/.local/lib/python3.6/...
+ If this fails with a Traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6. then path is ~/.local/lib/python3.6/...
 
 Make an alias if you choose
 ```sh
