@@ -61,7 +61,7 @@ Devices:
 	hci0	B8:27:EB:96:64:43
 ```
 
-If no devices are listed, try to reboot and check again
+If no devices are listed, reboot and check again
 ```sh
 $ reboot
 ```
