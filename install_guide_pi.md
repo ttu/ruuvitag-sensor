@@ -136,7 +136,7 @@ optional arguments:
 Make an alias if you choose
 ```sh
 $ alias ruuvitag='python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor'
-`1``1
+```
 
 Try to find all tags
 ```sh
