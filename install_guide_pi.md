@@ -1,7 +1,6 @@
 # Raspbian
 
 RuuviTag is a Bluetooth Low Energy device. 
-
 Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as well as Pi Zero W have integrated Bluetooth which support BLE devices. For older models a Bluetooth adapter is required.
 
 Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017'
