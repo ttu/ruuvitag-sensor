@@ -6,6 +6,7 @@ Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as 
 Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017'
 
 Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+
 Summerized here:
 
 ### Start the pi
@@ -24,14 +25,12 @@ $ sudo raspi-config
 Select Advanced Options 
  SSH and enable ssh server
  Hostname and give your pi a name
-<!-- us the name 
+<!-- use the name 
 Check IP-address
 ```sh
 $ ip a
 ```
-
-Expect something like 192.168.1.x (can be found ~4th row from the bottom)
--->
+Expect something like 192.168.1.x (can be found after eth0:, inet )-->
 Now you can either connect to raspberry with SSH (e.g. Putty from windows) or continue using current terminal.
 
 Use these login credentials
@@ -39,7 +38,6 @@ Use these login credentials
 username: pi 
 password: raspberry
 ```
---> 
 
 ### Update the System
 
