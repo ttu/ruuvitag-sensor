@@ -1,14 +1,17 @@
 # Raspbian
 
-Tested with Raspbian Jessie 2017-01-11. 
+RuuviTag is a Bluetooth Low Energy device. 
+Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as well as Pi Zero W have integrated Bluetooth which support BLE devices. For older models a Bluetooth adapter is required.
 
-RuuviTag is a Bluetooth Low Energy device, so Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 has integrated Bluetooth which support BLE devices. For older models Bluetooth adapter is required.
+Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017'
 
-### Start
+Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+
+Summerized here:
+
+### Start the pi
 
 Plug display and keyboard
-
-Connect to Wifi
 
 Open Terminal
 
@@ -18,40 +21,49 @@ Open raspi-config to enable SSH
 ```sh
 $ sudo raspi-config
 ```
+Select Hostname and give your pi a name.
 
-Select 7 advanced options and A4 SSH and enable ssh server
+You may want to Select Localisation Options Set up language and regional settings(timezone) to match your location
 
+Select Interface Options 
+
+ SSH and enable ssh server (Secure Shell command line
+ 
+<!-- use the name not an IP address
 Check IP-address
 ```sh
 $ ip a
 ```
+Expect something like 192.168.1.x (can be found after eth0:, inet )-->
+Now you can either connect to raspberry pi over the network with SSH (For example use Putty from windows) or continue using current terminal.
 
-Pretty likely it is something like 192.168.1.x (can be found ~4th row from the bottom)
-
-Now you can either connect to raspberry with SSH (e.g. Putty from windows) or continue using current terminal
-
-If you connect from SSH, use these login credentials
+Use these login credentials
 ```
 username: pi 
 password: raspberry
 ```
 
-### Update System
+### Update the System
 
-Update package indexes and upgrade installed packages. This will take some minutes
+Update package indexes and upgrade installed packages. 
+apt-get is rather verbose and how long it takes depends on what needs to be updated.
 ```sh
-$ sudo apt-get update
-$ sudo apt-get upgrade
+$ sudo apt-get update &&  sudo apt-get dist-upgrade && echo +++ upgrade successful +++
 ```
 
 ### Bluetooth
 
-List Bluetooth devices and check that you can see device hci0 on the list
+List Bluetooth devices and verify that hci0 is on the list
 ```sh
 $ hcitool dev
 ```
+Expect output similar to
+```sh
+Devices:
+	hci0	B8:27:EB:96:64:43
+```
 
-If not, try to reboot and check again
+If no devices are listed, reboot and check again
 ```sh
 $ reboot
 ```
@@ -64,7 +76,7 @@ $ reboot
 
 ### Update Python 3 version (optional)
 
-You might want't to update default version of Python 3 to a newer version. Newer version must be installed from the sources. This will take around 20min to complete.
+You might want to update default version of Python 3 to a newer version. Newer version must be installed from the sources. This will take around 20min to complete.
 
 Install dependencies so SSL will work with newly compiled pip (not sure if all of these are needed)
 ```sh
@@ -84,30 +96,67 @@ $ reboot
 
 ### Install ruuvitag-sensor package
 
-In this example we use default installed version of Python 3, which is 3.4.2. Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
+<!-- seems extraenous, but that's up to you
+leave in as a comment may be of interest later
+In this example we use default installed version of Python 3, which is 3.4.2. 
+Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
 ```sh
 $ python3 --version
 ```
-
-Ruuvitag-sensor package requires bluez and bluez-hcidump. Bluez is the Linux Bluetooth system and allows a Raspberry Pi to communicate with Bluetooth classic and Bluetooth low energy (LE) devices. Hcidump is a tool which prints data broadcasted by Bluetooth devices to console. Bluez is already installed on Raspbian, so install only bluez-hcidump
+-->
+Ruuvitag-sensor package requires bluez and bluez-hcidump. 
+Bluez is the Linux Bluetooth system and allows a Raspberry Pi to communicate with Bluetooth classic and Bluetooth low energy (LE) devices and is included with Raspbian. 
+Hcidump is a tool which prints data broadcasted by Bluetooth devices to console and needs to be installed.
 ```sh
-$ sudo apt-get install bluez-hcidump
+$ sudo apt-get install bluez-hcidump && echo +++ install successful +++
 ```
+Expect the usual verbose output from apt-get.
 
-Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add user option to install for current user
+Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add --user to install for current user
 ```sh
 $ pip3 install --user ruuvitag-sensor
 ```
+This library includes a command line utility.
 
-Try installed package from command line. Should show help from ruuvitag_sensor. If not, change the minor version from the path to match Python's minor version, e.g. if you updated Python to version 3.6. then path is /home/pi/.local/lib/python3.6/...
+Try displaying the help. 
 ```sh
-$ python3 /home/pi/.local/lib/python3.4/site-packages/ruuvitag_sensor -h
+$ python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor --help
+```
+Expect
+```sh
+usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-l] [-s] [--version]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -g MAC_ADDRESS, --get MAC_ADDRESS
+                        Get data
+  -f, --find            Find broadcasting RuuviTags
+  -l, --latest          Get latest data for found RuuviTags
+  -s, --stream          Stream broadcasts from all RuuviTags
+  --version             show program's version number and exit
+```
+ If this fails with a Traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6. then path is ~/.local/lib/python3.6/...
+
+Make an alias if you choose
+```sh
+$ alias ruuvitag='python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor'
 ```
 
-Try to find all tags from command line
+Try to find all tags
 ```sh
-$ python3 /home/pi/.local/lib/python3.4/site-packages/ruuvitag_sensor -f
+$ ruuvitag -f
 ```
+After several seconds, expect something like
+```sh
+F2:C0:C6:43:AD:03
+{'pressure': 1003.0, 'identifier': 'N', 'temperature': 20.0, 'humidity': 52.0}
+E9:38:3F:DD:20:BC
+{'pressure': 1004.0, 'identifier': 'r', 'temperature': 22.0, 'humidity': 100.0}
+D3:51:78:72:EC:0F
+{'pressure': 1003.0, 'identifier': 'r', 'temperature': 11.0, 'humidity': 60.0}
+```
+This continues waiting for additional tags to be detected until interrupted with ^C.
+
 
 Open nano editor and create test script tag_test.py
 ```sh
@@ -121,9 +170,11 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 RuuviTagSensor.find_ruuvitags()
 ```
 
-Execute script we just created. Should get the same result as from find all tags that was executed from the command line.
+Execute script just created. Expect the same result as from find all tags executed from the command line.
 ```sh
 $ python3 tag_test.py
 ```
 
-Now you are all set! Remember to check examples from the [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
+Now you are all set! 
+
+Remember to check examples from the [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
