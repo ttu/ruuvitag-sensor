@@ -23,9 +23,7 @@ $ sudo raspi-config
 ```
 Select Hostname and give your pi a name.
 
-You may want to select
-
-Localisation Options Set up language and regional settings(timezone) to match your location
+You may want to select Localisation Options Set up language and regional settings(timezone) to match your location
 
 Select Interface Options 
 
@@ -37,7 +35,7 @@ Check IP-address
 $ ip a
 ```
 Expect something like 192.168.1.x (can be found after eth0:, inet )-->
-Now you can either connect to raspberry with SSH (e.g. Putty from windows) or continue using current terminal.
+Now you can either connect to raspberry pi over the network with SSH (For example use Putty from windows) or continue using current terminal.
 
 Use these login credentials
 ```
