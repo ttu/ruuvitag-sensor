@@ -5,9 +5,8 @@ Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as 
 
 Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017'
 
-<!--  I think it is reasonable to expect the user has a pi up and running
-and info on doing so is best left to https://www.raspberrypi.org/documentation/configuration/raspi-config.md
-DGerman
+Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+Summerized here:
 
 ### Start the pi
 
@@ -24,15 +23,15 @@ $ sudo raspi-config
 
 Select Advanced Options 
  SSH and enable ssh server
- Hostname and give you pi a name
-
+ Hostname and give your pi a name
+<!-- us the name 
 Check IP-address
 ```sh
 $ ip a
 ```
 
 Expect something like 192.168.1.x (can be found ~4th row from the bottom)
-
+-->
 Now you can either connect to raspberry with SSH (e.g. Putty from windows) or continue using current terminal.
 
 Use these login credentials
@@ -42,7 +41,7 @@ password: raspberry
 ```
 --> 
 
-### Update System
+### Update the System
 
 Update package indexes and upgrade installed packages. 
 apt-get is rather verbose and how long it takes depends on what needs to be updated.
@@ -96,6 +95,7 @@ $ reboot
 ### Install ruuvitag-sensor package
 
 <!-- seems extraenous, but that's up to you
+leave in as a comment may be of interest later
 In this example we use default installed version of Python 3, which is 3.4.2. 
 Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
 ```sh
