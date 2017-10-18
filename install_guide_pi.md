@@ -23,8 +23,11 @@ $ sudo raspi-config
 ```
 
 Select Advanced Options 
+
  SSH and enable ssh server
+ 
  Hostname and give your pi a name
+ 
 <!-- use the name 
 Check IP-address
 ```sh
