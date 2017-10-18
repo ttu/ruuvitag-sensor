@@ -21,14 +21,17 @@ Open raspi-config to enable SSH
 ```sh
 $ sudo raspi-config
 ```
+Select Hostname and give your pi a name.
 
-Select Advanced Options 
+You may want to select
 
- SSH and enable ssh server
+Localisation Options Set up language and regional settings(timezone) to match your location
+
+Select Interface Options 
+
+ SSH and enable ssh server (Secure Shell command line
  
- Hostname and give your pi a name
- 
-<!-- use the name 
+<!-- use the name not an IP address
 Check IP-address
 ```sh
 $ ip a
