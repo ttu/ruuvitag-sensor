@@ -175,4 +175,5 @@ $ python3 tag_test.py
 ```
 
 Now you are all set! 
+
 Remember to check examples from the [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
