@@ -23,7 +23,7 @@ $ sudo raspi-config
 ```
 Select Hostname and give your pi a name.
 
-You may want to select Localisation Options Set up language and regional settings(timezone) to match your location
+You may want to Select Localisation Options Set up language and regional settings(timezone) to match your location
 
 Select Interface Options 
 
