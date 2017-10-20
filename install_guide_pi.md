@@ -153,7 +153,7 @@ F2:C0:C6:43:AD:03
 E9:38:3F:DD:20:BC
 {'pressure': 1004.0, 'identifier': 'r', 'temperature': 22.0, 'humidity': 100.0}
 D3:51:78:72:EC:0F
-{'pressure': 1003.0, 'identifier': 'r', 'temperature': 11.0, 'humidity': 60.0}
+{'pressure': 1003.0, 'identifier': 's', 'temperature': 11.0, 'humidity': 60.0}
 ```
 This continues waiting for additional tags to be detected until interrupted with ^C.
 
