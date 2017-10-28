@@ -1,14 +1,17 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [0.9.0] - 2017-10-29
 * Fix sharing run_flag with rx and ruuvitag processes
 * Fix RuuviTagReactive Python2.7 support
-* Define Bluetooth device id
+* Define Bluetooth device id with bt_device parameter
 
 ## [0.8.2] - 2017-09-09
 * Fixed pypi documentation format
 
-## [0.8.2] - 2017-09-09
+## [0.8.1] - 2017-09-09
 * Fix Data Format 3 temperature decode for negative values
 
 ## [0.8.0] - 2017-07-29
