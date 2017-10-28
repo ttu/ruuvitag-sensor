@@ -244,9 +244,7 @@ optional arguments:
   --version             show program's version number and exit
 ```
 
-## Tests
-
-### Unit Tests
+## Unit Tests
 
 Unit tests use unittest.mock library, so Python 3.3. or newer is required.
 
@@ -263,7 +261,7 @@ Run with setup
 $ python setup.py test
 ```
 
-### Verification Test
+## Verification Test
 
 Verification test sciprt executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
 
