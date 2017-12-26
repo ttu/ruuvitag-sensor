@@ -1,8 +1,9 @@
 import abc
+import logging
+import os
+import ptyprocess
 import subprocess
 import sys
-import os
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +66,7 @@ class BleCommunicationNix(BleCommunication):
 
         subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
         hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout=DEVNULL)
-        hcidump = subprocess.Popen(['sudo', '-n', 'hcidump', '--raw'], stdout=subprocess.PIPE)
+        hcidump = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcidump', '--raw'])
         return (hcitool, hcidump)
 
     @staticmethod
@@ -87,14 +88,14 @@ class BleCommunicationNix(BleCommunication):
         kill_child_processes(hcitool.pid)
         subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(hcitool.pid)])
         kill_child_processes(hcidump.pid)
-        subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(hcidump.pid)])
+        hcidump.close()
 
     @staticmethod
     def get_lines(hcidump):
         data = None
         try:
-            for line in hcidump.stdout:
-                line = line.decode()
+            while True:
+                line = hcidump.readline().decode()
                 if line.startswith('> '):
                     yield data
                     data = line[2:].strip().replace(' ', '')

@@ -36,6 +36,7 @@ setup(name='ruuvitag_sensor',
           'rx',
           'psutil;platform_system=="Linux"',
           'futures;python_version<"3.3"',
+          'ptyprocess'
       ],
       license='MIT',
       packages=['ruuvitag_sensor'],
