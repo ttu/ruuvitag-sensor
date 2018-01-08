@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-
+* Circumvent hcidump pipe buffering to assure all readings are propagated timely
 
 ## [0.9.0] - 2017-10-29
 * Fix sharing run_flag with rx and ruuvitag processes
