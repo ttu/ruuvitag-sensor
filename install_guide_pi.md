@@ -112,6 +112,11 @@ $ sudo apt-get install bluez-hcidump && echo +++ install successful +++
 ```
 Expect the usual verbose output from apt-get.
 
+Upgrade setuptools
+```sh
+$ sudo pip3 install --upgrade setuptools
+```
+
 Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add --user to install for current user
 ```sh
 $ pip3 install --user ruuvitag-sensor
