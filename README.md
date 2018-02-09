@@ -11,7 +11,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * Supports [Data Format 2, 3 and 4](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Python 2.7 and 3
     * psutil
-        * Package uses psutil to start and stop processes. Psutil requires `sudo apt-get install python-dev` or `sudo apt-get install python3-dev`
+        * Package uses psutil to start and stop processes. Psutil requires `sudo apt-get install python-dev python-psutil` or `sudo apt-get install python3-dev python3-psutil`
 * Linux
     * Package's Windows and OSX supports are only for testing and url decoding
 * Bluez
