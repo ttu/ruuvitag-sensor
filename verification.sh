@@ -1,10 +1,10 @@
 #!/bin/bash
 
-rm -rf venv
+rm -rf venv_py3
 rm -rf venv_py2
 
-virtualenv venv
-source venv/bin/activate      
+python3 -m venv venv_py3
+source venv_py3/bin/activate
 pip3 install -e .
 python3 verification.py
 ret=$?
@@ -15,7 +15,7 @@ fi
 deactivate
 
 virtualenv --python=/usr/bin/python2.7 venv_py2
-source venv_py2/bin/activate     
+source venv_py2/bin/activate
 pip install -e .
 python verification.py
 ret=$?
