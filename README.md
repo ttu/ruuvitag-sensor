@@ -16,8 +16,9 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * Package's Windows and OSX supports are only for testing and url decoding
 * Bluez
     * `sudo apt-get install bluez bluez-hcidump`
+    * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 * Superuser rights
-    * Package uses internally hciconf, hcitool and hcidump, which require superuser rights
+    * BlueZ tools require superuser rights
 
 ### Installation
 
