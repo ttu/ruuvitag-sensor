@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [0.10.0] - 2018-03-11
 * Circumvent hcidump pipe buffering to assure all readings are propagated timely
 
 ## [0.9.0] - 2017-10-29
