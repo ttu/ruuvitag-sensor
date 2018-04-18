@@ -1,7 +1,6 @@
 import abc
 import logging
 import os
-import ptyprocess
 import subprocess
 import sys
 
@@ -60,7 +59,8 @@ class BleCommunicationNix(BleCommunication):
         Attributes:
            device (string): BLE device (default hci0)
         '''
-
+        import ptyprocess
+        
         if not bt_device:
             bt_device = 'hci0'
 
