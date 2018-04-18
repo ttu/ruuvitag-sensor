@@ -37,7 +37,10 @@ setup(name='ruuvitag_sensor',
           'psutil;platform_system=="Linux"',
           'futures;python_version<"3.3"',
           'ptyprocess;platform_system=="Linux"',
-          'bleson'
+          'bleson==0.0.13'
+      ],
+      dependency_links = [
+        'https://github.com/TheCellule/python-bleson/tarball/master#egg=bleson-0.0.13',
       ],
       license='MIT',
       packages=['ruuvitag_sensor'],
