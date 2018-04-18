@@ -8,13 +8,12 @@ from ruuvitag_sensor.decoder import get_decoder
 log = logging.getLogger(__name__)
 
 
-if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
-    # Use BleCommunicationDummy also for CI as it can't use bluez
+if os.environ.get('CI') == 'True':
     from ruuvitag_sensor.ble_communication import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
-    from ruuvitag_sensor.ble_communication import BleCommunicationNix
-    ble = BleCommunicationNix()
+    from ruuvitag_sensor.ble_communication import BleCommunicationBleson
+    ble = BleCommunicationBleson()
 
 
 class RunFlag(object):
@@ -155,7 +154,10 @@ class RuuviTagSensor(object):
             # Check MAC whitelist
             if macs and not ble_data[0] in macs:
                 continue
+
+            log.info(ble_data)
             (data_format, data) = RuuviTagSensor.convert_data(ble_data[1])
+
             # Check that encoded data is valid RuuviTag data and it is sensor data
             # If data is not valid RuuviTag data add MAC to blacklist
             if data is not None:
@@ -177,11 +179,12 @@ class RuuviTagSensor(object):
         try:
             # TODO: Fix conversion so convered data will show https://ruu.vi/# and htts://r/
             # Now it has e.g. [Non_ASCII characters]ruu.vi/#AjwYAMFc
-            base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
-            selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
-            characters = [chr(int(c, 16)) for c in selected_hexs]
-            data = ''.join(characters)
+            # base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
+            # selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
+            # characters = [chr(int(c, 16)) for c in selected_hexs]
+            # data = ''.join(characters)
 
+            data = str(raw)[2:-1]
             # take only part after ruu.vi/# or r/
             index = data.find('ruu.vi/#')
             if index > -1:
@@ -194,6 +197,7 @@ class RuuviTagSensor(object):
         except:
             return None
 
+
     @staticmethod
     def _get_data_format_3(raw):
         """
@@ -203,12 +207,12 @@ class RuuviTagSensor(object):
             string: Sensor data
         """
         try:
-            if len(raw) != 54:
+            # if len(raw) != 54:
+            #     return None
+
+            if raw[2:3] != b'\x03':
                 return None
 
-            if raw[16:18] != '03':
-                return None
-
-            return raw[16:]
+            return raw[2:]
         except:
             return None

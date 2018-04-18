@@ -129,7 +129,7 @@ class Df3Decoder(object):
             dict: Sensor values
         '''
         try:
-            byte_data = bytearray.fromhex(data)
+            byte_data = data
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'humidity': self._get_humidity(byte_data),

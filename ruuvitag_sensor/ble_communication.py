@@ -5,6 +5,9 @@ import ptyprocess
 import subprocess
 import sys
 
+from queue import Queue
+from bleson import get_provider, Observer
+
 log = logging.getLogger(__name__)
 
 
@@ -131,6 +134,86 @@ class BleCommunicationNix(BleCommunication):
                 continue
 
         BleCommunicationNix.stop(procs[0], procs[1])
+
+    @staticmethod
+    def get_data(mac, bt_device=''):
+        data = None
+        data_iter = BleCommunicationNix.get_datas(bt_device)
+        for data in data_iter:
+            if mac == data[0]:
+                log.info('Data found')
+                data_iter.send(StopIteration)
+                data = data[1]
+                break
+
+        return data
+
+
+class BleCommunicationBleson(BleCommunication):
+    '''Bluetooth LE communication with Bleson'''
+
+    @staticmethod
+    def start(bt_device=''):
+        '''
+        Attributes:
+           device (string): BLE device (default hci0)
+        '''
+
+        if not bt_device:
+            bt_device = 'hci0'
+
+        log.info('Start receiving broadcasts (device %s)', bt_device)
+
+        # TODO: Set bt_device
+        q = Queue(maxsize=1000)
+
+        def add(advertisement):
+            q.put(advertisement)
+
+        adapter = get_provider().get_adapter()
+        observer = Observer(adapter)
+        observer.on_advertising_data = add
+        observer.start()
+        return (observer, q)
+
+    @staticmethod
+    def stop(observer):
+        observer.stop()
+
+    @staticmethod
+    def get_lines(q):
+        data = None
+        try:
+            while True:
+                next_item = q.get(True, None)
+                yield next_item
+        except KeyboardInterrupt as ex:
+            return
+        except Exception as ex:
+            log.info(ex)
+            return
+
+    @staticmethod
+    def get_datas(blacklist=[], bt_device=''):
+        procs = BleCommunicationBleson.start(bt_device)
+
+        data = None
+        for line in BleCommunicationBleson.get_lines(procs[1]):
+            try:
+                found_mac = line.address.address
+                reversed_mac = ''.join(
+                    reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
+                mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
+                if mac in blacklist:
+                    continue
+
+                yield (line.address.address, line.service_data or line.mfg_data)
+            except GeneratorExit:
+                break
+            except:
+                continue
+
+        BleCommunicationBleson.stop(procs[0])
 
     @staticmethod
     def get_data(mac, bt_device=''):
