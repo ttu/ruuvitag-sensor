@@ -16,8 +16,17 @@ def get_decoder(data_type):
     '''
     if data_type == 2:
         return UrlDecoder()
-    else:
+    elif data_type == 3:
         return Df3Decoder()
+    else :
+        return Df5Decoder()
+
+def twos_complement(value, bits):
+        if (value & (1 << (bits - 1))) != 0:
+            value = value - (1 << bits)
+        return value
+
+def rshift(val, n): return (val % 0x100000000) >> n
 
 
 class UrlDecoder(object):
@@ -105,16 +114,11 @@ class Df3Decoder(object):
         pres = (data[4] << 8) + data[5] + 50000
         return pres / 100
 
-    def _twos_complement(self, value, bits):
-        if (value & (1 << (bits - 1))) != 0:
-            value = value - (1 << bits)
-        return value
-
     def _get_acceleration(self, data):
         '''Return acceleration mG'''
-        acc_x = self._twos_complement((data[6] << 8) + data[7], 16)
-        acc_y = self._twos_complement((data[8] << 8) + data[9], 16)
-        acc_z = self._twos_complement((data[10] << 8) + data[11], 16)
+        acc_x = twos_complement((data[6] << 8) + data[7], 16)
+        acc_y = twos_complement((data[8] << 8) + data[9], 16)
+        acc_z = twos_complement((data[10] << 8) + data[11], 16)
         return (acc_x, acc_y, acc_z)
 
     def _get_battery(self, data):
@@ -157,11 +161,8 @@ class Df5Decoder(object):
         if (0x7FFF == data[1:2]):
             return None
 
-        temperature = ((data[1]&0x7F) << 8 | data[2] & 0xFF) / 200
-        sign = data[1]&0x7F
-        if (!sign):
-            return round(temp, 2);
-        return round(-1 * temp, 2)
+        temperature = twos_complement(data[1] << 8 + data[2], 16) / 200
+        return temperature
 
     def _get_humidity(self, data):
         '''Return humidity %'''
@@ -169,7 +170,7 @@ class Df5Decoder(object):
             return None
 
         humidity = ((data[3] & 0xFF) << 8 | data[4] & 0xFF) / 400
-        return humidity[1] * 0.5
+        return humidity
 
     def _get_pressure(self, data):
         '''Return air pressure hPa'''
@@ -179,11 +180,6 @@ class Df5Decoder(object):
         pressure = ((data[5] & 0xFF) << 8 | data[6] & 0xFF) + 50000
         return pressure / 100
 
-    def _twos_complement(self, value, bits):
-        if (value & (1 << (bits - 1))) != 0:
-            value = value - (1 << bits)
-        return value
-
     def _get_acceleration(self, data):
         '''Return acceleration mG'''
         if (0x7FFF == data[7:8] or
@@ -191,18 +187,18 @@ class Df5Decoder(object):
                    0x7FFF == data[11:12]):
             return (None, None, None)
 
-        acc_x = self._twos_complement((data[7] << 8) + data[8], 16)
-        acc_y = self._twos_complement((data[9] << 8) + data[10], 16)
-        acc_z = self._twos_complement((data[11] << 8) + data[12], 16)
+        acc_x = twos_complement((data[7] << 8) + data[8], 16)
+        acc_y = twos_complement((data[9] << 8) + data[10], 16)
+        acc_z = twos_complement((data[11] << 8) + data[12], 16)
         return (acc_x, acc_y, acc_z)
 
     def _get_powerinfo(self, data):
         '''Return battery voltage and tx power '''
         power_info = (data[13] & 0xFF) << 8 | (data[14] & 0xFF)
-        battery_voltage = (power_info >>> 5) / 1000d + 1.6
+        battery_voltage = rshift(power_info, 5) / 1000 + 1.6
         tx_power = (power_info & 0b11111) * 2 - 40
 
-        if ((power_info >>> 5) == 0b11111111111):
+        if (rshift(power_info, 5) == 0b11111111111):
             battery_voltage = None
         if ((powerInfo & 0b11111) == 0b11111):
             tx_power = None
@@ -251,7 +247,7 @@ class Df5Decoder(object):
                 'battery': self._get_battery(byte_data),
                 'movementcounter': self._get_movementcounter(byte_data),
                 'measurementsequencenumber': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data);
+                'mac': self._get_mac(byte_data)
             }
         except Exception:
             log.exception('Value: %s not valid', data)
