@@ -51,6 +51,16 @@ class TestDecoder(TestCase):
         self.assertNotEqual(data['acceleration_y'], 0)
         self.assertNotEqual(data['acceleration_z'], 0)
 
+        data = decoder.decode_data('03291A1ECE1EFC18F94202CA0B53BB')
+        self.assertEqual(data['temperature'], 26.3)
+        self.assertEqual(data['pressure'], 1027.66)
+        self.assertEqual(data['humidity'], 20.5)
+        self.assertEqual(data['battery'], 2899)
+        self.assertNotEqual(data['acceleration'], 0)
+        self.assertEqual(data['acceleration_x'], -1000)
+        self.assertNotEqual(data['acceleration_y'], 0)
+        self.assertNotEqual(data['acceleration_z'], 0)
+
     def test_df3decode_is_valid_max_values(self):
         decoder = Df3Decoder()
         humidity = 'C8'
