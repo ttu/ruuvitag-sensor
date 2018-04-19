@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from ruuvitag_sensor.decoder import get_decoder, UrlDecoder, Df3Decoder
+from ruuvitag_sensor.decoder import get_decoder, UrlDecoder, Df3Decoder, Df5Decoder
+import sys
 
 
 class TestDecoder(TestCase):
@@ -102,3 +103,32 @@ class TestDecoder(TestCase):
         self.assertEqual(data['acceleration_y'], -1000)
         self.assertEqual(data['acceleration_z'], -1000)
         self.assertNotEqual(data['acceleration'], 0)
+
+    def test_df5decode_is_valid(self):
+        decoder = Df5Decoder()
+        format = '05'
+        temp = '12FC'
+        humidity = '5394'
+        pressure = 'C37C'
+        accX = '0004'
+        accY = 'FFFC'
+        accZ = '040C'
+        power_info = 'AC36'
+        movement_counter = '42'
+        measurement_sequence = '00CD'
+        mac = 'CBB8334C884F'
+        data = decoder.decode_data('{format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}{movement_counter}{measurement_sequence}{mac}'.format(
+            format=format, humidity=humidity, temp=temp, pressure=pressure, accX=accX, accY=accY, accZ=accZ, power_info=power_info, movement_counter=movement_counter, measurement_sequence=measurement_sequence, mac=mac))
+
+        self.assertEqual(data['temperature'], 24.30)
+        self.assertEqual(data['humidity'], 53.49)
+        self.assertEqual(data['pressure'], 1000.44)
+        self.assertEqual(data['acceleration_x'], 4)
+        self.assertEqual(data['acceleration_y'], -4)
+        self.assertEqual(data['acceleration_z'], 1036)
+        self.assertEqual(data['tx_power'], 4)
+        self.assertEqual(data['battery'], 2.977)
+        self.assertEqual(data['movement_counter'], 66)
+        self.assertEqual(data['measurement_sequence_number'], 205)
+        self.assertEqual(data['mac'], 'cbb8334c88')
+

@@ -161,8 +161,8 @@ class Df5Decoder(object):
         if (0x7FFF == data[1:2]):
             return None
 
-        temperature = twos_complement(data[1] << 8 + data[2], 16) / 200
-        return temperature
+        temperature = twos_complement((data[1] << 8) + data[2], 16) / 200
+        return round(temperature,2)
 
     def _get_humidity(self, data):
         '''Return humidity %'''
@@ -170,7 +170,7 @@ class Df5Decoder(object):
             return None
 
         humidity = ((data[3] & 0xFF) << 8 | data[4] & 0xFF) / 400
-        return humidity
+        return round(humidity, 2)
 
     def _get_pressure(self, data):
         '''Return air pressure hPa'''
@@ -178,7 +178,7 @@ class Df5Decoder(object):
             return None
 
         pressure = ((data[5] & 0xFF) << 8 | data[6] & 0xFF) + 50000
-        return pressure / 100
+        return round((pressure / 100), 2)
 
     def _get_acceleration(self, data):
         '''Return acceleration mG'''
@@ -200,10 +200,10 @@ class Df5Decoder(object):
 
         if (rshift(power_info, 5) == 0b11111111111):
             battery_voltage = None
-        if ((powerInfo & 0b11111) == 0b11111):
+        if ((power_info & 0b11111) == 0b11111):
             tx_power = None
 
-        return (battery_voltage, tx_power)
+        return (round(battery_voltage, 3), tx_power)
 
     def _get_battery(self, data):
         '''Return battery mV'''
@@ -245,8 +245,8 @@ class Df5Decoder(object):
                 'acceleration_z': acc_z,
                 'tx_power': self._get_txpower(byte_data),
                 'battery': self._get_battery(byte_data),
-                'movementcounter': self._get_movementcounter(byte_data),
-                'measurementsequencenumber': self._get_measurementsequencenumber(byte_data),
+                'movement_counter': self._get_movementcounter(byte_data),
+                'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
                 'mac': self._get_mac(byte_data)
             }
         except Exception:
