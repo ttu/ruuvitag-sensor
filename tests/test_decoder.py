@@ -130,5 +130,5 @@ class TestDecoder(TestCase):
         self.assertEqual(data['battery'], 2.977)
         self.assertEqual(data['movement_counter'], 66)
         self.assertEqual(data['measurement_sequence_number'], 205)
-        self.assertEqual(data['mac'], 'cbb8334c88')
+        self.assertEqual(data['mac'], 'cbb8334c884f')
 

@@ -223,7 +223,7 @@ class Df5Decoder(object):
         return measurementSequenceNumber
 
     def _get_mac(self, data):
-        return ''.join('{:02x}'.format(x) for x in data[18:23])
+        return ''.join('{:02x}'.format(x) for x in data[18:24])
 
     def decode_data(self, data):
         '''
