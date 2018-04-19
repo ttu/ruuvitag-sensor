@@ -1,7 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
-
+* Fix support for RuuviFW 1.2.8 
+* Fix for use of bt_device parameter in find_ruuvitags
 
 ## [0.10.0] - 2018-03-11
 * Circumvent hcidump pipe buffering to assure all readings are propagated timely
