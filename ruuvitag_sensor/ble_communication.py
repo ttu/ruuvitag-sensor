@@ -200,14 +200,12 @@ class BleCommunicationBleson(BleCommunication):
         data = None
         for line in BleCommunicationBleson.get_lines(procs[1]):
             try:
-                found_mac = line.address.address
-                reversed_mac = ''.join(
-                    reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
-                mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
+                reversed_mac = line.address.address
+                mac = ':'.join(reversed(reversed_mac.split(':')))
                 if mac in blacklist:
                     continue
 
-                yield (line.address.address, line.service_data or line.mfg_data)
+                yield (mac, line.service_data or line.mfg_data)
             except GeneratorExit:
                 break
             except:
