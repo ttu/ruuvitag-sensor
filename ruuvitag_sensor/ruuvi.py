@@ -57,6 +57,11 @@ class RuuviTagSensor(object):
         if data is not None:
             return (3, data)
 
+        data = RuuviTagSensor._get_data_format_5(raw)
+
+        if data is not None:
+            return (5, data)
+
         return (None, None)
 
     @staticmethod
@@ -220,3 +225,22 @@ class RuuviTagSensor(object):
             return raw[2:]
         except:
             return None
+
+    @staticmethod
+    def _get_data_format_5(raw):
+        """
+        Validate that data is from RuuviTag and is Data Format 5
+
+        Returns:
+            string: Sensor data
+        """
+        # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
+        try:
+            if "FF990405" not in raw:
+                return None
+
+            payload_start = raw.index("FF990405") + 6;
+            return raw[payload_start:]
+        except:
+            return None
+
