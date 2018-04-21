@@ -8,7 +8,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 
 * RuuviTag with Weather Station firmware
     * Setup [guide](https://ruu.vi/setup/)
-    * Supports [Data Format 2, 3 and 4](https://github.com/ruuvi/ruuvi-sensor-protocols)
+    * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Python 2.7 and 3
     * psutil
         * Package uses psutil to start and stop processes. Psutil requires `sudo apt-get install python-dev python-psutil` or `sudo apt-get install python3-dev python3-psutil`
@@ -198,16 +198,18 @@ print(sensor_data)
 
 ##### Data Formats
 
-Example data has data from 3 sensors with different firmwares. 
-* 1st is Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data.
-* 2nd is Data Format 4 and it has an identifier character.
-* 3rd is Data Format 3.
+Example data has data from 4 sensors with different firmwares.
+* 1st is Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data
+* 2nd is Data Format 4 and it has an identifier character
+* 3rd is Data Format 3
+* 4th is Data Format 5
 
 ```python
 {
 'CA:F7:44:DE:EB:E1': { 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None }, 
 'F4:A5:74:89:16:57': { 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' },
-'A3:GE:2D:91:A4:1F': { 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3}
+'A3:GE:2D:91:A4:1F': { 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3},
+'CB:B8:33:4C:88:4F': {'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70}
 }
 ```
 
