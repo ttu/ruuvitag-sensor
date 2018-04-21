@@ -219,6 +219,7 @@ class RuuviTagSensor(object):
             # return raw[payload_start:]
 
             # TODO: Check how this is with data provided by Bleson
+            # mfg_data=b'\x99\x04\x03>\x17\x16\xc3\x17\xff\xf1\xff\xe1\x04\x0b\x0bk'
             if raw[2:3] != b'\x03':
                 return None
 
@@ -236,11 +237,18 @@ class RuuviTagSensor(object):
         """
         # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
         try:
-            if "FF990405" not in raw:
+            # TODO: Check how this is with data provided by Bleson
+            
+            # if "FF990405" not in raw:
+            #     return None
+
+            # payload_start = raw.index("FF990405") + 6;
+            # return raw[payload_start:]
+
+            if raw[2:3] != b'\x05':
                 return None
 
-            payload_start = raw.index("FF990405") + 6;
-            return raw[payload_start:]
+            return raw[2:]
         except:
             return None
 
