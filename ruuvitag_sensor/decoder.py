@@ -22,11 +22,16 @@ def get_decoder(data_type):
         return Df5Decoder()
 
 def twos_complement(value, bits):
-        if (value & (1 << (bits - 1))) != 0:
-            value = value - (1 << bits)
-        return value
+    if (value & (1 << (bits - 1))) != 0:
+        value = value - (1 << bits)
+    return value
 
-def rshift(val, n): return (val % 0x100000000) >> n
+def rshift(val, n):
+    '''
+    Arithmetic right shift, preserves sign bit. 
+    https://stackoverflow.com/a/5833119 . 
+    '''
+    return (val % 0x100000000) >> n
 
 
 class UrlDecoder(object):
@@ -162,7 +167,7 @@ class Df5Decoder(object):
             return None
 
         temperature = twos_complement((data[1] << 8) + data[2], 16) / 200
-        return round(temperature,2)
+        return round(temperature, 2)
 
     def _get_humidity(self, data):
         '''Return humidity %'''
