@@ -1,4 +1,3 @@
-import sys
 import os
 import time
 import logging
@@ -159,7 +158,6 @@ class RuuviTagSensor(object):
             if macs and not ble_data[0] in macs:
                 continue
 
-            log.info(ble_data)
             (data_format, data) = RuuviTagSensor.convert_data(ble_data[1])
 
             # Check that encoded data is valid RuuviTag data and it is sensor data
@@ -238,7 +236,7 @@ class RuuviTagSensor(object):
         # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
         try:
             # TODO: Check how this is with data provided by Bleson
-            
+
             # if "FF990405" not in raw:
             #     return None
 
