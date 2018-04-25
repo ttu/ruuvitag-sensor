@@ -4,6 +4,7 @@ from unittest.mock import patch
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
+# pylint: disable=W0613
 
 class TestRuuviTagSensor(TestCase):
 
@@ -88,7 +89,7 @@ class TestRuuviTagSensor(TestCase):
            get_datas)
     def test_get_datas(self):
         datas = []
-        RuuviTagSensor.get_datas(lambda x: datas.append(x))
+        RuuviTagSensor.get_datas(datas.append)
         self.assertEqual(7, len(datas))
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
@@ -98,5 +99,5 @@ class TestRuuviTagSensor(TestCase):
     def test_get_datas_with_macs(self):
         datas = []
         macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
-        RuuviTagSensor.get_datas(lambda x: datas.append(x), macs)
+        RuuviTagSensor.get_datas(datas.append, macs)
         self.assertEqual(2, len(datas))

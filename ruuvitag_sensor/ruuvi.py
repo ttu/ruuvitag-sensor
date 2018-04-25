@@ -211,7 +211,7 @@ class RuuviTagSensor(object):
             if "FF990403" not in raw:
                 return None
 
-            payload_start = raw.index("FF990403") + 6;
+            payload_start = raw.index("FF990403") + 6
             return raw[payload_start:]
         except:
             return None
@@ -229,8 +229,7 @@ class RuuviTagSensor(object):
             if "FF990405" not in raw:
                 return None
 
-            payload_start = raw.index("FF990405") + 6;
+            payload_start = raw.index("FF990405") + 6
             return raw[payload_start:]
         except:
             return None
-
