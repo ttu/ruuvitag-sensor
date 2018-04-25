@@ -59,8 +59,9 @@ class BleCommunicationNix(BleCommunication):
         Attributes:
            device (string): BLE device (default hci0)
         '''
+        # import ptyprocess here so as long as all implementations are in the same file, all will work
         import ptyprocess
-        
+
         if not bt_device:
             bt_device = 'hci0'
 

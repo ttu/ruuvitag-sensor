@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [0.11.0] - 2018-04-25
 * Fix support for RuuviFW 1.2.8 
 * Support for Data Format 5
 * Fix for use of bt_device parameter in find_ruuvitags

@@ -215,7 +215,7 @@ class RuuviTagSensor(object):
             # if "FF990403" not in raw:
             #     return None
 
-            # payload_start = raw.index("FF990403") + 6;
+            # payload_start = raw.index("FF990403") + 6
             # return raw[payload_start:]
 
             # TODO: Check how this is with data provided by Bleson
@@ -242,7 +242,7 @@ class RuuviTagSensor(object):
             # if "FF990405" not in raw:
             #     return None
 
-            # payload_start = raw.index("FF990405") + 6;
+            # payload_start = raw.index("FF990405") + 6
             # return raw[payload_start:]
 
             if raw[2:3] != b'\x05':
@@ -251,4 +251,3 @@ class RuuviTagSensor(object):
             return raw[2:]
         except:
             return None
-

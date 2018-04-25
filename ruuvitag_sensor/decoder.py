@@ -18,7 +18,7 @@ def get_decoder(data_type):
         return UrlDecoder()
     elif data_type == 3:
         return Df3Decoder()
-    else :
+    else:
         return Df5Decoder()
 
 def twos_complement(value, bits):
@@ -28,8 +28,8 @@ def twos_complement(value, bits):
 
 def rshift(val, n):
     '''
-    Arithmetic right shift, preserves sign bit. 
-    https://stackoverflow.com/a/5833119 . 
+    Arithmetic right shift, preserves sign bit.
+    https://stackoverflow.com/a/5833119 .
     '''
     return (val % 0x100000000) >> n
 
@@ -163,7 +163,7 @@ class Df5Decoder(object):
 
     def _get_temperature(self, data):
         '''Return temperature in celsius'''
-        if (0x7FFF == data[1:2]):
+        if data[1:2] == 0x7FFF:
             return None
 
         temperature = twos_complement((data[1] << 8) + data[2], 16) / 200
@@ -171,7 +171,7 @@ class Df5Decoder(object):
 
     def _get_humidity(self, data):
         '''Return humidity %'''
-        if (0xFFFF == data[3:4]):
+        if data[3:4] == 0xFFFF:
             return None
 
         humidity = ((data[3] & 0xFF) << 8 | data[4] & 0xFF) / 400
@@ -179,7 +179,7 @@ class Df5Decoder(object):
 
     def _get_pressure(self, data):
         '''Return air pressure hPa'''
-        if (0xFFFF == data[5:6]):
+        if data[5:6] == 0xFFFF:
             return None
 
         pressure = ((data[5] & 0xFF) << 8 | data[6] & 0xFF) + 50000
@@ -187,9 +187,9 @@ class Df5Decoder(object):
 
     def _get_acceleration(self, data):
         '''Return acceleration mG'''
-        if (0x7FFF == data[7:8] or
-                   0x7FFF == data[9:10] or
-                   0x7FFF == data[11:12]):
+        if (data[7:8] == 0x7FFF or
+                data[9:10] == 0x7FFF or
+                data[11:12] == 0x7FFF):
             return (None, None, None)
 
         acc_x = twos_complement((data[7] << 8) + data[8], 16)
@@ -203,28 +203,28 @@ class Df5Decoder(object):
         battery_voltage = rshift(power_info, 5) / 1000 + 1.6
         tx_power = (power_info & 0b11111) * 2 - 40
 
-        if (rshift(power_info, 5) == 0b11111111111):
+        if rshift(power_info, 5) == 0b11111111111:
             battery_voltage = None
-        if ((power_info & 0b11111) == 0b11111):
+        if (power_info & 0b11111) == 0b11111:
             tx_power = None
 
         return (round(battery_voltage, 3), tx_power)
 
     def _get_battery(self, data):
         '''Return battery mV'''
-        battery_voltage, tx_power = self._get_powerinfo(data)
+        battery_voltage = self._get_powerinfo(data)[0]
         return battery_voltage
 
     def _get_txpower(self, data):
         '''Return battery mV'''
-        battery_voltage, tx_power = self._get_powerinfo(data)
+        tx_power = self._get_powerinfo(data)[1]
         return tx_power
 
     def _get_movementcounter(self, data):
-        return (data[15] & 0xFF)
+        return data[15] & 0xFF
 
     def _get_measurementsequencenumber(self, data):
-        measurementSequenceNumber = (data[16] & 0xFF) << 8 | data[17] & 0xFF;
+        measurementSequenceNumber = (data[16] & 0xFF) << 8 | data[17] & 0xFF
         return measurementSequenceNumber
 
     def _get_mac(self, data):
@@ -257,4 +257,3 @@ class Df5Decoder(object):
         except Exception:
             log.exception('Value: %s not valid', data)
             return None
-
