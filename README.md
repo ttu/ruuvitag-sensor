@@ -20,6 +20,10 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * Superuser rights
     * BlueZ tools require superuser rights
 
+ __NOTE:__ Experimental implementation with cross-platform BLE communication in branch: [bleson-ble-communication](https://github.com/ttu/ruuvitag-sensor/tree/bleson-ble-communication)
+ * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
+ * More info on issues [#31](https://github.com/ttu/ruuvitag-sensor/issues/31) and [#18](https://github.com/ttu/ruuvitag-sensor/issues/18)
+
 ### Installation
 
 Install latest released version
