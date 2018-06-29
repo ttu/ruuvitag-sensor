@@ -216,7 +216,7 @@ class Df5Decoder(object):
         return battery_voltage
 
     def _get_txpower(self, data):
-        '''Return battery mV'''
+        '''Return transmit power'''
         tx_power = self._get_powerinfo(data)[1]
         return tx_power
 
