@@ -33,16 +33,26 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
 def convert_to_influx(mac, payload):
+    fields = {}
+    fields["temperature"]               = payload["temperature"] if ('temperature' in payload) else None
+    fields["humidity"]                  = payload["humidity"] if ('humidity' in payload) else None
+    fields["pressure"]                  = payload["pressure"] if ('pressure' in payload) else None
+    fields["accelerationX"]             = payload["acceleration_x"] if ('acceleration_x' in payload) else None
+    fields["accelerationY"]             = payload["acceleration_y"] if ('acceleration_y' in payload) else None
+    fields["accelerationZ"]             = payload["acceleration_z"] if ('acceleration_z' in payload) else None
+    fields["batteryVoltage"]            = payload["battery"] if hasattr(payload, 'battery') else None
+    fields["dataFormat"]                = payload["data_format"] if ('data_format' in payload) else None
+    fields["txPower"]                   = payload["tx_power"] if ('tx_power' in payload) else None
+    fields["movementCounter"]           = payload["battery"] if ('battery' in payload) else None
+    fields["measurementSequenceNumber"] = payload["measurement_sequence_number"] if ('measurement_sequence_number' in payload) else None
+    fields["tagID"]                     = payload["tagID"] if ('tagID' in payload) else None
     return {
         "measurement": "ruuvitag",
         "tags": {
-            "mac": mac
+            "mac": mac,
+            "gateway_id": "ruuvitag-sensor"
         },
-        "fields": {
-            "temperature": payload["temperature"],
-            "humidity": payload["humidity"],
-            "pressure": payload["pressure"]
-        }
+        "fields": fields
     }
 
 
