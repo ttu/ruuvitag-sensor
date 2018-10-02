@@ -49,8 +49,7 @@ def convert_to_influx(mac, payload):
     return {
         "measurement": "ruuvitag",
         "tags": {
-            "mac": mac,
-            "gateway_id": "ruuvitag-sensor"
+            "mac": mac
         },
         "fields": fields
     }

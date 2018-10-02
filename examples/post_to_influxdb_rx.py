@@ -7,7 +7,7 @@ Check guide and requirements from post_to_influxdb.py
 from influxdb import InfluxDBClient
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
-client = InfluxDBClient(host="playground.ruuvi.com", port=8086, database="ruuvi")
+client = InfluxDBClient(host="localhost", port=8086, database="tag_data")
 
 
 def write_to_influxdb(received_data):
@@ -26,10 +26,9 @@ def write_to_influxdb(received_data):
     fields["tagID"]                     = received_data[1]["tagID"] if ('tagID' in received_data[1]) else None
     json_body = [
         {
-            "measurement": "ruuvi_measurements",
+            "measurement": "ruuvitag",
             "tags": {
-                "mac": received_data[0],
-                "gateway_id": "ruuvitag-sensor-rx"
+                "mac": received_data[0]
             },
             "fields": fields
         }
