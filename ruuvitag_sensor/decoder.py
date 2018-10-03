@@ -207,7 +207,7 @@ class Df5Decoder(object):
     def _get_powerinfo(self, data):
         '''Return battery voltage and tx power '''
         power_info = (data[13] & 0xFF) << 8 | (data[14] & 0xFF)
-        battery_voltage = rshift(power_info, 5) / 1000 + 1.6
+        battery_voltage = rshift(power_info, 5) + 1600
         tx_power = (power_info & 0b11111) * 2 - 40
 
         if rshift(power_info, 5) == 0b11111111111:
