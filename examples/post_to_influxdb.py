@@ -33,6 +33,12 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
 def convert_to_influx(mac, payload):
+    '''
+    Convert data into RuuviCollecor naming schme and scale
+
+    returns:
+        Object to be written to InfluxDB
+    '''
     fields = {}
     fields["temperature"]               = payload["temperature"] if ('temperature' in payload) else None
     fields["humidity"]                  = payload["humidity"] if ('humidity' in payload) else None
@@ -40,14 +46,14 @@ def convert_to_influx(mac, payload):
     fields["accelerationX"]             = payload["acceleration_x"] if ('acceleration_x' in payload) else None
     fields["accelerationY"]             = payload["acceleration_y"] if ('acceleration_y' in payload) else None
     fields["accelerationZ"]             = payload["acceleration_z"] if ('acceleration_z' in payload) else None
-    fields["batteryVoltage"]            = payload["battery"] if hasattr(payload, 'battery') else None
+    fields["batteryVoltage"]            = payload["battery"]/1000.0 if hasattr(payload, 'battery') else None
     fields["dataFormat"]                = payload["data_format"] if ('data_format' in payload) else None
     fields["txPower"]                   = payload["tx_power"] if ('tx_power' in payload) else None
     fields["movementCounter"]           = payload["battery"] if ('battery' in payload) else None
     fields["measurementSequenceNumber"] = payload["measurement_sequence_number"] if ('measurement_sequence_number' in payload) else None
     fields["tagID"]                     = payload["tagID"] if ('tagID' in payload) else None
     return {
-        "measurement": "ruuvitag",
+        "measurement": "ruuvi_measurements",
         "tags": {
             "mac": mac
         },
@@ -55,7 +61,7 @@ def convert_to_influx(mac, payload):
     }
 
 
-client = InfluxDBClient(host="localhost", port=8086, database="tag_data")
+client = InfluxDBClient(host="localhost", port=8086, database="ruuvi")
 
 while True:
     datas = RuuviTagSensor.get_data_for_sensors()
