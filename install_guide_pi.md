@@ -89,8 +89,10 @@ $ wget https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tgz
 $ tar xzvf Python-3.6.0.tgz
 $ cd Python-3.6.0/
 $ ./configure
-$ make
+$ make -j2
 $ sudo make install
+# to preserve the existing custom python installations (e.g. having python3.6 installed and want python3.7 on the side)
+# $ sudo make altinstall
 $ reboot
 ```
 
