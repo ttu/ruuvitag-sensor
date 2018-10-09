@@ -19,7 +19,7 @@ def _run_get_data_background(macs, queue, shared_data, bt_device):
         if not shared_data['run_flag']:
             run_flag.running = False
 
-        data[1]['time'] = str(datetime.now())
+        data[1]['time'] = datetime.utcnow().isoformat()
         queue.put(data)
 
     RuuviTagSensor.get_datas(add_data, macs, run_flag, bt_device)
