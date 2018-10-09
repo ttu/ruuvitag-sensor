@@ -41,6 +41,9 @@ setup(name='ruuvitag_sensor',
       license='MIT',
       packages=['ruuvitag_sensor'],
       include_package_data=True,
-      tests_require=['nose'],
+      tests_require=[
+          'nose',
+          'mock'
+      ],
       test_suite='nose.collector',
       zip_safe=True)
