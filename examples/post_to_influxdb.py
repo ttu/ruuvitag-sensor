@@ -18,13 +18,13 @@ $ docker start docker-statsd-influxdb-grafana
 
 InfluxDB: http://localhost:3004/
 
-First create new table: CREATE TABLE tag_data
-Query to return all tag data: SELECT * FROM ruuvitag
-Remove all data: DROP SERIES FROM ruuvitag
+First create new database: CREATE DATABASE ruuvi
+Query to return all tag data: SELECT * FROM ruuvi_measurements
+Remove all data: DROP SERIES FROM ruuvi_measurements
 
 Grafana: http://localhost:3003/ (root/root)
 
-Add datasource (type: InfluxDB url: http://localhost:8086, database: tag_data)
+Add datasource (type: InfluxDB url: http://localhost:8086, database: ruuvi)
 Add new graph to dashboard
 '''
 
@@ -34,7 +34,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 def convert_to_influx(mac, payload):
     '''
-    Convert data into RuuviCollecor naming schme and scale
+    Convert data into RuuviCollector naming schme and scale
 
     returns:
         Object to be written to InfluxDB
@@ -52,7 +52,7 @@ def convert_to_influx(mac, payload):
     fields["movementCounter"]           = payload["battery"] if ('battery' in payload) else None
     fields["measurementSequenceNumber"] = payload["measurement_sequence_number"] if ('measurement_sequence_number' in payload) else None
     fields["tagID"]                     = payload["tagID"] if ('tagID' in payload) else None
-    fields["rssi"]                      = received_data[1]["rssi"] if ('rssi' in received_data[1]) else None
+    fields["rssi"]                      = payload["rssi"] if ('rssi' in payload) else None
     return {
         "measurement": "ruuvi_measurements",
         "tags": {
