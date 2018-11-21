@@ -1,7 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
-
+* Changed RuuviTagReactive's time-value from local to UTC 
+* Dataformat 5 to use mV instead of V
+* Add data_format value to payload
 
 ## [0.11.0] - 2018-04-25
 * Fix support for RuuviFW 1.2.8 

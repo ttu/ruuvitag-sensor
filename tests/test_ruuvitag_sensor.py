@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch
+from mock import patch, MagicMock
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
