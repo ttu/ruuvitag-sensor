@@ -14,8 +14,8 @@ setup(
     url='https://github.com/musterp/ruuvitag-sensing',
     download_url='https://github.com/musterp/ruuvitag-sensing/tarball/' 
     + ruuvitag_sensing.__version__,
-    author='Tomi Tuhkanen, Pascal Muster',
-    author_email='tomi.tuhkanen@iki.fi',
+    author='Pascal Muster',
+    author_email='muster.pascal@t-online.de',
     platforms='Linux, Unix',
     classifiers=[
         'Development Status :: 4 - Beta',
