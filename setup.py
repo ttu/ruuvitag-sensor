@@ -12,9 +12,6 @@ except ImportError:
     with io.open('README.md', encoding="utf-8") as f:
         readme = f.read()
 
-with io.open('README.md', encoding="utf-8") as f:
-    readme = f.read()
-
 setup(
     name='ruuvitag_sensing',
     version=ruuvitag_sensing.__version__,
