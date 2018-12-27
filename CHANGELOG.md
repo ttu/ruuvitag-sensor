@@ -1,9 +1,10 @@
 ## Changelog
 
-## [0.12.0-beta] - 2018-12-27
+## [0.12.0] - 2018-12-27
 * Added RSSI-Value to RuuviTag data output
+* beta version, development in progress
 
-### [Unreleased]
+## [Unreleased] - TTU after 2018-04-25
 * Changed RuuviTagReactive's time-value from local to UTC 
 * Dataformat 5 to use mV instead of V
 * Add data_format value to payload
