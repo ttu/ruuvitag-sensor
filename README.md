@@ -31,7 +31,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor]
 
 Install latest released version
 ```sh
-$ pip install ruuvitag_sensor
+$ pip install ruuvitag_sensing
 ```
 
 Install latest developement version
