@@ -1,7 +1,7 @@
 import sys
 from setuptools import setup
 
-import ruuvitag_sensor
+import ruuvitag_sensing
 
 try:
     import pypandoc
