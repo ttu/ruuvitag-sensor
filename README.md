@@ -2,7 +2,7 @@
 
 Forked from [ttu/ruuvitag-sensor](https://github.com/ttu/ruuvitag-sensor)
 
-RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](http://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
+RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor](https://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
 
 ### Requirements
 
