@@ -19,7 +19,7 @@ from concurrent.futures import ProcessPoolExecutor
 import asyncio
 from aiohttp import ClientSession
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensing.ruuvi import RuuviTagSensor
 
 
 all_data = {}

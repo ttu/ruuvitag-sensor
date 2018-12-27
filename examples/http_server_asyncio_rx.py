@@ -13,7 +13,7 @@ Requires:
 
 
 from aiohttp import web
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensing.ruuvi_rx import RuuviTagReactive
 
 allData = {}
 

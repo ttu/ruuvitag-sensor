@@ -2,7 +2,7 @@
 RuuviTagReactive and Reactive Extensions Subject examples
 '''
 
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensing.ruuvi_rx import RuuviTagReactive
 
 tags = {
     'F4:A5:74:89:16:57': 'sauna',

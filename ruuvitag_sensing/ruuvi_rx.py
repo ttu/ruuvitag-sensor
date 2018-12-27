@@ -5,7 +5,7 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 from rx.subjects import Subject
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+from ruuvitag_sensing.ruuvi import RuuviTagSensor, RunFlag
 
 
 def _run_get_data_background(macs, queue, shared_data, bt_device):

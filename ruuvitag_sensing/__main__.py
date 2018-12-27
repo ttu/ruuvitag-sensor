@@ -1,12 +1,12 @@
 import sys
 import argparse
 
-import ruuvitag_sensor
-from ruuvitag_sensor.log import log
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.ruuvitag import RuuviTag
+import ruuvitag_sensing
+from ruuvitag_sensing.log import log
+from ruuvitag_sensing.ruuvi import RuuviTagSensor
+from ruuvitag_sensing.ruuvitag import RuuviTag
 
-ruuvitag_sensor.log.enable_console()
+ruuvitag_sensing.log.enable_console()
 
 
 def my_excepthook(exctype, value, traceback):
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--stream', action='store_true',
                         dest='stream_action', help='Stream broadcasts from all RuuviTags')
     parser.add_argument('--version', action='version',
-                        version='%(prog)s {}'.format(ruuvitag_sensor.__version__))
+                        version='%(prog)s {}'.format(ruuvitag_sensing.__version__))
     args = parser.parse_args()
 
     if args.mac_address:

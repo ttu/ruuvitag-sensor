@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import copy
 import requests
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensing.ruuvi import RuuviTagSensor
 
 
 all_data = {}

@@ -8,7 +8,7 @@ import os
 import math
 
 from datetime import datetime
-from ruuvitag_sensor.ruuvitag import RuuviTag
+from ruuvitag_sensing.ruuvitag import RuuviTag
 
 # Starting Routines
 os.system('clear')

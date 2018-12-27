@@ -1,7 +1,7 @@
 import re
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.decoder import get_decoder
+from ruuvitag_sensing.ruuvi import RuuviTagSensor
+from ruuvitag_sensing.decoder import get_decoder
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 

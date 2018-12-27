@@ -14,7 +14,7 @@ import json
 from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
 from flask import Flask, abort
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensing.ruuvi import RuuviTagSensor
 
 app = Flask(__name__)
 
