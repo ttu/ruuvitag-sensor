@@ -8,11 +8,11 @@ with io.open('README.md', encoding="utf-8") as f:
 setup(
     name='ruuvitag_sensing',
     version=ruuvitag_sensing.__version__,
-    description='Find RuuviTag sensor beacons and get data from selected ' 
+    description='Find RuuviTag sensor beacons and get data from selected '
     + 'sensor and decode data from eddystone url',
     long_description=readme,
     url='https://github.com/musterp/ruuvitag-sensing',
-    download_url='https://github.com/musterp/ruuvitag-sensing/tarball/' 
+    download_url='https://github.com/musterp/ruuvitag-sensing/tarball/'
     + ruuvitag_sensing.__version__,
     author='Pascal Muster',
     author_email='muster.pascal@t-online.de',
