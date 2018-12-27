@@ -1,21 +1,21 @@
 '''
 Verification script for RuuviTags
 
-Run the script with Python 3.x and 2.7. Requires at least one active RuuviTag.
+Run the script with Python 3.x and 2.7.
+Requires at least one active RuuviTag.
 '''
 
 import time
 
-from ruuvitag_sensor.decoder import UrlDecoder, Df3Decoder
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
-from ruuvitag_sensor.ruuvitag import RuuviTag
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensing.decoder import UrlDecoder, Df3Decoder
+from ruuvitag_sensing.ruuvi import RuuviTagSensor, RunFlag
+from ruuvitag_sensing.ruuvitag import RuuviTag
+from ruuvitag_sensing.ruuvi_rx import RuuviTagReactive
 
 # Uncomment to turn on console print
-# import ruuvitag_sensor
-# from ruuvitag_sensor.log import log
-# ruuvitag_sensor.log.enable_console()
-
+# import ruuvitag_sensing
+# from ruuvitag_sensing.log import log
+# ruuvitag_sensing.log.enable_console()
 
 #
 # Helper Functions
@@ -52,9 +52,9 @@ else:
 
 
 #
-# UrlDecoder.decode_data
+# Df3Decoder.decode_data
 #
-print_header('UrlDecoder.decode_data')
+print_header('Df3Decoder.decode_data')
 
 decoder = Df3Decoder()
 data = decoder.decode_data('03291A1ECE1EFC18F94202CA0B5300000000BB')
