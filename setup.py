@@ -1,15 +1,9 @@
-from setuptools import setup
-
-import pypandoc
 import io
+from setuptools import setup
 import ruuvitag_sensing
 
-try:
-    readme = pypandoc.convert('README.md', 'rst')
-    readme = readme.replace("\r", "")
-except ImportError:
-    with io.open('README.md', encoding="utf-8") as f:
-        readme = f.read()
+with io.open('README.md', encoding="utf-8") as f:
+    readme = f.read()
 
 setup(
     name='ruuvitag_sensing',
