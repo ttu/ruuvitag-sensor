@@ -42,9 +42,7 @@ class UrlDecoder(object):
     Decodes data from RuuviTag url
     Protocol specification:
     https://github.com/ruuvi/ruuvi-sensor-protocols
-    '''
 
-    '''
     Decoder operations are ported from:
     https://github.com/ruuvi/sensor-protocol-for-eddystone-url/blob/master/index.html
 
@@ -132,6 +130,10 @@ class Df3Decoder(object):
         acc_z = twos_complement((data[10] << 8) + data[11], 16)
         return (acc_x, acc_y, acc_z)
 
+    def _get_rssi(self, data):
+        '''Return Received Signal Strength Indicator in dBm'''
+        return data[-1]-256
+
     def _get_battery(self, data):
         '''Return battery mV'''
         return (data[12] << 8) + data[13]
@@ -155,7 +157,8 @@ class Df3Decoder(object):
                 'acceleration_x': acc_x,
                 'acceleration_y': acc_y,
                 'acceleration_z': acc_z,
-                'battery': self._get_battery(byte_data)
+                'battery': self._get_battery(byte_data),
+                'rssi': self._get_rssi(byte_data)
             }
         except Exception:
             log.exception('Value: %s not valid', data)
@@ -237,6 +240,9 @@ class Df5Decoder(object):
     def _get_mac(self, data):
         return ''.join('{:02x}'.format(x) for x in data[18:24])
 
+    def _get_rssi(self, data):
+        return data[-1] - 256
+
     def decode_data(self, data):
         '''
         Decode sensor data.
@@ -257,6 +263,7 @@ class Df5Decoder(object):
                 'acceleration_y': acc_y,
                 'acceleration_z': acc_z,
                 'tx_power': self._get_txpower(byte_data),
+                'rssi': self._get_rssi(byte_data),
                 'battery': self._get_battery(byte_data),
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
