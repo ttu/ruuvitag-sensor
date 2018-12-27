@@ -1,13 +1,13 @@
 from setuptools import setup
 
+import pypandoc
+import io
 import ruuvitag_sensing
 
 try:
-    import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
     readme = readme.replace("\r", "")
 except ImportError:
-    import io
     with io.open('README.md', encoding="utf-8") as f:
         readme = f.read()
 
@@ -20,9 +20,9 @@ setup(
     url='https://github.com/musterp/ruuvitag-sensing',
     download_url='https://github.com/musterp/ruuvitag-sensing/tarball/' 
     + ruuvitag_sensing.__version__,
-    author='Tomi Tuhkanen',
+    author='Tomi Tuhkanen, Pascal Muster',
     author_email='tomi.tuhkanen@iki.fi',
-    platforms='Linux and other',
+    platforms='Linux, Unix',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
