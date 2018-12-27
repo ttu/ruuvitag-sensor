@@ -1,4 +1,3 @@
-import sys
 from setuptools import setup
 
 import ruuvitag_sensing
@@ -48,4 +47,3 @@ setup(
     ],
     test_suite='nose.collector',
     zip_safe=True)
-    
