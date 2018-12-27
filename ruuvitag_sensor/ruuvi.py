@@ -42,7 +42,6 @@ class RuuviTagSensor(object):
     def convert_data(raw):
         """
         Validate that data is from RuuviTag and get correct data part.
-        
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
