@@ -8,9 +8,10 @@ import os
 import math
 
 from datetime import datetime
+from ruuvitag_sensor.ruuvitag import RuuviTag
+
 
 class MyRuuvi():
-    from ruuvitag_sensor.ruuvitag import RuuviTag
 
     def __init__(self, mac_addr='E8:C7:D7:F2:4B:47', bt_device=''):
         self._sensor = RuuviTag(mac_addr, bt_device)
@@ -86,21 +87,16 @@ class MyRuuvi():
         self._sensor.update()
         self._data_count += 1
 
-    def print_to_shell(self, running=True):
-        '''
-        Printing collected/extracted data to shell
-        '''
-        if not running:
-            return
+    def update_reactive(self):
+        def handle_callback(found_data):
+            self._sensor.state = found_data[1]
+            self.print_to_shell()
+        self._sensor.update_reactive(handle_callback)
 
-        # Starting routines
-        if self.data_count == 0:
-            os.system('clear')
-            print('Starting...\nPrinting Data to shell')
+    def print_to_shell(self):
+        ''' Printing collected/extracted data from saved state to shell '''
 
-        self.update()
-        os.system('clear')
-        print('Press Ctr+C to quit.\n\r')
+        print('\n\r')
         print(str(datetime.now()))
         print('Sensor:\t{}'.format(self.mac))
         print('-'*30)
