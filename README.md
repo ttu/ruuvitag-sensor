@@ -36,7 +36,8 @@ Look at [TTU's RuuviTag Python Package](https://github.com/ttu/ruuvitag-sensor).
 
 RuuviTag sensors can be identified using MAC addresses.
 
-#### Simple "print to shell" script
+#### Simple print to shell
+
 ```python
 '''
 Printing Data to Shell Window
