@@ -68,7 +68,7 @@ class MyRuuvi():
         self._sensor.update()
         self._data_count += 1
 
-    def print_data(self, sleepTime=0.1, runFlag=True):
+    def print_data(self, sleepTime=0, runFlag=True):
         ''' Printing Data '''
         # Starting routines
         os.system('clear')
@@ -81,14 +81,14 @@ class MyRuuvi():
                 print(str(datetime.now()))
                 print('Sensor:\t{}'.format(self.mac))
                 print('-'*30)
-                print('Temperature:\t{:.2f}°C'.format(self.temp))
-                print('Humidity:\t{:.1f}%'.format(self.humid))
-                print('Pressure:\t{:.0f}hPa'.format(self.press))
+                print('Temperature:\t{:.2f}\t°C'.format(self.temp))
+                print('Humidity:\t{:.1f}\t%'.format(self.humid))
+                print('Pressure:\t{:.0f}\thPa'.format(self.press))
                 print('-'*30)
-                print('Acceleration:\t{:0f} mG'.format(self.acc))
-                print('X:\t\t{:.0f} mG'.format(self.acc_x))
-                print('Y:\t\t{:.0f} mG'.format(self.acc_y))
-                print('Z:\t\t{:.0f} mG'.format(self.acc_z))
+                print('Acceleration:\t{:.0f}\tmG'.format(self.acc))
+                print('X:\t\t{:.0f}\tmG'.format(self.acc_x))
+                print('Y:\t\t{:.0f}\tmG'.format(self.acc_y))
+                print('Z:\t\t{:.0f}\tmG'.format(self.acc_z))
                 print('-'*30)
                 print('RSSI:\t\t{}'.format(self.rssi))
                 print('Data Count:\t{}'.format(self.data_count))
