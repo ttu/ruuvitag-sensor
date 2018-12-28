@@ -1,6 +1,7 @@
 '''
-Testing new added RSSI Value
-Extracted from BLE-Byte-Data
+Class included in ruuvitag_sensing for
+printing data extracted from RuuviTag Raw Data Format (v1,v2)
+- is df3 and df5 - in shell.
 '''
 
 import time
