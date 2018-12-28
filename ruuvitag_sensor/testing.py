@@ -8,9 +8,9 @@ import os
 import math
 
 from datetime import datetime
-from ruuvitag_sensor.ruuvitag import RuuviTag
 
 class MyRuuvi():
+    from ruuvitag_sensor.ruuvitag import RuuviTag
 
     def __init__(self, mac_addr='E8:C7:D7:F2:4B:47', bt_device=''):
         self._sensor = RuuviTag(mac_addr, bt_device)

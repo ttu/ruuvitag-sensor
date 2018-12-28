@@ -1,6 +1,6 @@
 import re
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 from ruuvitag_sensor.decoder import get_decoder
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
@@ -20,6 +20,7 @@ class RuuviTag(object):
         self._state = {}
         self._data = None
         self._bt_device = bt_device
+        self._run_flag = RunFlag()
 
     @property
     def mac(self):
@@ -28,6 +29,10 @@ class RuuviTag(object):
     @property
     def state(self):
         return self._state
+
+    @property
+    def run_flag(self):
+        return self._run_flag
 
     def update(self):
         """
@@ -50,3 +55,6 @@ class RuuviTag(object):
             self._state = get_decoder(data_format).decode_data(self._data)
 
         return self._state
+
+    def update_reactive(self, callback):
+        RuuviTagSensor.get_datas(callback, self._mac, self._run_flag, self._bt_device)
