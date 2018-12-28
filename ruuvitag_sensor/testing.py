@@ -93,7 +93,7 @@ class MyRuuvi():
     def print_to_shell(self):
         ''' Printing collected data from saved state to shell '''
 
-        os.system
+        os.system('clear')
         print('\n\r')
         print(str(datetime.now()))
         print('Sensor:\t{}'.format(self.mac))
