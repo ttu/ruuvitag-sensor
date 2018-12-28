@@ -88,15 +88,12 @@ class MyRuuvi():
         self._data_count += 1
 
     def update_reactive(self):
-        def handle_callback(found_data):
-            os.system('clear')
-            self.state = found_data[1]
-            self.print_to_shell()
-        self._sensor.update_reactive(handle_callback)
+        pass
 
     def print_to_shell(self):
         ''' Printing collected data from saved state to shell '''
 
+        os.system
         print('\n\r')
         print(str(datetime.now()))
         print('Sensor:\t{}'.format(self.mac))
