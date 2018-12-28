@@ -94,8 +94,7 @@ class MyRuuvi():
         if not runFlag:
             return
         # Starting routines
-        os.system('clear')
-        print('Starting...\nPrinting Data 2 Screen')
+        print('Starting...\nPrinting Data to shell')
         try:
             self.update()
             os.system('clear')
