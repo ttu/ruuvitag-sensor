@@ -94,7 +94,7 @@ class MyRuuvi():
         self._sensor.update_reactive(handle_callback)
 
     def print_to_shell(self):
-        ''' Printing collected/extracted data from saved state to shell '''
+        ''' Printing collected data from saved state to shell '''
 
         print('\n\r')
         print(str(datetime.now()))
