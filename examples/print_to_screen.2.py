@@ -9,4 +9,4 @@ mac = 'E8:C7:D7:F2:4B:47'
 sleepTime = 0
 
 ruuvi_sensor = MyRuuvi(mac)
-ruuvi_sensor.print_data(sleepTime)
+ruuvi_sensor.print_to_shell(sleepTime)
