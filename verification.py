@@ -7,15 +7,15 @@ Requires at least one active RuuviTag.
 
 import time
 
-from ruuvitag_sensing.decoder import UrlDecoder, Df3Decoder
-from ruuvitag_sensing.ruuvi import RuuviTagSensor, RunFlag
-from ruuvitag_sensing.ruuvitag import RuuviTag
-from ruuvitag_sensing.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensor.decoder import UrlDecoder, Df3Decoder
+from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+from ruuvitag_sensor.ruuvitag import RuuviTag
+from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 # Uncomment to turn on console print
-# import ruuvitag_sensing
-# from ruuvitag_sensing.log import log
-# ruuvitag_sensing.log.enable_console()
+# import ruuvitag_sensor
+# from ruuvitag_sensor.log import log
+# ruuvitag_sensor.log.enable_console()
 
 #
 # Helper Functions

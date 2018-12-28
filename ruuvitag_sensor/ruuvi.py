@@ -3,17 +3,17 @@ import os
 import time
 import logging
 
-from ruuvitag_sensing.decoder import get_decoder
+from ruuvitag_sensor.decoder import get_decoder
 
 log = logging.getLogger(__name__)
 
 
 if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
     # Use BleCommunicationDummy also for CI as it can't use bluez
-    from ruuvitag_sensing.ble_communication import BleCommunicationDummy
+    from ruuvitag_sensor.ble_communication import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
-    from ruuvitag_sensing.ble_communication import BleCommunicationNix
+    from ruuvitag_sensor.ble_communication import BleCommunicationNix
     ble = BleCommunicationNix()
 
 

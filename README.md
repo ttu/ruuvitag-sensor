@@ -1,54 +1,42 @@
-# RuuviTag Sensor Python Package
+# Python Package for RuuviTag Sensing
 
 Forked from [ttu/ruuvitag-sensor](https://github.com/ttu/ruuvitag-sensor)
 
-RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor](https://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
+RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor](https://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url. This Rep/Fork is made for own purposes.
 
 ### Requirements
 
 * RuuviTag with Weather Station firmware
-    * Setup [guide](https://ruu.vi/setup/)
-    * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
+  * Setup [guide](https://ruu.vi/setup/)
+  * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Python 2.7 and 3
-    * psutil
-        * Package uses psutil to start and stop processes. 
-        * Psutil requires 
-            * `sudo apt-get install python-dev python-psutil` or 
-            * `sudo apt-get install python3-dev python3-psutil`
+  * psutil
+    * Package uses psutil to start and stop processes.
+    * Psutil requires
+      * `sudo apt-get install python-dev python-psutil` or
+      * `sudo apt-get install python3-dev python3-psutil`
 * Linux
-    * Package's Windows and OSX supports are only for testing and url decoding
+  * Package's Windows and OSX supports are only for testing and url decoding
 * Bluez
-    * `sudo apt-get install bluez bluez-hcidump`
-    * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
+  * `sudo apt-get install bluez bluez-hcidump`
+  * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 * Superuser rights
-    * BlueZ tools require superuser rights
-
- __NOTE:__ Experimental implementation with cross-platform BLE communication in branch: [bleson-ble-communication](https://github.com/ttu/ruuvitag-sensor/tree/bleson-ble-communication)
- * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
- * More info on issues [#31](https://github.com/ttu/ruuvitag-sensor/issues/31) and [#18](https://github.com/ttu/ruuvitag-sensor/issues/18)
+  * BlueZ tools require superuser rights
 
 ### Installation
 
-Install latest released version
+Install latest development version
 ```sh
-$ pip install ruuvitag_sensing
+$ pip install git+https://github.com/musterp/ruuvitag-sensing
 ```
-
-Install latest developement version
-```sh
-$ pip install git+https://github.com/ttu/ruuvitag-sensor
-# Or clone this repository and install locally
-$ pip install -e .
-```
-
-Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruuvitag-sensor/blob/master/install_guide_pi.md)
 
 ### Usage
 
+Look at [TTU's RuuviTag Python Package](https://github.com/ttu/ruuvitag-sensor).
+
 RuuviTag sensors can be identified using MAC addresses.
 
-
-##### Get data from sensor
+#### Get data from sensor
 
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
@@ -64,7 +52,7 @@ state = sensor.state
 print(state)
 ```
 
-##### Get sensor datas with callback
+#### Get sensor datas with callback
 
 `get_datas` calls the callback every time when a RuuviTag sensor broadcasts data
 
@@ -101,7 +89,7 @@ macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
 RuuviTagSensor.get_datas(handle_data, macs, run_flag)
 ```
 
-##### Get data for specified sensors
+#### Get data for specified sensors
 
 `get_data_for_sensors` will collect latest data from sensors for specified duration.
 
@@ -121,7 +109,7 @@ print(datas['AA:2C:6A:1E:59:3D'])
 print(datas['CC:2C:6A:1E:59:3D'])
 ```
 
-##### RuuviTagReactive
+#### RuuviTagReactive
 
 Reactive wrapper and background process for RuuviTagSensor get_datas. Optional MAC address list can be passed on initializer and execution can be stopped with stop function.
 
@@ -155,7 +143,7 @@ More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/rx.py
 
 Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
 
-##### Find sensors
+#### Find sensors
 
 `find_ruuvitags` function will exeute forever and when new RuuviTag sensor is found it will print it's MAC address and state at that moment. This function can be used with a command line applications. Logging must be enabled and set to print to console.
 
@@ -168,7 +156,7 @@ ruuvitag_sensor.log.enable_console()
 RuuviTagSensor.find_ruuvitags()
 ```
 
-##### Using different Bluetooth device
+#### Using different Bluetooth device
 
 If you have multiple Bluetooth devices installed, device to be used might not be the default (Linux: hci0). Device can be passed with `bt_device` parameter.
 
@@ -185,7 +173,7 @@ datas = RuuviTagSensor.get_data_for_sensors(bt_device='hci1')
 RuuviTagSensor.get_datas(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=device))
 ```
 
-##### Parse data
+#### Parse data
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -203,7 +191,7 @@ print(sensor_data)
 # {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
-##### Data Formats
+#### Data Formats
 
 Example data has data from 4 sensors with different firmwares.
 * 1st is Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data
@@ -213,14 +201,14 @@ Example data has data from 4 sensors with different firmwares.
 
 ```python
 {
-'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None }, 
+'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None },
 'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' },
 'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3},
 'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70 }
 }
 ```
 
-##### Logging and Print to console
+#### Logging and Print to console
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. Command line application has console logging enabled by default.
 
@@ -235,7 +223,7 @@ datas = RuuviTagSensor.get_data_for_sensors()
 print(datas)
 ```
 
-##### Command line application
+#### Command line application
 
 ```
 $ python ruuvitag_sensor -h

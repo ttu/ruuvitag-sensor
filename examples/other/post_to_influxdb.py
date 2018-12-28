@@ -29,7 +29,7 @@ Add new graph to dashboard
 '''
 
 from influxdb import InfluxDBClient
-from ruuvitag_sensing.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
 def convert_to_influx(mac, payload):

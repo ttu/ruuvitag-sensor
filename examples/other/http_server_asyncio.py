@@ -16,7 +16,7 @@ import asyncio
 from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
 from aiohttp import web
-from ruuvitag_sensing.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 allData = {}
 

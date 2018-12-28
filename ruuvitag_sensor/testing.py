@@ -1,5 +1,5 @@
 '''
-Class included in ruuvitag_sensing for
+Class included in ruuvitag_sensor for
 printing data extracted from RuuviTag Raw Data Format (v1,v2)
 - is df3 and df5 - in shell.
 '''

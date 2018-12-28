@@ -2,10 +2,10 @@
 Get all BLE device broadcasts
 '''
 
-from ruuvitag_sensing.ble_communication import BleCommunicationNix
-import ruuvitag_sensing.log
+from ruuvitag_sensor.ble_communication import BleCommunicationNix
+import ruuvitag_sensor.log
 
-ruuvitag_sensing.log.enable_console()
+ruuvitag_sensor.log.enable_console()
 
 ble = BleCommunicationNix()
 

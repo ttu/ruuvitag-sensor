@@ -7,7 +7,7 @@ Requires:
 
 from urllib.parse import quote
 import requests
-from ruuvitag_sensing.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 macs = [
     'F4:A5:74:89:16:57',

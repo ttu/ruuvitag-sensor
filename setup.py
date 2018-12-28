@@ -1,6 +1,6 @@
 from setuptools import setup
 
-import ruuvitag_sensing
+import ruuvitag_sensor
 
 try:
     import pypandoc
@@ -12,14 +12,14 @@ except ImportError:
         readme = f.read()
 
 setup(
-    name='ruuvitag_sensing',
-    version=ruuvitag_sensing.__version__,
+    name='ruuvitag_sensor',
+    version=ruuvitag_sensor.__version__,
     description='Find RuuviTag sensor beacons and get data from selected '
     + 'sensor and decode data from eddystone url',
     long_description=readme,
     url='https://github.com/musterp/ruuvitag-sensing',
     download_url='https://github.com/musterp/ruuvitag-sensing/tarball/'
-    + ruuvitag_sensing.__version__,
+    + ruuvitag_sensor.__version__,
     author='Pascal Muster',
     author_email='muster.pascal@t-online.de',
     platforms='Linux, Unix',
@@ -39,7 +39,7 @@ setup(
         'ptyprocess;platform_system=="Linux"'
     ],
     license='MIT',
-    packages=['ruuvitag_sensing'],
+    packages=['ruuvitag_sensor'],
     include_package_data=True,
     tests_require=[
         'nose',
