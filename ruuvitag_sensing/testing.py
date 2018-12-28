@@ -94,7 +94,9 @@ class MyRuuvi():
         if not runFlag:
             return
         # Starting routines
-        print('Starting...\nPrinting Data to shell')
+        if self.data_count == 0:
+            os.system('clear')
+            print('Starting...\nPrinting Data to shell')
         try:
             self.update()
             os.system('clear')
