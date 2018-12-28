@@ -4,7 +4,6 @@ printing data extracted from RuuviTag Raw Data Format (v1,v2)
 - is df3 and df5 - in shell.
 '''
 
-import time
 import os
 import math
 
@@ -87,7 +86,7 @@ class MyRuuvi():
         self._sensor.update()
         self._data_count += 1
 
-    def print_to_shell(self, sleepTime=0, runFlag=True):
+    def print_to_shell(self, runFlag=True):
         '''
         Printing collected/extracted data to shell
         '''
@@ -121,4 +120,3 @@ class MyRuuvi():
         print('RSSI:\t\t{}\tdBm'.format(self.rssi))
         print('Battery:\t{:.0f}\tmV'.format(self.bat))
         print('Data Count:\t{}'.format(self.data_count))
-        time.sleep(sleepTime)
