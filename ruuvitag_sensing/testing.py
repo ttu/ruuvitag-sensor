@@ -93,7 +93,7 @@ class MyRuuvi():
         '''
         if not runFlag:
             return
-        
+
         # Starting routines
         if self.data_count == 0:
             os.system('clear')
