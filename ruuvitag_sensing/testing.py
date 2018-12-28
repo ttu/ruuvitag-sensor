@@ -73,7 +73,6 @@ class MyRuuvi():
         # Starting routines
         os.system('clear')
         print('Starting...\nPrinting Data 2 Screen')
-        self.data_count = 0
         while True and runFlag:
             try:
                 self.update()
