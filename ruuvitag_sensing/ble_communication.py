@@ -72,7 +72,8 @@ class BleCommunicationNix(BleCommunication):
 
     @staticmethod
     def stop(hcitool, hcidump):
-        # import psutil here so as long as all implementations are in the same file, all will work
+        # import psutil here 
+        # as long as all implementations are in the same file, all will work
         import psutil
 
         log.info('Stop receiving broadcasts')
