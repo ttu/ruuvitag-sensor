@@ -77,7 +77,7 @@ class MyRuuvi():
             try:
                 self.update()
                 os.system('clear')
-                print('Press Ctr + C to quit.\n\r')
+                print('Press Ctr+C to quit.\n\r')
                 print(str(datetime.now()))
                 print('Sensor:\t{}'.format(self.mac))
                 print('-'*30)
@@ -91,7 +91,7 @@ class MyRuuvi():
                 print('Z:\t\t{:.0f}\tmG'.format(self.acc_z))
                 print('-'*30)
                 print('RSSI:\t\t{}\tdBm'.format(self.rssi))
-                print('Battery:\t{:.0f}\tmV')
+                print('Battery:\t{:.0f}\tmV'.format(self.bat))
                 print('Data Count:\t{}'.format(self.data_count))
                 time.sleep(sleepTime)
             except KeyboardInterrupt:
