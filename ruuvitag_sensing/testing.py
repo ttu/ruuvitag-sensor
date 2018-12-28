@@ -12,8 +12,9 @@ from ruuvitag_sensor.ruuvitag import RuuviTag
 
 class MyRuuvi():
 
-    def __init__(self, mac_addr, bt_device=''):
+    def __init__(self, mac_addr='E8:C7:D7:F2:4B:47', bt_device=''):
         self._sensor = RuuviTag(mac_addr, bt_device)
+        self._data_count = 0
 
     @property
     def mac(self):
@@ -59,15 +60,23 @@ class MyRuuvi():
     def rssi(self):
         return self.state['rssi']
 
+    @property
+    def data_count(self):
+        return self._data_count
+
+    def update(self):
+        self._sensor.update()
+        self._data_count += 1
+
     def print_data(self, sleepTime=0.1, runFlag=True):
         ''' Printing Data '''
         # Starting routines
         os.system('clear')
         print('Starting...\nPrinting Data 2 Screen')
-
+        self.data_count = 0
         while True and runFlag:
             try:
-                self._sensor.update()
+                self.update()
                 os.system('clear')
                 print('Press Ctr + C to quit.\n\r')
                 print(str(datetime.now()))
@@ -83,6 +92,7 @@ class MyRuuvi():
                 print('Z:\t\t{:.0f} mG'.format(self.acc_z))
                 print('-'*30)
                 print('RSSI:\t\t{}'.format(self.rssi))
+                print('Data Count:\t{}'.format(self.data_count))
                 time.sleep(sleepTime)
             except KeyboardInterrupt:
                 # When Ctrl+C is pressed
