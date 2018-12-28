@@ -86,11 +86,11 @@ class MyRuuvi():
         self._sensor.update()
         self._data_count += 1
 
-    def print_to_shell(self, runFlag=True):
+    def print_to_shell(self, running=True):
         '''
         Printing collected/extracted data to shell
         '''
-        if not runFlag:
+        if not running:
             return
 
         # Starting routines
