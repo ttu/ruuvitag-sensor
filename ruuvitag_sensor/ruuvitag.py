@@ -50,3 +50,6 @@ class RuuviTag(object):
             self._state = get_decoder(data_format).decode_data(self._data)
 
         return self._state
+    def update_reactive(self):
+        self._state = RuuviTagSensor.get_data_for_sensors(self.mac, None, self._bt_device)[1]
+        return self._state
