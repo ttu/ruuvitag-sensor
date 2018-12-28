@@ -6,6 +6,7 @@ printing data extracted from RuuviTag Raw Data Format (v1,v2)
 
 import time
 import os
+import math
 
 from datetime import datetime
 from ruuvitag_sensor.ruuvitag import RuuviTag
@@ -16,6 +17,7 @@ class MyRuuvi():
         self._sensor = RuuviTag(mac_addr, bt_device)
         self._data_count = 0
 
+    ### Properties ###
     @property
     def mac(self):
         return self._sensor.mac
@@ -57,6 +59,22 @@ class MyRuuvi():
         return self.state['battery']
 
     @property
+    def dataformat(self):
+        return self.state['data_format']
+
+    @property
+    def elev_x(self):
+        return math.acos(self.acc_x / self.acc) * 180 / math.pi
+
+    @property
+    def elev_y(self):
+        return math.acos(self.acc_y / self.acc) * 180 / math.pi
+
+    @property
+    def elev_z(self):
+        return math.acos(self.acc_z / self.acc) * 180 / math.pi
+
+    @property
     def rssi(self):
         return self.state['rssi']
 
@@ -64,16 +82,19 @@ class MyRuuvi():
     def data_count(self):
         return self._data_count
 
+    ### Methods ###
     def update(self):
         self._sensor.update()
         self._data_count += 1
 
-    def print_data(self, sleepTime=0, runFlag=True):
-        ''' Printing Data '''
+    def print_to_shell(self, sleepTime=0):
+        '''
+        Printing collected/extracted data to shell
+        '''
         # Starting routines
         os.system('clear')
         print('Starting...\nPrinting Data 2 Screen')
-        while True and runFlag:
+        while True:
             try:
                 self.update()
                 os.system('clear')
@@ -90,16 +111,15 @@ class MyRuuvi():
                 print('Y:\t\t{:.0f}\tmG'.format(self.acc_y))
                 print('Z:\t\t{:.0f}\tmG'.format(self.acc_z))
                 print('-'*30)
+                print('Elevation X:\t{:.0f}\tmG'.format(self.elev_x))
+                print('Elevation Y:\t{:.0f}\tmG'.format(self.elev_y))
+                print('Elevation Z:\t{:.0f}\tmG'.format(self.elev_x))
+                print('-' * 30)
                 print('RSSI:\t\t{}\tdBm'.format(self.rssi))
                 print('Battery:\t{:.0f}\tmV'.format(self.bat))
                 print('Data Count:\t{}'.format(self.data_count))
                 time.sleep(sleepTime)
-            except KeyboardInterrupt:
-                # When Ctrl+C is pressed
-                # execution of the while loop is stopped
-                print('Exit')
-                break
-            except KeyError:
+            except:
                 # When Ctrl+C is pressed
                 # execution of the while loop is stopped
                 print('Exit')
