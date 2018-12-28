@@ -78,12 +78,18 @@ class MyRuuvi():
                 print('Pressure:\t{:.0f}hPa'.format(self.press))
                 print('-'*30)
                 print('Acceleration:\t{:0f} mG'.format(self.acc))
-                print('X:\t\t{:0f} mG'.format(self.acc_x))
-                print('Y:\t\t{:0f} mG'.format(self.acc_y))
-                print('Z:\t\t{:0f} mG'.format(self.acc_z))
+                print('X:\t\t{:.0f} mG'.format(self.acc_x))
+                print('Y:\t\t{:.0f} mG'.format(self.acc_y))
+                print('Z:\t\t{:.0f} mG'.format(self.acc_z))
                 print('-'*30)
+                print('RSSI:\t\t{}'.format(self.rssi))
                 time.sleep(sleepTime)
             except KeyboardInterrupt:
+                # When Ctrl+C is pressed
+                # execution of the while loop is stopped
+                print('Exit')
+                break
+            except KeyError:
                 # When Ctrl+C is pressed
                 # execution of the while loop is stopped
                 print('Exit')
