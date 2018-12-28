@@ -87,40 +87,40 @@ class MyRuuvi():
         self._sensor.update()
         self._data_count += 1
 
-    def print_to_shell(self, sleepTime=0):
+    def print_to_shell(self, sleepTime=0, runFlag=True):
         '''
         Printing collected/extracted data to shell
         '''
+        if not runFlag:
+            return
         # Starting routines
         os.system('clear')
         print('Starting...\nPrinting Data 2 Screen')
-        while True:
-            try:
-                self.update()
-                os.system('clear')
-                print('Press Ctr+C to quit.\n\r')
-                print(str(datetime.now()))
-                print('Sensor:\t{}'.format(self.mac))
-                print('-'*30)
-                print('Temperature:\t{:.2f}\t°C'.format(self.temp))
-                print('Humidity:\t{:.2f}\t%'.format(self.humid))
-                print('Pressure:\t{:.2f}\thPa'.format(self.press))
-                print('-'*30)
-                print('Acceleration:\t{:.0f}\tmG'.format(self.acc))
-                print('X:\t\t{:.0f}\tmG'.format(self.acc_x))
-                print('Y:\t\t{:.0f}\tmG'.format(self.acc_y))
-                print('Z:\t\t{:.0f}\tmG'.format(self.acc_z))
-                print('-'*30)
-                print('Elevation X:\t{:.0f}\tmG'.format(self.elev_x))
-                print('Elevation Y:\t{:.0f}\tmG'.format(self.elev_y))
-                print('Elevation Z:\t{:.0f}\tmG'.format(self.elev_x))
-                print('-' * 30)
-                print('RSSI:\t\t{}\tdBm'.format(self.rssi))
-                print('Battery:\t{:.0f}\tmV'.format(self.bat))
-                print('Data Count:\t{}'.format(self.data_count))
-                time.sleep(sleepTime)
-            except:
-                # When Ctrl+C is pressed
-                # execution of the while loop is stopped
-                print('Exit')
-                break
+        try:
+            self.update()
+            os.system('clear')
+            print('Press Ctr+C to quit.\n\r')
+            print(str(datetime.now()))
+            print('Sensor:\t{}'.format(self.mac))
+            print('-'*30)
+            print('Temperature:\t{:.2f}\t°C'.format(self.temp))
+            print('Humidity:\t{:.2f}\t%'.format(self.humid))
+            print('Pressure:\t{:.2f}\thPa'.format(self.press))
+            print('-'*30)
+            print('Acceleration:\t{:.0f}\tmG'.format(self.acc))
+            print('X:\t\t{:.0f}\tmG'.format(self.acc_x))
+            print('Y:\t\t{:.0f}\tmG'.format(self.acc_y))
+            print('Z:\t\t{:.0f}\tmG'.format(self.acc_z))
+            print('-'*30)
+            print('Elevation X:\t{:.0f}\tmG'.format(self.elev_x))
+            print('Elevation Y:\t{:.0f}\tmG'.format(self.elev_y))
+            print('Elevation Z:\t{:.0f}\tmG'.format(self.elev_x))
+            print('-' * 30)
+            print('RSSI:\t\t{}\tdBm'.format(self.rssi))
+            print('Battery:\t{:.0f}\tmV'.format(self.bat))
+            print('Data Count:\t{}'.format(self.data_count))
+            time.sleep(sleepTime)
+        except:
+            # When Ctrl+C is pressed
+            # execution of a maybe loop is stopped
+            pass
