@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [0.12.0] - 2019-02-15
 * Changed RuuviTagReactive's time-value from local to UTC 
 * Dataformat 5 to use mV instead of V
 * Add data_format value to payload

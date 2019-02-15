@@ -3,7 +3,7 @@
 RuuviTag is a Bluetooth Low Energy device. 
 Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as well as Pi Zero W have integrated Bluetooth which support BLE devices. For older models a Bluetooth adapter is required.
 
-Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017'
+Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017', and '4.14.79-v7+ #1159 SMP Sun Nov 4 17:50:20 GMT 2018 armv7l GNU/Linux'
 
 Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
 
@@ -172,7 +172,11 @@ $ nano tag_test.py
 
 Add this content. Exit with Ctrl-X and select Y to save
 ```python
+import ruuvitag_sensor
+from ruuvitag_sensor.log import log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+ruuvitag_sensor.log.enable_console()
 
 RuuviTagSensor.find_ruuvitags()
 ```
