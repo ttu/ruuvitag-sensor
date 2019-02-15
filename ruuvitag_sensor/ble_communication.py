@@ -200,8 +200,7 @@ class BleCommunicationBleson(BleCommunication):
 
         for line in BleCommunicationBleson.get_lines(queue):
             try:
-                reversed_mac = line.address.address
-                mac = ':'.join(reversed(reversed_mac.split(':')))
+                mac = line.address.address
                 if mac in blacklist:
                     continue
 
