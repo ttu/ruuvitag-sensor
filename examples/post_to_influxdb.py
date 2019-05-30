@@ -32,13 +32,18 @@ from influxdb import InfluxDBClient
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
-def convert_to_influx(mac, payload):
+client = InfluxDBClient(host="localhost", port=8086, database="ruuvi")
+
+def write_to_influxdb(received_data):
     '''
     Convert data into RuuviCollector naming schme and scale
 
     returns:
         Object to be written to InfluxDB
     '''
+    mac = received_data[0]
+    payload = received_data[1]
+
     dataFormat = payload["data_format"] if ('data_format' in payload) else None
     fields = {}
     fields["temperature"]               = payload["temperature"] if ('temperature' in payload) else None
@@ -53,19 +58,17 @@ def convert_to_influx(mac, payload):
     fields["measurementSequenceNumber"] = payload["measurement_sequence_number"] if ('measurement_sequence_number' in payload) else None
     fields["tagID"]                     = payload["tagID"] if ('tagID' in payload) else None
     fields["rssi"]                      = payload["rssi"] if ('rssi' in payload) else None
-    return {
-        "measurement": "ruuvi_measurements",
-        "tags": {
-            "mac": mac,
-            "dataFormat": dataFormat
-        },
-        "fields": fields
-    }
-
-
-client = InfluxDBClient(host="localhost", port=8086, database="ruuvi")
-
-while True:
-    datas = RuuviTagSensor.get_data_for_sensors()
-    json_body = [convert_to_influx(mac, payload) for mac, payload in datas.items()]
+    json_body = [
+        {
+            "measurement": "ruuvi_measurements",
+            "tags": {
+                "mac": mac,
+                "dataFormat": dataFormat
+            },
+            "fields": fields
+        }
+    ]
     client.write_points(json_body)
+
+
+RuuviTagSensor.get_datas(write_to_influxdb)

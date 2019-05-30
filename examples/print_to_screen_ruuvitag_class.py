@@ -1,5 +1,5 @@
 '''
-Print sensor data to the screen.
+Print sensor data to the screen. Update interval 2 sec.
 
 Press Ctrl+C to quit.
 
@@ -8,23 +8,29 @@ Sensor - F4:A5:74:89:16:57
 Temperature: 10
 Humidity:    28
 Pressure:    689
+
+NOTE: This example should only be used when interval is really long.
+RuuviTag's update-method will always create new bluetooth scanning
+process and eventually process creation may fail.
 '''
 
+import time
 import os
 from datetime import datetime
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # Change here your own device's mac-address
 mac = 'F4:A5:74:89:16:57'
 
 print('Starting')
 
-def print_data(received_data):
-    received_mac = received_data[0]
-    data = received_data[1]
+sensor = RuuviTag(mac)
 
-    line_sen = str.format('Sensor - {0}', received_mac)
+while True:
+    data = sensor.update()
+
+    line_sen = str.format('Sensor - {0}', mac)
     line_tem = str.format('Temperature: {0} C', data['temperature'])
     line_hum = str.format('Humidity:    {0}', data['humidity'])
     line_pre = str.format('Pressure:    {0}', data['pressure'])
@@ -39,5 +45,10 @@ def print_data(received_data):
     print(line_pre)
     print('\n\r\n\r.......')
 
-
-RuuviTagSensor.get_datas(print_data, mac)
+    # Wait for 2 seconds and start over again
+    try:
+        time.sleep(2)
+    except KeyboardInterrupt:
+        # When Ctrl+C is pressed execution of the while loop is stopped
+        print('Exit')
+        break
