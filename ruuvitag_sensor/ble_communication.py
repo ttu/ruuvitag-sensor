@@ -4,6 +4,9 @@ import os
 import subprocess
 import sys
 
+from queue import Queue
+from bleson import get_provider, Observer
+
 log = logging.getLogger(__name__)
 
 
@@ -115,6 +118,83 @@ class BleCommunicationNix(BleCommunication):
     def get_data(mac, bt_device=''):
         data = None
         data_iter = BleCommunicationNix.get_datas(bt_device)
+        for data in data_iter:
+            if mac == data[0]:
+                log.info('Data found')
+                data_iter.send(StopIteration)
+                data = data[1]
+                break
+
+        return data
+
+
+class BleCommunicationBleson(BleCommunication):
+    '''Bluetooth LE communication with Bleson'''
+
+    @staticmethod
+    def start(bt_device=''):
+        '''
+        Attributes:
+           device (string): BLE device (default 0)
+        '''
+
+        if not bt_device:
+            bt_device = 0
+        else:
+            # Old communication used hci0 etc.
+            bt_device = bt_device.replace('hci', '')
+
+        log.info('Start receiving broadcasts (device %s)', bt_device)
+
+        q = Queue()
+
+        # TODO: Should do this on own process?
+        adapter = get_provider().get_adapter(int(bt_device))
+        observer = Observer(adapter)
+        observer.on_advertising_data = q.put
+        observer.start()
+
+        return (observer, q)
+
+    @staticmethod
+    def stop(observer):
+        observer.stop()
+
+    @staticmethod
+    def get_lines(queue):
+        try:
+            while True:
+                next_item = queue.get(True, None)
+                yield next_item
+        except KeyboardInterrupt as ex:
+            return
+        except Exception as ex:
+            log.info(ex)
+            return
+
+    @staticmethod
+    def get_datas(blacklist=[], bt_device=''):
+        (observer, queue) = BleCommunicationBleson.start(bt_device)
+
+        for line in BleCommunicationBleson.get_lines(queue):
+            try:
+                mac = line.address.address
+                if mac in blacklist:
+                    continue
+
+                yield (mac, line.service_data or line.mfg_data)
+            except GeneratorExit:
+                break
+            except:
+                continue
+
+        BleCommunicationBleson.stop(observer)
+
+    @staticmethod
+    def get_data(mac, bt_device=''):
+        data = None
+        data_iter = BleCommunicationBleson.get_datas(bt_device)
+
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')

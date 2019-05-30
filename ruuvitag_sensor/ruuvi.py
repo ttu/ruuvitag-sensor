@@ -1,4 +1,3 @@
-import sys
 import os
 import time
 import logging
@@ -8,13 +7,12 @@ from ruuvitag_sensor.decoder import get_decoder
 log = logging.getLogger(__name__)
 
 
-if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
-    # Use BleCommunicationDummy also for CI as it can't use bluez
+if os.environ.get('CI') == 'True':
     from ruuvitag_sensor.ble_communication import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
-    from ruuvitag_sensor.ble_communication import BleCommunicationNix
-    ble = BleCommunicationNix()
+    from ruuvitag_sensor.ble_communication import BleCommunicationBleson
+    ble = BleCommunicationBleson()
 
 
 class RunFlag(object):
@@ -159,7 +157,9 @@ class RuuviTagSensor(object):
             # Check MAC whitelist
             if macs and not ble_data[0] in macs:
                 continue
+
             (data_format, data) = RuuviTagSensor.convert_data(ble_data[1])
+
             # Check that encoded data is valid RuuviTag data and it is sensor data
             # If data is not valid RuuviTag data add MAC to blacklist
             if data is not None:
@@ -181,11 +181,12 @@ class RuuviTagSensor(object):
         try:
             # TODO: Fix conversion so convered data will show https://ruu.vi/# and htts://r/
             # Now it has e.g. [Non_ASCII characters]ruu.vi/#AjwYAMFc
-            base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
-            selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
-            characters = [chr(int(c, 16)) for c in selected_hexs]
-            data = ''.join(characters)
+            # base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
+            # selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
+            # characters = [chr(int(c, 16)) for c in selected_hexs]
+            # data = ''.join(characters)
 
+            data = str(raw)[2:-1]
             # take only part after ruu.vi/# or r/
             index = data.find('ruu.vi/#')
             if index > -1:
@@ -198,6 +199,7 @@ class RuuviTagSensor(object):
         except:
             return None
 
+
     @staticmethod
     def _get_data_format_3(raw):
         """
@@ -208,11 +210,18 @@ class RuuviTagSensor(object):
         """
         # Search of FF990403 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 3 (03))
         try:
-            if "FF990403" not in raw:
+            # if "FF990403" not in raw:
+            #     return None
+
+            # payload_start = raw.index("FF990403") + 6
+            # return raw[payload_start:]
+
+            # TODO: Check how this is with data provided by Bleson
+            # mfg_data=b'\x99\x04\x03>\x17\x16\xc3\x17\xff\xf1\xff\xe1\x04\x0b\x0bk'
+            if raw[2:3] != b'\x03':
                 return None
 
-            payload_start = raw.index("FF990403") + 6
-            return raw[payload_start:]
+            return raw[2:]
         except:
             return None
 
@@ -226,10 +235,17 @@ class RuuviTagSensor(object):
         """
         # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
         try:
-            if "FF990405" not in raw:
+            # TODO: Check how this is with data provided by Bleson
+
+            # if "FF990405" not in raw:
+            #     return None
+
+            # payload_start = raw.index("FF990405") + 6
+            # return raw[payload_start:]
+
+            if raw[2:3] != b'\x05':
                 return None
 
-            payload_start = raw.index("FF990405") + 6
-            return raw[payload_start:]
+            return raw[2:]
         except:
             return None
