@@ -7,13 +7,6 @@ import sys
 log = logging.getLogger(__name__)
 
 
-# Eddystone Protocol specification
-# https://github.com/google/eddystone/blob/master/protocol-specification.md
-# Bluetooth Service UUID used by Eddystone
-#  16bit: 0xfeaa (65194)
-#  64bit: 0000FEAA-0000-1000-8000-00805F9B34FB
-
-
 class BleCommunication(object):
     '''Bluetooth LE communication'''
     __metaclass__ = abc.ABCMeta
@@ -39,8 +32,8 @@ class BleCommunicationDummy(BleCommunication):
     @staticmethod
     def get_datas(blacklist=[], bt_device=''):
         datas = [
-            ('BC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
+            ('DU:MM:YD:AT:A9:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('NO:TS:UP:PO:RT:ED', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
         ]
 
         for data in datas:
