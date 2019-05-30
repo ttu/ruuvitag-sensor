@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* Fix hcitool subprocess closing
 
 ## [0.12.0] - 2019-02-15
 * Changed RuuviTagReactive's time-value from local to UTC 

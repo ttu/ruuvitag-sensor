@@ -66,29 +66,14 @@ class BleCommunicationNix(BleCommunication):
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
-        hcitool = subprocess.Popen(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'], stdout=DEVNULL)
+        hcitool = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'])
         hcidump = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcidump', '--raw'])
         return (hcitool, hcidump)
 
     @staticmethod
     def stop(hcitool, hcidump):
-        # import psutil here so as long as all implementations are in the same file, all will work
-        import psutil
-
         log.info('Stop receiving broadcasts')
-
-        def kill_child_processes(parent_pid):
-            try:
-                parent = psutil.Process(parent_pid)
-            except psutil.NoSuchProcess:
-                return
-
-            for process in parent.children(recursive=True):
-                subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(process.pid)])
-
-        kill_child_processes(hcitool.pid)
-        subprocess.call(['sudo', '-n', 'kill', '-s', 'SIGINT', str(hcitool.pid)])
-        kill_child_processes(hcidump.pid)
+        hcitool.close()
         hcidump.close()
 
     @staticmethod
