@@ -147,7 +147,7 @@ ruuvi_rx.get_subject().\
 ruuvi_rx.stop()
 ```
 
-More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/rx.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
+More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
 
 Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
 
