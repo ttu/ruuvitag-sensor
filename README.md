@@ -118,6 +118,8 @@ print(datas['AA:2C:6A:1E:59:3D'])
 print(datas['CC:2C:6A:1E:59:3D'])
 ```
 
+__NOTE:__ This method shouldn't be used for a long duration with short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For a long running processes it is recommended to use `get_datas`-method with a callback.
+
 ##### RuuviTagReactive
 
 Reactive wrapper and background process for RuuviTagSensor get_datas. Optional MAC address list can be passed on initializer and execution can be stopped with stop function.
