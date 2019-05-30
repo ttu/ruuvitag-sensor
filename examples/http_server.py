@@ -10,6 +10,7 @@ Requires:
     Flask - pip install flask
 '''
 
+from datetime import datetime
 import json
 from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
@@ -29,16 +30,16 @@ tags = {
     'BB:2C:6A:1E:59:3D': 'livingroom'
 }
 
-timeout_in_sec = 5
-
 
 def run_get_data_background(macs, queue):
     """
     Background process from RuuviTag Sensors
     """
-    while True:
-        datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
-        queue.put(datas)
+    def callback(data):
+        data[1]['time'] = str(datetime.now())
+        queue.put(data)
+
+    RuuviTagSensor.get_datas(callback, macs)
 
 
 def update_data():
