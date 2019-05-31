@@ -78,6 +78,19 @@ class TestRuuviTagSensor(TestCase):
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['identifier'] == '0')
 
+    def test_convert_data_valid_df3(self):
+        data = '1502010611FF990403651652CAE900080018041C0C8BC6'
+        encoded = RuuviTagSensor.convert_data(data)
+        print(encoded[1])
+        self.assertEqual(3, encoded[0])
+        self.assertEqual('03651652CAE900080018041C0C8BC6', encoded[1])
+
+    def test_convert_data_not_valid_binary(self):
+        data = b'\x99\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00'
+        encoded = RuuviTagSensor.convert_data(data)
+        self.assertIsNone(encoded[0])
+        self.assertIsNone(encoded[1])
+
     def test_convert_data_not_valid(self):
         encoded = RuuviTagSensor.convert_data('not_valid')
         self.assertIsNone(encoded[0])
