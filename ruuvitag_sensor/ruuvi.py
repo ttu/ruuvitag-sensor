@@ -166,6 +166,8 @@ class RuuviTagSensor(object):
                 state = get_decoder(data_format).decode_data(data)
                 if state is not None:
                     yield (ble_data[0], state)
+                else:
+                    log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
             else:
                 mac_blacklist.append(ble_data[0])
 
