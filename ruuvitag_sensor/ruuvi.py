@@ -46,13 +46,6 @@ class RuuviTagSensor(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        # TODO: Check from raw data correct data format
-        # Now this returns 2 also for Data Format 4
-        data = RuuviTagSensor._get_data_format_2and4(raw)
-
-        if data is not None:
-            return (2, data)
-
         data = RuuviTagSensor._get_data_format_3(raw)
 
         if data is not None:
@@ -62,6 +55,12 @@ class RuuviTagSensor(object):
 
         if data is not None:
             return (5, data)
+
+        # TODO: Check from raw data correct data format
+        # Now this returns 2 also for Data Format 4
+        data = RuuviTagSensor._get_data_format_2and4(raw)
+        if data is not None:
+            return (2, data)
 
         return (None, None)
 

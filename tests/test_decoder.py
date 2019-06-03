@@ -61,6 +61,20 @@ class TestDecoder(TestCase):
         self.assertNotEqual(data['acceleration_y'], 0)
         self.assertNotEqual(data['acceleration_z'], 0)
 
+    def test_df3decode_is_valid_notNone(self):
+        test_cases = [
+            '1502010611FF990403411540C84AFC72FE2FFFC50B89C6',
+            '1502010611FF990403411544C850FC72FE2FFFC60B89B9',
+            '1502010611FF990403411540C855FC72FE2FFFC30B83C7',
+            '1502010611FF990403411539C842FC72FE2FFFC60B89C5',
+            '1502010611FF990403421534C813FC72FE2FFFC50B8FD5',
+            '1502010611FF990403441536C810FC72FE2FFFC70B83C7',
+        ]
+        decoder = Df3Decoder()
+        for x in test_cases:
+            data = decoder.decode_data(x)
+            self.assertIsNotNone(data)
+
     def test_df3decode_is_valid_max_values(self):
         decoder = Df3Decoder()
         humidity = 'C8'
