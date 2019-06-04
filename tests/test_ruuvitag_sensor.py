@@ -78,6 +78,25 @@ class TestRuuviTagSensor(TestCase):
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['identifier'] == '0')
 
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
+           get_datas)
+    def test_get_datas(self):
+        datas = []
+        RuuviTagSensor.get_datas(datas.append)
+        self.assertEqual(7, len(datas))
+
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
+           get_datas)
+    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
+           get_datas)
+    def test_get_datas_with_macs(self):
+        datas = []
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
+        RuuviTagSensor.get_datas(datas.append, macs)
+        self.assertEqual(2, len(datas))
+
     def test_convert_data_valid_data(self):
         test_cases = [
             ('1502010611FF990403651652CAE900080018041C0C8BC6', 3, '03651652CAE900080018041C0C8BC6'),
@@ -100,21 +119,31 @@ class TestRuuviTagSensor(TestCase):
         self.assertIsNone(encoded[0])
         self.assertIsNone(encoded[1])
 
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
-           get_datas)
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
-           get_datas)
-    def test_get_datas(self):
-        datas = []
-        RuuviTagSensor.get_datas(datas.append)
-        self.assertEqual(7, len(datas))
+    def test_get_data_format_3_valid_data(self):
+        test_cases = [
+            '1502010611FF990403651652CAE900080018041C0C8BC6',
+            '1502010611FF990403411540C84AFC72FE2FFFC50B89C6',
+        ]
+        for x in test_cases:
+            encoded = RuuviTagSensor._get_data_format_3(x)
+            self.assertIsNotNone(encoded)
 
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
-           get_datas)
-    @patch('ruuvitag_sensor.ble_communication.BleCommunicationNix.get_datas',
-           get_datas)
-    def test_get_datas_with_macs(self):
-        datas = []
-        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
-        RuuviTagSensor.get_datas(datas.append, macs)
-        self.assertEqual(2, len(datas))
+    def test_get_data_format_5_valid_data(self):
+        test_cases = [
+            '1F0201061BFF990405138A5F92C4F3FFE4FFDC0414C4F6EC29BBE62EB92E73E5BC',
+            '1F0201061BFF990405138A5F61C4F0FFE4FFDC0414C5B6EC29B3E62EB92E73E5BC',
+        ]
+        for x in test_cases:
+            encoded = RuuviTagSensor._get_data_format_5(x)
+            self.assertIsNotNone(encoded)
+
+    def test_get_data_format_2and4_valid_data(self):
+        test_cases = [
+            '1F0201060303AAFE1716AAFE10F6037275752E76692F234248415A414D576F77C9',
+            '1F0201060303AAFE1716AAFE10F6037275752E76692F234248415A414D576F77C8',
+            '1E0201060303AAFE1616AAFE10EE037275752E76692F23416E4159414D5645CC',
+            '1E0201060303AAFE1616AAFE10EE037275752E76692F23416E4159414D5645C9'
+        ]
+        for x in test_cases:
+            encoded = RuuviTagSensor._get_data_format_2and4(x)
+            self.assertIsNotNone(encoded)
