@@ -210,10 +210,10 @@ class RuuviTagSensor(object):
         """
         # Search of FF990403 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 3 (03))
         try:
-            if "FF990403" not in raw:
+            if 'FF990403' not in raw:
                 return None
 
-            payload_start = raw.index("FF990403") + 6
+            payload_start = raw.index('FF990403') + 6
             return raw[payload_start:]
         except:
             return None
@@ -228,10 +228,10 @@ class RuuviTagSensor(object):
         """
         # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
         try:
-            if "FF990405" not in raw:
+            if 'FF990405' not in raw:
                 return None
 
-            payload_start = raw.index("FF990405") + 6
+            payload_start = raw.index('FF990405') + 6
             return raw[payload_start:]
         except:
             return None

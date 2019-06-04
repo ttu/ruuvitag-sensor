@@ -1,4 +1,4 @@
-'''
+"""
 Simple http server, that returns data in json.
 Executes get data for sensors in the background.
 
@@ -9,7 +9,7 @@ Endpoints:
 Requires:
     asyncio - Python 3.5
     aiohttp - pip install aiohttp
-'''
+"""
 
 from datetime import datetime
 import asyncio
@@ -53,7 +53,7 @@ async def get_all_data(request):
 
 
 async def get_data(request):
-    mac = request.match_info.get("mac")
+    mac = request.match_info.get('mac')
     if mac not in allData:
         return web.json_response(status=404)
     return web.json_response(allData[mac])

@@ -1,6 +1,6 @@
-'''
+"""
 RuuviTagReactive and Reactive Extensions Subject examples
-'''
+"""
 
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 

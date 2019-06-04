@@ -1,4 +1,4 @@
-'''
+"""
 Print sensor data to the screen. Update interval 2 sec.
 
 Press Ctrl+C to quit.
@@ -12,7 +12,7 @@ Pressure:    689
 NOTE: This example should only be used when interval is really long.
 RuuviTag's update-method will always create new bluetooth scanning
 process and eventually process creation may fail.
-'''
+"""
 
 import time
 import os

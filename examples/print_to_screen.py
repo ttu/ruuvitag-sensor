@@ -1,4 +1,4 @@
-'''
+"""
 Print sensor data to the screen.
 
 Press Ctrl+C to quit.
@@ -8,7 +8,7 @@ Sensor - F4:A5:74:89:16:57
 Temperature: 10
 Humidity:    28
 Pressure:    689
-'''
+"""
 
 import os
 from datetime import datetime
