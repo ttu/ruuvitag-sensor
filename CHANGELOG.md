@@ -3,6 +3,7 @@
 ### [Unreleased]
 * Fix hcitool subprocess closing
 * Fix data format selection
+* Move raw data handling to an own file
 
 ## [0.12.0] - 2019-02-15
 * Changed RuuviTagReactive's time-value from local to UTC 

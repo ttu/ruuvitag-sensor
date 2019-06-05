@@ -184,16 +184,16 @@ RuuviTagSensor.get_datas(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=dev
 ##### Parse data
 
 ```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.decoder import UrlDecoder
+from ruuvitag_sensor.data_formats import DataFormats
+from ruuvitag_sensor.decoder import get_decoder
 
 full_data = '043E2A0201030157168974A51F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'
 data = full_data[26:]
 
 # convert_data returns tuple which has Data Format type and encoded data
-encoded = RuuviTagSensor.convert_data(data)
+(data_format, encoded) = DataFormats.convert_data(data)
 
-sensor_data = UrlDecoder().decode_data(encoded[1])
+sensor_data = get_decoder(data_format).decode_data(encoded)
 
 print(sensor_data)
 # {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
@@ -202,10 +202,10 @@ print(sensor_data)
 ##### Data Formats
 
 Example data has data from 4 sensors with different firmwares.
-* 1st is Data Format 2 so identifier is None as sensor doesn't broadcast any identifier data
-* 2nd is Data Format 4 and it has an identifier character
-* 3rd is Data Format 3
-* 4th is Data Format 5
+* 1st is Data Format 2 (URL) so identifier is None as sensor doesn't broadcast any identifier data
+* 2nd is Data Format 4 (URL) and it has an identifier character
+* 3rd is Data Format 3 (RAW)
+* 4th is Data Format 5 (RAW v2)
 
 ```python
 {
