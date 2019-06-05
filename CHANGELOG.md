@@ -3,7 +3,8 @@
 ### [Unreleased]
 * Fix hcitool subprocess closing
 * Fix data format selection
-* Move braodcasted raw data handling to an own file
+* Move broadcasted raw data handling to an own file
+* Remove obsolete handling for r/ in Data Format 2/4 validate
 
 ## [0.12.0] - 2019-02-15
 * Changed RuuviTagReactive's time-value from local to UTC 
