@@ -1,6 +1,6 @@
 class DataFormats(object):
     """
-    RuuviTag payload handling for each data format
+    RuuviTag broadcasted raw data handling for each data format
     """
 
     @staticmethod
