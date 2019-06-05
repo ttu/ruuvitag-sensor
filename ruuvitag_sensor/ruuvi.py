@@ -31,11 +31,21 @@ class RunFlag(object):
 
 class RuuviTagSensor(object):
     """
-    RuuviTag communication
+    RuuviTag communication functionality
     """
 
     @staticmethod
     def get_data(mac, bt_device=''):
+        """
+        Get raw data for selected RuuviTag
+
+        Args:
+            mac (string): MAC address
+            bt_device (string): Bluetooth device id
+        Returns:
+            tuple (int, string): Data Format type and raw Sensor data
+        """
+
         raw = ble.get_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
