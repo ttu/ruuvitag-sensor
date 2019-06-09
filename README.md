@@ -250,32 +250,6 @@ optional arguments:
   --version             show program's version number and exit
 ```
 
-## Unit Tests
-
-Unit tests use unittest.mock library, so Python 3.3. or newer is required.
-
-Run with nosetests
-
-```sh
-$ pip install nose
-$ nosetests
-```
-
-Run with setup
-
-```sh
-$ python setup.py test
-```
-
-## Verification Test
-
-Verification test sciprt executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
-
-```sh
-$ chmod +x verification.sh
-$ ./verification.sh
-```
-
 ## Examples
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
@@ -287,6 +261,10 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 ## Changelog
 
 [Changelog](https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md)
+
+## Developer notes
+
+[Notes for developers](https://github.com/ttu/ruuvitag-sensor/blob/master/developer_notes.md) who are interested in developing RuuviTag Sensor package or interested in it's internal functionality.
 
 ## Contributing
 
