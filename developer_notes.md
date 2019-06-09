@@ -90,41 +90,41 @@ $ ps aux | grep hci
 ## Example datas from different firmwares and data formats
 
 Kickstarter FW
-```json
+```python
 {'data_format': 2, 'temperature': 24.0, 'humidity': 42.0, 'pressure': 1009.0, 'identifier': None}
 ```
 
 1.0.1 URL-mode
-```json
+```python
 {'data_format': 4, 'temperature': 26.0, 'humidity': 36.0, 'pressure': 1007.0, 'identifier': 'd'}
 ```
 
 1.0.1 RAW-mode
-```json
+```python
 {'data_format': 3, 'humidity': 58.0, 'temperature': 24.56, 'pressure': 1009.11, 'acceleration': 1019.803902718557, 'acceleration_x': 344, 'acceleration_y': -8, 'acceleration_z': 960, 'battery': 3283}
 ```
 
 1.2.12 URL-mode
-```json
+```python
 {'data_format': 4, 'temperature': 25.0, 'humidity': 62.0, 'pressure': 1009.0, 'identifier': 'w'}
 ```
 
 1.2.12 RAW-mode
-```json
+```python
 {'data_format': 3, 'humidity': 45.5, 'temperature': 25.0, 'pressure': 1008.59, 'acceleration': 1055.12558494238, 'acceleration_x': -11, 'acceleration_y': 12, 'acceleration_z': 1055, 'battery': 3259}
 ```
 
 2.4.2 RAW-mode
-```json
+```python
 {'data_format': 3, 'humidity': 46.5, 'temperature': 24.81, 'pressure': 1009.93, 'acceleration': 989.23809065361, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 988, 'battery': 3175}
 ```
 
 2.4.2 RAW v2-mode
-```json
+```
 {'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5'}
 ```
 
-## BLE Broadcast data from RuuviTags
+## Bluez BLE Broadcast data from RuuviTags
 
 Example data from hcidump:
 
@@ -196,7 +196,7 @@ BleCommunicationNix.get_datas
     Start hcidump (hcidump --raw)
   While new data from hcidump
     Get data from hcidump
-      While not new line (<)
+      While not new line (>)
         Append data
       Yield data
     Parse Mac from data
@@ -295,21 +295,10 @@ while True:
 Create new connections with 1 minute interval
 
 ```python
+# Use sleep from time to pause the execution
 import time
-from datetime import datetime
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
-import ruuvitag_sensor.log
-
-ruuvitag_sensor.log.enable_console()
-
-macs = []
-
-while True:
-    datas = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
-    print(datetime.utcnow().isoformat())
-    print(datas)
-    time.sleep(60)
+# Add after print(datas)
+time.sleep(60)
 ```
 
 Normal scanning function is good for running normal long duration tests without abusing BLE scanning process as it will just initialize the connection once in the beginning
