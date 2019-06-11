@@ -1,5 +1,5 @@
 from unittest import TestCase
-from mock import patch, MagicMock
+from mock import patch
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
@@ -77,11 +77,6 @@ class TestRuuviTagSensor(TestCase):
         self.assertTrue(data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['identifier'] == '0')
-
-    def test_convert_data_not_valid(self):
-        encoded = RuuviTagSensor.convert_data('not_valid')
-        self.assertIsNone(encoded[0])
-        self.assertIsNone(encoded[1])
 
     @patch('ruuvitag_sensor.ble_communication.BleCommunicationDummy.get_datas',
            get_datas)

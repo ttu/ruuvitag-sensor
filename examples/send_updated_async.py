@@ -1,4 +1,4 @@
-'''
+"""
 Get latest sensor data for all sensors and keep track of current states in own dictionary.
 Send updated data asynchronously to server with aiohttp.
 
@@ -9,7 +9,7 @@ Example sends data (application/json) to:
 Requires:
     asyncio - Python 3.5
     aiohttp - pip install aiohttp
-'''
+"""
 
 from datetime import datetime
 from multiprocessing import Manager

@@ -1,4 +1,4 @@
-'''
+"""
 Simple http server, that returns data in json.
 Executes get data for sensors in the background.
 
@@ -8,7 +8,7 @@ Endpoints:
 
 Requires:
     Flask - pip install flask
-'''
+"""
 
 from datetime import datetime
 import json

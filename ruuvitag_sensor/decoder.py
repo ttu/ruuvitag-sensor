@@ -8,12 +8,12 @@ log = logging.getLogger(__name__)
 
 
 def get_decoder(data_type):
-    '''
+    """
     Get correct decoder for Data Type.
 
     Returns:
         object: Data decoder
-    '''
+    """
     if data_type == 2:
         return UrlDecoder()
     elif data_type == 4:
@@ -30,21 +30,19 @@ def twos_complement(value, bits):
     return value
 
 def rshift(val, n):
-    '''
+    """
     Arithmetic right shift, preserves sign bit.
     https://stackoverflow.com/a/5833119 .
-    '''
+    """
     return (val % 0x100000000) >> n
 
 
 class UrlDecoder(object):
-    '''
+    """
     Decodes data from RuuviTag url
     Protocol specification:
     https://github.com/ruuvi/ruuvi-sensor-protocols
-    '''
 
-    '''
     Decoder operations are ported from:
     https://github.com/ruuvi/sensor-protocol-for-eddystone-url/blob/master/index.html
 
@@ -55,10 +53,10 @@ class UrlDecoder(object):
     6-7: uint16_t    time;            // seconds (now from reset)
 
     The bytes for temperature, pressure and time are swaped during the encoding
-    '''
+    """
 
     def _get_temperature(self, decoded):
-        '''Return temperature in celsius'''
+        """Return temperature in celsius"""
         temp = (decoded[2] & 127) + decoded[3] / 100
         sign = (decoded[2] >> 7) & 1
         if sign == 0:
@@ -66,21 +64,21 @@ class UrlDecoder(object):
         return round(-1 * temp, 2)
 
     def _get_humidity(self, decoded):
-        '''Return humidity %'''
+        """Return humidity %"""
         return decoded[1] * 0.5
 
     def _get_pressure(self, decoded):
-        '''Return air pressure hPa'''
+        """Return air pressure hPa"""
         pres = ((decoded[4] << 8) + decoded[5]) + 50000
         return pres / 100
 
     def decode_data(self, encoded):
-        '''
+        """
         Decode sensor data.
 
         Returns:
             dict: Sensor values
-        '''
+        """
         try:
             identifier = None
             data_format = 2
@@ -102,14 +100,14 @@ class UrlDecoder(object):
 
 
 class Df3Decoder(object):
-    '''
+    """
     Decodes data from RuuviTag with Data Format 3
     Protocol specification:
     https://github.com/ruuvi/ruuvi-sensor-protocols
-    '''
+    """
 
     def _get_temperature(self, data):
-        '''Return temperature in celsius'''
+        """Return temperature in celsius"""
         temp = (data[2] & ~(1 << 7)) + (data[3] / 100)
         sign = (data[2] >> 7) & 1
         if sign == 0:
@@ -117,32 +115,32 @@ class Df3Decoder(object):
         return round(-1 * temp, 2)
 
     def _get_humidity(self, data):
-        '''Return humidity %'''
+        """Return humidity %"""
         return data[1] * 0.5
 
     def _get_pressure(self, data):
-        '''Return air pressure hPa'''
+        """Return air pressure hPa"""
         pres = (data[4] << 8) + data[5] + 50000
         return pres / 100
 
     def _get_acceleration(self, data):
-        '''Return acceleration mG'''
+        """Return acceleration mG"""
         acc_x = twos_complement((data[6] << 8) + data[7], 16)
         acc_y = twos_complement((data[8] << 8) + data[9], 16)
         acc_z = twos_complement((data[10] << 8) + data[11], 16)
         return (acc_x, acc_y, acc_z)
 
     def _get_battery(self, data):
-        '''Return battery mV'''
+        """Return battery mV"""
         return (data[12] << 8) + data[13]
 
     def decode_data(self, data):
-        '''
+        """
         Decode sensor data.
 
         Returns:
             dict: Sensor values
-        '''
+        """
         try:
             byte_data = data
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
@@ -162,14 +160,14 @@ class Df3Decoder(object):
             return None
 
 class Df5Decoder(object):
-    '''
+    """
     Decodes data from RuuviTag with Data Format 5
     Protocol specification:
     https://github.com/ruuvi/ruuvi-sensor-protocols
-    '''
+    """
 
     def _get_temperature(self, data):
-        '''Return temperature in celsius'''
+        """Return temperature in celsius"""
         if data[1:2] == 0x7FFF:
             return None
 
@@ -177,7 +175,7 @@ class Df5Decoder(object):
         return round(temperature, 2)
 
     def _get_humidity(self, data):
-        '''Return humidity %'''
+        """Return humidity %"""
         if data[3:4] == 0xFFFF:
             return None
 
@@ -185,7 +183,7 @@ class Df5Decoder(object):
         return round(humidity, 2)
 
     def _get_pressure(self, data):
-        '''Return air pressure hPa'''
+        """Return air pressure hPa"""
         if data[5:6] == 0xFFFF:
             return None
 
@@ -193,7 +191,7 @@ class Df5Decoder(object):
         return round((pressure / 100), 2)
 
     def _get_acceleration(self, data):
-        '''Return acceleration mG'''
+        """Return acceleration mG"""
         if (data[7:8] == 0x7FFF or
                 data[9:10] == 0x7FFF or
                 data[11:12] == 0x7FFF):
@@ -205,7 +203,7 @@ class Df5Decoder(object):
         return (acc_x, acc_y, acc_z)
 
     def _get_powerinfo(self, data):
-        '''Return battery voltage and tx power '''
+        """Return battery voltage and tx power"""
         power_info = (data[13] & 0xFF) << 8 | (data[14] & 0xFF)
         battery_voltage = rshift(power_info, 5) + 1600
         tx_power = (power_info & 0b11111) * 2 - 40
@@ -218,12 +216,12 @@ class Df5Decoder(object):
         return (round(battery_voltage, 3), tx_power)
 
     def _get_battery(self, data):
-        '''Return battery mV'''
+        """Return battery mV"""
         battery_voltage = self._get_powerinfo(data)[0]
         return battery_voltage
 
     def _get_txpower(self, data):
-        '''Return transmit power'''
+        """Return transmit power"""
         tx_power = self._get_powerinfo(data)[1]
         return tx_power
 
@@ -238,12 +236,12 @@ class Df5Decoder(object):
         return ''.join('{:02x}'.format(x) for x in data[18:24])
 
     def decode_data(self, data):
-        '''
+        """
         Decode sensor data.
 
         Returns:
             dict: Sensor values
-        '''
+        """
         try:
             byte_data = data
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)

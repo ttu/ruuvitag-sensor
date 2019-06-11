@@ -1,6 +1,6 @@
-'''
+"""
 Get all BLE device broadcasts
-'''
+"""
 
 from ruuvitag_sensor.ble_communication import BleCommunicationNix
 import ruuvitag_sensor.log

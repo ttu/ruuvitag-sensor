@@ -1,8 +1,8 @@
-'''
+"""
 Verification script for RuuviTags
 
 Run the script with Python 3.x and 2.7. Requires at least one active RuuviTag.
-'''
+"""
 
 import time
 

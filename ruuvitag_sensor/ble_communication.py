@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 class BleCommunication(object):
-    '''Bluetooth LE communication'''
+    """Bluetooth LE communication"""
     __metaclass__ = abc.ABCMeta
 
     @staticmethod
@@ -26,7 +26,7 @@ class BleCommunication(object):
 
 
 class BleCommunicationDummy(BleCommunication):
-    '''TODO: Find some working BLE implementation for Windows and OSX'''
+    """TODO: Find some working BLE implementation for Windows and OSX"""
 
     @staticmethod
     def get_data(mac, bt_device=''):
@@ -44,14 +44,14 @@ class BleCommunicationDummy(BleCommunication):
 
 
 class BleCommunicationNix(BleCommunication):
-    '''Bluetooth LE communication for Linux'''
+    """Bluetooth LE communication for Linux"""
 
     @staticmethod
     def start(bt_device=''):
-        '''
+        """
         Attributes:
            device (string): BLE device (default hci0)
-        '''
+        """
         # import ptyprocess here so as long as all implementations are in the same file, all will work
         import ptyprocess
 

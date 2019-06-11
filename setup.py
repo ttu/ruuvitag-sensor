@@ -6,10 +6,10 @@ import ruuvitag_sensor
 try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
-    readme = readme.replace("\r", "")
+    readme = readme.replace('\r', '')
 except ImportError:
     import io
-    with io.open('README.md', encoding="utf-8") as f:
+    with io.open('README.md', encoding='utf-8') as f:
         readme = f.read()
 
 setup(name='ruuvitag_sensor',

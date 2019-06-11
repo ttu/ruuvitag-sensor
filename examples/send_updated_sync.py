@@ -1,4 +1,4 @@
-'''
+"""
 Get latest sensor data for all sensors every 10 seconds an keep track of current states in own dictionary.
 Send updated data synchronously to server with requests.
 
@@ -8,7 +8,7 @@ Example sends data (application/json) to:
 
 Requires:
     Requests - pip install requests
-'''
+"""
 
 from urllib.parse import quote
 from datetime import datetime, timedelta

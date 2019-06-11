@@ -1,6 +1,6 @@
-'''
+"""
 ruuvitag_sensor module level logging
-'''
+"""
 
 import logging
 
