@@ -11,12 +11,14 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        data = DataFormats._get_data_format_3(raw)
+        raw = raw.hex()
+
+        data = DataFormats._get_data_format_3('FF' + raw)
 
         if data is not None:
             return (3, data)
 
-        data = DataFormats._get_data_format_5(raw)
+        data = DataFormats._get_data_format_5('FF' + raw)
 
         if data is not None:
             return (5, data)

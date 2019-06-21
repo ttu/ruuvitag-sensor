@@ -4,7 +4,10 @@ import os
 import subprocess
 import sys
 
+from multiprocessing import Manager, Process
+import time
 from queue import Queue
+
 from bleson import get_provider, Observer
 
 log = logging.getLogger(__name__)
@@ -132,6 +135,28 @@ class BleCommunicationBleson(BleCommunication):
     '''Bluetooth LE communication with Bleson'''
 
     @staticmethod
+    def _run_get_data_background(queue, shared_data, bt_device):
+        (observer, q) = BleCommunicationBleson.start(bt_device)
+
+        for line in BleCommunicationBleson.get_lines(q):
+            if shared_data['stop']:
+                break
+            try:
+                mac = line.address.address
+                if mac in shared_data['blacklist']:
+                    continue
+                data = line.service_data or line.mfg_data
+                if data is None:
+                    continue
+                queue.put((mac, data))
+            except GeneratorExit:
+                break
+            except:
+                continue
+
+        BleCommunicationBleson.stop(observer)
+
+    @staticmethod
     def start(bt_device=''):
         '''
         Attributes:
@@ -148,7 +173,6 @@ class BleCommunicationBleson(BleCommunication):
 
         q = Queue()
 
-        # TODO: Should do this on own process?
         adapter = get_provider().get_adapter(int(bt_device))
         observer = Observer(adapter)
         observer.on_advertising_data = q.put
@@ -174,21 +198,30 @@ class BleCommunicationBleson(BleCommunication):
 
     @staticmethod
     def get_datas(blacklist=[], bt_device=''):
-        (observer, queue) = BleCommunicationBleson.start(bt_device)
+        m = Manager()
+        q = m.Queue()
 
-        for line in BleCommunicationBleson.get_lines(queue):
-            try:
-                mac = line.address.address
-                if mac in blacklist:
-                    continue
+        # Use Manager dict to share data between processes
+        shared_data = m.dict()
+        shared_data['blacklist'] = blacklist
+        shared_data['stop'] = False
 
-                yield (mac, line.service_data or line.mfg_data)
-            except GeneratorExit:
-                break
-            except:
-                continue
+        # Start background process
+        proc = Process(target=BleCommunicationBleson._run_get_data_background, args=[q, shared_data, bt_device])
+        proc.start()
 
-        BleCommunicationBleson.stop(observer)
+        try:
+            while True:
+                while not q.empty():
+                    data = q.get()
+                    yield data
+                time.sleep(0.1)
+        except GeneratorExit:
+            pass
+
+        shared_data['stop'] = True
+        proc.join()
+        return
 
     @staticmethod
     def get_data(mac, bt_device=''):

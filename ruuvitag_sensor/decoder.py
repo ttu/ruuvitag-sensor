@@ -142,7 +142,7 @@ class Df3Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = data
+            byte_data = bytearray.fromhex(data)
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 3,
@@ -243,7 +243,7 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = data
+            byte_data = bytearray.fromhex(data)
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 5,
