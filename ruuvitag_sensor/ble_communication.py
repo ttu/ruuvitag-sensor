@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 
 log = logging.getLogger(__name__)
 
@@ -58,8 +59,23 @@ class BleCommunicationNix(BleCommunication):
         log.info('Start receiving broadcasts (device %s)', bt_device)
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
-        subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
-        hcitool = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcitool', 'lescan', '--duplicates'])
+        def reset_ble_adapter():
+            return subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
+
+        def start_with_retry(func, try_count, interval, msg):
+            retcode = func()
+            if retcode != 0 and try_count > 0:
+                log.info(msg)
+                time.sleep(interval)
+                return start_with_retry(func, try_count - 1, interval + interval, msg)
+            return retcode
+
+        retcode = start_with_retry(reset_ble_adapter, 3, 1, 'Problem with hciconfig reset. Retry reset.')
+        if retcode != 0:
+            log.info('Problem with hciconfig reset. Exit.')
+            exit(1)
+
+        hcitool = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcitool', 'lescan2', '--duplicates'])
         hcidump = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcidump', '--raw'])
         return (hcitool, hcidump)
 
