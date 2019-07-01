@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [0.13.0] - 2019-07-01
 * Fix hcitool subprocess closing
 * Fix data format selection
 * Move broadcasted raw data handling to an own file
