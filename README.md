@@ -16,10 +16,9 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 * Superuser rights
     * BlueZ tools require superuser rights
-
- __NOTE:__ Experimental implementation with cross-platform BLE communication in branch: [bleson-ble-communication](https://github.com/ttu/ruuvitag-sensor/tree/bleson-ble-communication)
- * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
- * More info on issues [#31](https://github.com/ttu/ruuvitag-sensor/issues/31) and [#18](https://github.com/ttu/ruuvitag-sensor/issues/18)
+* __NOTE:__ Experimental implementation with cross-platform BLE communication in branch: [bleson-ble-communication](https://github.com/ttu/ruuvitag-sensor/tree/bleson-ble-communication)
+    * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
+    * More info and instrutions on issue [#78](https://github.com/ttu/ruuvitag-sensor/issues/78)
 
 ### Installation
 
@@ -42,25 +41,9 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 RuuviTag sensors can be identified using MAC addresses.
 
 
-##### Get data from sensor
-
-```python
-from ruuvitag_sensor.ruuvitag import RuuviTag
-
-sensor = RuuviTag('AA:2C:6A:1E:59:3D')
-
-# update state from the device
-state = sensor.update()
-
-# get latest state (does not get it from the device)
-state = sensor.state
-
-print(state)
-```
-
 ##### Get sensor datas with callback
 
-`get_datas` calls the callback every time when a RuuviTag sensor broadcasts data
+`get_datas` calls the callback every time when a RuuviTag sensor broadcasts data. This method is the preferred way to use the library.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -116,6 +99,22 @@ print(datas['CC:2C:6A:1E:59:3D'])
 ```
 
 __NOTE:__ This method shouldn't be used for a long duration with short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For a long running processes it is recommended to use `get_datas`-method with a callback.
+
+##### Get data from sensor
+
+```python
+from ruuvitag_sensor.ruuvitag import RuuviTag
+
+sensor = RuuviTag('AA:2C:6A:1E:59:3D')
+
+# update state from the device
+state = sensor.update()
+
+# get latest state (does not get it from the device)
+state = sensor.state
+
+print(state)
+```
 
 ##### RuuviTagReactive
 
@@ -249,6 +248,11 @@ optional arguments:
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
 ```
+## Bluez limitations
+
+The ruuvitag-sensor use Bluez to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well unexpected errors or changes, e.g. when adapter is busy, rebooted or powered down.
+
+In case of errors, application tries to exit immediately, so it can be automatically restarted.
 
 ## Examples
 

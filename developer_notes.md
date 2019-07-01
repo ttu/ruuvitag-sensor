@@ -15,14 +15,14 @@ $ source venv/bin/activate
 
 3. Install required dependencies
 ```sh
-$ sudo python3 -m pip install -e .
+$ sudo python3 -m pip install -e .
 ```
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
 
 4. Test that application works 
 ```sh
-$ sudo python3 ruuvitag_sensor --help
+$ sudo python3 ruuvitag_sensor --help
 ```
 
 ## Project files
@@ -60,17 +60,17 @@ $ sudo python3 ruuvitag_sensor --help
 
 Reset bluetooth device:
 ```sh
-$ sudo hciconfig hci0 reset
+$ sudo hciconfig hci0 reset
 ```
 
 Scan bluetooth devices:
-```shLinux
-$ sudo hcitool lescan --duplicates
+```sh
+$ sudo hcitool lescan --duplicates
 ```
 
 Get broadcasted data:
 ```sh
-$ sudo hcidump --raw
+$ sudo hcidump --raw
 ```
 
 > NOTE: Scanning must be active in order to get broadcasted data.
@@ -79,12 +79,12 @@ $ sudo hcidump --raw
 
 List bluetooth devices
 ```sh
-$ hcitool dev
+$ hcitool dev
 ```
 
 List processes containing hci in order to find BLE scanning subprocesses
 ```sh
-$ ps aux | grep hci
+$ ps aux | grep hci
 ```
 
 ## Example datas from different firmwares and data formats
@@ -120,22 +120,24 @@ Kickstarter FW
 ```
 
 2.4.2 RAW v2-mode
-```
+```python
 {'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5'}
 ```
 
-## Bluez BLE Broadcast data from RuuviTags
+## BLE Broadcast data from RuuviTags
+
+### Bluez
 
 Example data from hcidump:
 
 ```sh
 > 04 3E 2B 02 01 03 01 C4 C4 37 D3 1E D0 1F 02 01 06 03 03 AA
 
-  FE 17 16 AA FE 10 F6 03 72 75 75 2E 76 69 2F 23 42 47 51 59 
+  FE 17 16 AA FE 10 F6 03 72 75 75 2E 76 69 2F 23 42 47 51 59
 
-  41 4D 71 38 77 98 
+  41 4D 71 38 77 98
 
-> 04 3E 25 02 01 03 01 F2 7A 52 FA D4 CD 19 02 01 04 15 FF 99 
+> 04 3E 25 02 01 03 01 F2 7A 52 FA D4 CD 19 02 01 04 15 FF 99
 
   04 03 63 18 22 CA 54 FF EC 00 0C 04 0C 0C B5 00 00 00 00 99
 ```
@@ -148,6 +150,8 @@ Example data has 2 broadcasts where '> ' from the beginning and empty spaced are
 ```
 043E2502010301F27A52FAD4CD1902010415FF9904036C180ECA60FC9CFE6801280C91000000009E
 ```
+
+Data is a hex string.
 
 Data contains 3 parts: `unknown`, `mac` and `payload`
 
@@ -167,15 +171,15 @@ Second data:
 ```
 043E2502010301_F27A52FAD4CD_1902010415FF9904036C180ECA60FC9CFE6801280C91000000009E
 
- MAC = CD:D4:FA:52:7A:F2
- PAYLOAD = 1902010415FF990403631822CA54FFEC000C040C0CB50000000099
+MAC = CD:D4:FA:52:7A:F2
+PAYLOAD = 1902010415FF990403631822CA54FFEC000C040C0CB50000000099
 ```
 
 This handling is done in `ble_communication.py`.
 
 Data format specific handling is in `data_formats.py`.
 
-Data format can be parsed from the payload. 
+Data format can be parsed from the payload.
 
 Data format 3 and 5 have Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 3|5 (03|05)
 
@@ -185,56 +189,70 @@ Data format 5: FF990405
 ```
 Data format 2 and 4 encode raw data and look for `ruu.vi/#` string from the encoded data.
 
+### Bleson
+
+__TODO: Add examples__
+
+Bleson send data in [bytes object](https://docs.python.org/3/library/stdtypes.html#bytes-objects).
+
+Bleson processes internally mac to an own property, so byte data contains only the payload part of RuuviTag data.
+
+NOTE: Manufacturer Specific Data (FF) is missing from the payload. It is added in the code before deciding the correct data format. This way most of the functions from Bluez version work with the Bleson version.
+
+Bytes is converted to a hex string before data format specific handling.
+
 ## Application flow
 
 Get data from Bluetooth device ([BleCommunicationNix.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ble_communication.py#L93))
 ```
 BleCommunicationNix.get_datas
-  Start BLE processes
-    Reset BLE device (hciconfig hci0 reset)
-    Start scanning (hcitool lescan --duplicates)
-    Start hcidump (hcidump --raw)
-  While new data from hcidump
-    Get data from hcidump
-      While not new line (>)
-        Append data
-      Yield data
-    Parse Mac from data
-    If Mac in blacklist
-      Continue
-    Yield Mac and payload part from data
-  Stop BLE processes
-    Stop hcitool
-    Stop hcidump
+ Start BLE processes
+   Reset BLE device (hciconfig hci0 reset)
+   Start scanning (hcitool lescan --duplicates)
+   Start hcidump (hcidump --raw)
+ While new data from hcidump
+   Get data from hcidump
+     While not new line (>)
+       Append data
+     Yield data
+   Parse Mac from data
+   If Mac in blacklist
+     Continue
+   Yield Mac and payload part from data
+ Stop BLE processes
+   Stop hcitool
+   Stop hcidump
 ```
+
+TODO: Application flow for Bleson
 
 [RuuviTagSensor._get_ruuvitag_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L117)
 ```
 RuuviTagSensor._get_ruuvitag_datas
-  While data from BleCommunicationNix.get_datas
-    If timeout
-      Break
-    If runflag set to stopped
-      Break
-    If whitelist in use and data's Mac not in whitelist
-      Continue
-    Get data_format and encoded data from data
-    If data_format not null
-      Use correct data format decoder to decode encoded data
-      If decoded data not null
-        Yield decoded data
-      Else
-         Log error
-    Else
-      Blacklist Mac    
+ While data from BleCommunicationNix.get_datas
+   If timeout
+     Break
+   If runflag set to stopped
+     Break
+   If whitelist in use and data's Mac not in whitelist
+     Continue
+   Get data_format and encoded data from data
+   If data_format not null
+     Use correct data format decoder to decode encoded data
+     If decoded data not null
+       Yield decoded data
+     Else
+        Log error
+   Else
+     Blacklist Mac   
 ```
 
 [RuuviTagSensor.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
 
 ```
 RuuviTagSensor._get_ruuvitag_datas
-  While data from RuuviTagSensor._get_ruuvitag_datas
-    Execute callback with data
+ While data from RuuviTagSensor._get_ruuvitag_datas
+   Execute callback with data
 ```
 
 ## Executing Unit Tests
@@ -260,8 +278,10 @@ $ nosetests test_ruuvitag_sensor:TestRuuviTagSensor.test_convert_data_valid_df3
 
 Show print statements on console:
 ```sh
-$ nosetest --nocapture
+$ nosetest --nocapture
 ```
+
+Or use e.g. VS Code to execute and debug tests.
 
 ## Exeuting Verification Test
 
@@ -270,6 +290,12 @@ Verification test sciprt executes a set of tests on active RuuviTags. Tests requ
 ```sh
 $ chmod +x verification.sh
 $ sudo ./verification.sh
+```
+
+Run verification for the package from pypi
+
+```sh
+$ sudo ./verification.sh pypi
 ```
 
 ## Run long duration tests
@@ -287,9 +313,9 @@ ruuvitag_sensor.log.enable_console()
 macs = []
 
 while True:
-    datas = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
-    print(datetime.utcnow().isoformat())
-    print(datas)
+   datas = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
+   print(datetime.utcnow().isoformat())
+   print(datas)
 ```
 
 Create new connections with 1 minute interval
@@ -306,7 +332,7 @@ Normal scanning function is good for running normal long duration tests without 
 $ sudo python3 ruuvitag_sensor -s
 ```
 
-## Randomly create bad BLE broadcast data 
+## Randomly create bad BLE broadcast data
 
 Add to `ble_communication.py`:
 ```python
@@ -329,7 +355,7 @@ Can't init device hci0: Operation not possible due to RF-kill (132)
 
 Fix:
 ```sh
-$ rfkill unblock all 
+$ rfkill unblock all
 ```
 
 Error from command `hcitool lescan --duplicates`
