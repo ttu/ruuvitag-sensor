@@ -215,6 +215,12 @@ Example data has data from 4 sensors with different firmwares.
 }
 ```
 
+##### Note on Data Format 2 and 4
+
+There is no reason to use Data Format 2 or 4.
+
+Original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users to view the tags without the need to install any app. Since the _Nearby_ has been discontinued there isn't any benefit in using Eddystone format anymore.
+
 ##### Logging and Print to console
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. Command line application has console logging enabled by default.
