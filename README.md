@@ -37,6 +37,25 @@ $ pip install -e .
 
 Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruuvitag-sensor/blob/master/install_guide_pi.md)
 
+
+### Docker
+
+Build Docker image
+
+```bash
+$ docker build -t ruuvitag-sensor .
+```
+
+Run the Docker container
+```
+$ docker run --rm ruuvitag-sensor 
+```
+
+Start an interactive bash session to the container (must have built the image first)
+```bash
+$ docker run -it ruuvitag-sensor bash
+```
+
 ### Usage
 
 RuuviTag sensors can be identified using MAC addresses.
