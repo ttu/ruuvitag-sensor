@@ -48,7 +48,8 @@ def update_data():
     """
     global allData
     while not q.empty():
-        allData = q.get()
+        data = q.get()
+        allData[data[0]] = data[1]
     for key, value in tags.items():
         if key in allData:
             allData[key]['name'] = value
