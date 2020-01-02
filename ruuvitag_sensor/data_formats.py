@@ -11,12 +11,22 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        data = DataFormats._get_data_format_3(raw)
+
+        #Python duck typing
+        try:
+            string_data = raw.hex()
+            if string_data[0:2] != 'FF':
+                string_data = 'FF' + string_data
+
+        except (AttributeError):
+            string_data = raw
+
+        data = DataFormats._get_data_format_3(string_data)
 
         if data is not None:
             return (3, data)
 
-        data = DataFormats._get_data_format_5(raw)
+        data = DataFormats._get_data_format_5(string_data)
 
         if data is not None:
             return (5, data)
@@ -49,7 +59,6 @@ class DataFormats(object):
             index = data.find('ruu.vi/#')
             if index > -1:
                 return data[(index + 8):]
-
             return None
         except:
             return None

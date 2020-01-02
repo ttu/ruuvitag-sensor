@@ -33,8 +33,8 @@ setup(name='ruuvitag_sensor',
       keywords='RuuviTag BLE',
       install_requires=[
           'rx',
-          'futures;python_version<"3.3"',
-          'ptyprocess;platform_system=="Linux"'
+          'ptyprocess',
+          'bleson @ https://github.com/TheCellule/python-bleson/tarball/master/#egg=bleson',
       ],
       license='MIT',
       packages=['ruuvitag_sensor'],

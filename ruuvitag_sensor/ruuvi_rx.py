@@ -1,10 +1,11 @@
-from datetime import datetime
-from multiprocessing import Manager
-from threading import Thread
+import rx
 import time
-from concurrent.futures import ProcessPoolExecutor
-from rx.subjects import Subject
 
+from threading import Thread
+from datetime import datetime
+from rx.subject import Subject
+from multiprocessing import Manager
+from concurrent.futures import ProcessPoolExecutor
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 

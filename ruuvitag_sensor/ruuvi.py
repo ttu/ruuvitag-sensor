@@ -2,21 +2,23 @@ import sys
 import os
 import time
 import logging
+from multiprocessing import Manager
 
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder
 
 log = logging.getLogger(__name__)
 
-
-if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
+if os.environ.get('CI') == 'True':
     # Use BleCommunicationDummy also for CI as it can't use bluez
     from ruuvitag_sensor.adaptors.dummy import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
-    from ruuvitag_sensor.adaptors.nix_hci import BleCommunicationNix
-    ble = BleCommunicationNix()
+    from ruuvitag_sensor.adaptors.bleson import BleCommunicationBleson
+    ble = BleCommunicationBleson()
 
+# from ruuvitag_sensor.adaptors.bleson import BleCommunicationBleson
+# ble = BleCommunicationBleson()
 
 class RunFlag(object):
     """
@@ -127,18 +129,18 @@ class RuuviTagSensor(object):
             tuple: MAC and State of RuuviTag sensor data
         """
 
-        mac_blacklist = []
+        mac_blacklist = Manager().list()
         start_time = time.time()
         data_iter = ble.get_datas(mac_blacklist, bt_device)
 
         for ble_data in data_iter:
             # Check duration
             if search_duratio_sec and time.time() - start_time > search_duratio_sec:
-                data_iter.send(StopIteration)
+                data_iter.send(StopIteration("Timeout"))
                 break
             # Check running flag
             if not run_flag.running:
-                data_iter.send(StopIteration)
+                data_iter.send(StopIteration("Not running"))
                 break
             # Check MAC whitelist
             if macs and not ble_data[0] in macs:

@@ -18,7 +18,8 @@ class TestDataFormats(TestCase):
             self.assertEqual(result, encoded[1])
 
     def test_convert_data_not_valid_binary(self):
-        data = b'\x99\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00'
+        # To make this data pseudo-vaid, it shoud start with \99 instead of \98
+        data = b'\x98\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00'
         encoded = DataFormats.convert_data(data)
         self.assertIsNone(encoded[0])
         self.assertIsNone(encoded[1])
