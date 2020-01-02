@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from ruuvitag_sensor.data_formats import DataFormats
 
-
 # pylint: disable=W0613
 
 class TestDataFormats(TestCase):
