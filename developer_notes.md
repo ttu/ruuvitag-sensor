@@ -47,6 +47,11 @@ $ sudo python3 ruuvitag_sensor --help
      * Helper class to be used to handle singe RuuviTag and it's state.
 
 
+## Testing
+To check that your changes work across multiple python versions and platforms, we have tox. 
+You can run tox locally, but tox will only run your current platform and the python versions 
+you have in your system. Travis, however, will pick up all the combinations and test the all.
+
 ## Update RuuviTag firmware and change modes
 
 1. Download firmware from https://lab.ruuvi.com/dfu
