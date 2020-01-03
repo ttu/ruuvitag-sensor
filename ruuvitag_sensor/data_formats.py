@@ -33,7 +33,8 @@ class DataFormats(object):
     @staticmethod
     def _get_data_format_2and4(raw):
         """
-        Validate that data is from RuuviTag and is Data Format 2 or 4. Convert hexadcimal data to string.
+        Validate that data is from RuuviTag and is Data Format 2 or 4.
+        Convert hexadcimal data to string.
         Encoded data part is after ruu.vi/#
 
         Returns:
@@ -62,7 +63,8 @@ class DataFormats(object):
         Returns:
             string: Sensor data
         """
-        # Search of FF990403 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 3 (03))
+        # Search of FF990403 (Manufacturer Specific Data (FF) /
+        # Ruuvi Innovations ltd (9904) / Format 3 (03))
         try:
             if 'FF990403' not in raw:
                 return None
@@ -80,7 +82,8 @@ class DataFormats(object):
         Returns:
             string: Sensor data
         """
-        # Search of FF990405 (Manufacturer Specific Data (FF) / Ruuvi Innovations ltd (9904) / Format 5 (05))
+        # Search of FF990405 (Manufacturer Specific Data (FF) /
+        # Ruuvi Innovations ltd (9904) / Format 5 (05))
         try:
             if 'FF990405' not in raw:
                 return None

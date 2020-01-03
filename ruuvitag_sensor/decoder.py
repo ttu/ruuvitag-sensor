@@ -149,7 +149,8 @@ class Df3Decoder(object):
                 'humidity': self._get_humidity(byte_data),
                 'temperature': self._get_temperature(byte_data),
                 'pressure': self._get_pressure(byte_data),
-                'acceleration': math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
+                'acceleration': math.sqrt(
+                    acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
                 'acceleration_x': acc_x,
                 'acceleration_y': acc_y,
                 'acceleration_z': acc_z,
