@@ -12,7 +12,9 @@ file_handler = logging.FileHandler('ruuvitag_sensor.log')
 file_handler.setLevel(logging.ERROR)
 
 # create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 file_handler.setFormatter(formatter)
 
 # add the handlers to the logger

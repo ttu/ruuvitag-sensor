@@ -1,10 +1,9 @@
-from datetime import datetime
-from multiprocessing import Manager
-from threading import Thread
 import time
-from concurrent.futures import ProcessPoolExecutor
+from threading import Thread
+from datetime import datetime
 from rx.subjects import Subject
-
+from multiprocessing import Manager
+from concurrent.futures import ProcessPoolExecutor
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
@@ -27,13 +26,15 @@ def _run_get_data_background(macs, queue, shared_data, bt_device):
 
 class RuuviTagReactive(object):
     """
-    Reactive wrapper and background process for RuuviTagSensor get_datas
+    Reactive wrapper and background process for RuuviTagSensor
+    get_datas
     """
 
     @staticmethod
     def _data_update(subjects, queue, run_flag):
         """
-        Get data from backgound process and notify all subscribed observers with the new data
+        Get data from backgound process and notify all subscribed observers
+        with the new data
         """
         while run_flag.running:
             while not queue.empty():
@@ -44,7 +45,8 @@ class RuuviTagReactive(object):
 
     def __init__(self, macs=[], bt_device=''):
         """
-        Start background process for get_datas and async task for notifying all subscribed observers
+        Start background process for get_datas and async task for notifying
+        all subscribed observers
 
         Args:
             macs (list): MAC addresses
@@ -62,12 +64,16 @@ class RuuviTagReactive(object):
         self._shared_data['run_flag'] = True
 
         # Start data updater
-        notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self._subjects, q, self._run_flag))
+        notify_thread = Thread(
+            target=RuuviTagReactive._data_update, 
+            args=(self._subjects, q, self._run_flag))
         notify_thread.start()
 
         # Start background process
         executor = ProcessPoolExecutor(1)
-        executor.submit(_run_get_data_background, macs, q, self._shared_data, bt_device)
+        executor.submit(
+            _run_get_data_background,
+            macs, q, self._shared_data, bt_device)
 
     def get_subject(self):
         """
