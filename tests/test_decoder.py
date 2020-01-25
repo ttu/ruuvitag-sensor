@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from ruuvitag_sensor.decoder import get_decoder, UrlDecoder, Df3Decoder, Df5Decoder
 
-
 class TestDecoder(TestCase):
 
     def test_getcorrectdecoder(self):

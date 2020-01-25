@@ -1,45 +1,12 @@
-import abc
 import logging
 import os
 import subprocess
 import sys
 import time
 
+from ruuvitag_sensor.adaptors import BleCommunication
+
 log = logging.getLogger(__name__)
-
-
-class BleCommunication(object):
-    """Bluetooth LE communication"""
-    __metaclass__ = abc.ABCMeta
-
-    @staticmethod
-    @abc.abstractmethod
-    def get_data(mac, bt_device=''):
-        pass
-
-    @staticmethod
-    @abc.abstractmethod
-    def get_datas(blacklist=[], bt_device=''):
-        pass
-
-
-class BleCommunicationDummy(BleCommunication):
-    """TODO: Find some working BLE implementation for Windows and OSX"""
-
-    @staticmethod
-    def get_data(mac, bt_device=''):
-        return '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
-
-    @staticmethod
-    def get_datas(blacklist=[], bt_device=''):
-        datas = [
-            ('DU:MM:YD:AT:A9:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('NO:TS:UP:PO:RT:ED', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
-        ]
-
-        for data in datas:
-            yield data
-
 
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
@@ -50,33 +17,53 @@ class BleCommunicationNix(BleCommunication):
         Attributes:
            device (string): BLE device (default hci0)
         """
-        # import ptyprocess here so as long as all implementations are in the same file, all will work
+        # import ptyprocess here so as long as all implementations are in 
+        # the same file, all will work
         import ptyprocess
 
         if not bt_device:
             bt_device = 'hci0'
 
         log.info('Start receiving broadcasts (device %s)', bt_device)
-        DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
+        if sys.version_info >= (3, 3):
+            DEVNULL = subprocess.DEVNULL
+        else:
+            open(os.devnull, 'wb')
 
         def reset_ble_adapter():
-            return subprocess.call('sudo hciconfig %s reset' % bt_device, shell=True, stdout=DEVNULL)
+            log.info("FYI: Calling a process with sudo!")
+            return subprocess.call(
+                'sudo hciconfig %s reset' % bt_device,
+                shell=True,
+                stdout=DEVNULL
+                )
 
         def start_with_retry(func, try_count, interval, msg):
             retcode = func()
             if retcode != 0 and try_count > 0:
                 log.info(msg)
                 time.sleep(interval)
-                return start_with_retry(func, try_count - 1, interval + interval, msg)
+                return start_with_retry(
+                    func, try_count - 1, interval + interval, msg)
             return retcode
 
-        retcode = start_with_retry(reset_ble_adapter, 3, 1, 'Problem with hciconfig reset. Retry reset.')
+        retcode = start_with_retry(
+            reset_ble_adapter,
+            3, 1,
+            'Problem with hciconfig reset. Retry reset.'
+        )
+
         if retcode != 0:
             log.info('Problem with hciconfig reset. Exit.')
             exit(1)
 
-        hcitool = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
-        hcidump = ptyprocess.PtyProcess.spawn(['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
+        log.info("FYI: Spawning 2 processes with sudo!")
+        hcitool = ptyprocess.PtyProcess.spawn(
+            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates']
+        )
+        hcidump = ptyprocess.PtyProcess.spawn(
+            ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw']
+        )
         return (hcitool, hcidump)
 
     @staticmethod
@@ -99,7 +86,7 @@ class BleCommunicationNix(BleCommunication):
                 else:
                     if data:
                         data += line.strip().replace(' ', '')
-        except KeyboardInterrupt as ex:
+        except KeyboardInterrupt:
             return
         except Exception as ex:
             log.info(ex)
