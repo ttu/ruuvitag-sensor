@@ -8,6 +8,7 @@ from ruuvitag_sensor.adaptors import BleCommunication
 
 log = logging.getLogger(__name__)
 
+
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
 
@@ -17,7 +18,7 @@ class BleCommunicationNix(BleCommunication):
         Attributes:
            device (string): BLE device (default hci0)
         """
-        # import ptyprocess here so as long as all implementations are in 
+        # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
         import ptyprocess
 
@@ -35,8 +36,7 @@ class BleCommunicationNix(BleCommunication):
             return subprocess.call(
                 'sudo hciconfig %s reset' % bt_device,
                 shell=True,
-                stdout=DEVNULL
-                )
+                stdout=DEVNULL)
 
         def start_with_retry(func, try_count, interval, msg):
             retcode = func()
@@ -50,8 +50,7 @@ class BleCommunicationNix(BleCommunication):
         retcode = start_with_retry(
             reset_ble_adapter,
             3, 1,
-            'Problem with hciconfig reset. Retry reset.'
-        )
+            'Problem with hciconfig reset. Retry reset.')
 
         if retcode != 0:
             log.info('Problem with hciconfig reset. Exit.')
@@ -59,11 +58,9 @@ class BleCommunicationNix(BleCommunication):
 
         log.info("FYI: Spawning 2 processes with sudo!")
         hcitool = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates']
-        )
+            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
         hcidump = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw']
-        )
+            ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
         return (hcitool, hcidump)
 
     @staticmethod

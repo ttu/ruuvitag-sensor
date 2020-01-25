@@ -15,6 +15,7 @@ def my_excepthook(exctype, value, traceback):
     if not issubclass(exctype, KeyboardInterrupt):
         log.critical(value)
 
+
 sys.excepthook = my_excepthook
 
 if __name__ == '__main__':
@@ -42,6 +43,8 @@ if __name__ == '__main__':
         datas = RuuviTagSensor.get_data_for_sensors(bt_device=args.bt_device)
         log.info(datas)
     elif args.stream_action:
-        RuuviTagSensor.get_datas(lambda x: log.info('%s - %s', x[0], x[1]), bt_device=args.bt_device)
+        RuuviTagSensor.get_datas(
+            lambda x: log.info('%s - %s', x[0], x[1]),
+            bt_device=args.bt_device)
     else:
         parser.print_usage()

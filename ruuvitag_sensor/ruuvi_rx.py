@@ -1,9 +1,9 @@
 import time
 from threading import Thread
 from datetime import datetime
-from rx.subjects import Subject
 from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
+from rx.subjects import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
@@ -65,7 +65,7 @@ class RuuviTagReactive(object):
 
         # Start data updater
         notify_thread = Thread(
-            target=RuuviTagReactive._data_update, 
+            target=RuuviTagReactive._data_update,
             args=(self._subjects, q, self._run_flag))
         notify_thread.start()
 

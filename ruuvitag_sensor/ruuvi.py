@@ -90,7 +90,10 @@ class RuuviTagSensor(object):
 
         datas = dict()
 
-        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, search_duratio_sec, bt_device=bt_device):
+        for new_data in RuuviTagSensor._get_ruuvitag_datas(
+                macs,
+                search_duratio_sec,
+                bt_device=bt_device):
             datas[new_data[0]] = new_data[1]
 
         return datas
@@ -121,7 +124,8 @@ class RuuviTagSensor(object):
         Args:
             macs (list): MAC addresses. Default empty list
             search_duratio_sec (int): Search duration in seconds. Default None
-            run_flag (object): RunFlag object. Function executes while run_flag.running. Default new RunFlag
+            run_flag (object): RunFlag object. Function executes while run_flag.running.
+                               Default new RunFlag
             bt_device (string): Bluetooth device id
         Yields:
             tuple: MAC and State of RuuviTag sensor data

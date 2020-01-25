@@ -6,6 +6,8 @@ import logging
 
 log = logging.getLogger(__name__)
 
+# pylint: disable=no-self-use
+
 
 def get_decoder(data_type):
     """
@@ -16,18 +18,18 @@ def get_decoder(data_type):
     """
     if data_type == 2:
         return UrlDecoder()
-    elif data_type == 4:
+    if data_type == 4:
         return UrlDecoder()
-    elif data_type == 3:
+    if data_type == 3:
         return Df3Decoder()
-    else:
-        return Df5Decoder()
+    return Df5Decoder()
 
 
 def twos_complement(value, bits):
     if (value & (1 << (bits - 1))) != 0:
         value = value - (1 << bits)
     return value
+
 
 def rshift(val, n):
     """
@@ -159,6 +161,7 @@ class Df3Decoder(object):
         except Exception:
             log.exception('Value: %s not valid', data)
             return None
+
 
 class Df5Decoder(object):
     """

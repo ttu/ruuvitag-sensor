@@ -4,7 +4,8 @@ from mock import patch
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
-# pylint: disable=W0613
+# pylint: disable=line-too-long,no-self-use,unused-argument
+
 
 class TestRuuviTagSensor(TestCase):
 
