@@ -1,7 +1,12 @@
 [MESSAGES CONTROL]
 
-disable=E0401,C0111,C0103,W0702,W0703,W0511,W0102,R0903,I0011
-
-[FORMAT]
-
-max-line-length=120
+disable=
+    import-error,
+    missing-docstring,
+    invalid-name,
+    bare-except,
+    broad-except,
+    fixme,
+    dangerous-default-value,
+    too-few-public-methods,
+    useless-object-inheritance

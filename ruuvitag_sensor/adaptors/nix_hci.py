@@ -8,6 +8,7 @@ from ruuvitag_sensor.adaptors import BleCommunication
 
 log = logging.getLogger(__name__)
 
+
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
 
@@ -17,7 +18,7 @@ class BleCommunicationNix(BleCommunication):
         Attributes:
            device (string): BLE device (default hci0)
         """
-        # import ptyprocess here so as long as all implementations are in 
+        # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
         import ptyprocess
 
@@ -35,8 +36,7 @@ class BleCommunicationNix(BleCommunication):
             return subprocess.call(
                 'sudo hciconfig %s reset' % bt_device,
                 shell=True,
-                stdout=DEVNULL
-                )
+                stdout=DEVNULL)
 
         def start_with_retry(func, try_count, interval, msg):
             retcode = func()

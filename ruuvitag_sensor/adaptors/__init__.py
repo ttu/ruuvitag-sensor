@@ -1,5 +1,5 @@
-
 import abc
+
 
 class BleCommunication(object):
     """Bluetooth LE communication"""

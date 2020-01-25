@@ -2,6 +2,9 @@ from unittest import TestCase
 
 from ruuvitag_sensor.decoder import get_decoder, UrlDecoder, Df3Decoder, Df5Decoder
 
+# pylint: disable=line-too-long
+
+
 class TestDecoder(TestCase):
 
     def test_getcorrectdecoder(self):
@@ -83,8 +86,15 @@ class TestDecoder(TestCase):
         accY = '03E8'
         accZ = '03E8'
         batt = 'FFFF'
-        data = decoder.decode_data('03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
-            humidity=humidity, temp=temp, pressure=pressure, accX=accX, accY=accY, accZ=accZ, batt=batt))
+        data = decoder.decode_data(
+            '03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
+                humidity=humidity,
+                temp=temp,
+                pressure=pressure,
+                accX=accX,
+                accY=accY,
+                accZ=accZ,
+                batt=batt))
 
         self.assertEqual(data['temperature'], 127.99)
         self.assertEqual(data['pressure'], 1155.35)
@@ -104,8 +114,15 @@ class TestDecoder(TestCase):
         accY = 'FC18'
         accZ = 'FC18'
         batt = '0000'
-        data = decoder.decode_data('03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
-            humidity=humidity, temp=temp, pressure=pressure, accX=accX, accY=accY, accZ=accZ, batt=batt))
+        data = decoder.decode_data(
+            '03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
+                humidity=humidity,
+                temp=temp,
+                pressure=pressure,
+                accX=accX,
+                accY=accY,
+                accZ=accZ,
+                batt=batt))
 
         self.assertEqual(data['temperature'], -127.99)
         self.assertEqual(data['pressure'], 500.0)
@@ -129,8 +146,19 @@ class TestDecoder(TestCase):
         movement_counter = '42'
         measurement_sequence = '00CD'
         mac = 'CBB8334C884F'
-        data = decoder.decode_data('{format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}{movement_counter}{measurement_sequence}{mac}'.format(
-            format=data_format, humidity=humidity, temp=temp, pressure=pressure, accX=accX, accY=accY, accZ=accZ, power_info=power_info, movement_counter=movement_counter, measurement_sequence=measurement_sequence, mac=mac))
+        data = decoder.decode_data(
+            '{format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}{movement_counter}{measurement_sequence}{mac}'.format(
+                format=data_format,
+                humidity=humidity,
+                temp=temp,
+                pressure=pressure,
+                accX=accX,
+                accY=accY,
+                accZ=accZ,
+                power_info=power_info,
+                movement_counter=movement_counter,
+                measurement_sequence=measurement_sequence,
+                mac=mac))
 
         self.assertEqual(data['temperature'], 24.30)
         self.assertEqual(data['humidity'], 53.49)
