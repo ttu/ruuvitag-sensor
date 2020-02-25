@@ -6,37 +6,53 @@ Get data from sensors and post it to specified mqtt channel in json-format
 Requires:
     Ruuvitag sensor - pip3 install --user ruuvitag-sensor
     Paho MQTT       - pip3 install --user paho-mqtt
+
+Example usage:
+./post_to_mqtt.py --mac DE:AD:BE:EE:EE:FF -b mqtt.ikenet \
+     -t ruuvitag/sauna -i 60 -l saunassa
+
+See here how to automate this using Ansible:
+https://github.com/RedHatNordicsSA/iot-hack/blob/master/run-ruuvi-to-mqtt.yml
 """
 
 import time
 import json
-import sys, signal
+import sys
+import signal
 import argparse
 from ruuvitag_sensor.ruuvitag import RuuviTag
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
 parser = argparse.ArgumentParser(
-    description='Program relays Ruuvitag BLE temperature and humidity advertisements to MQTT broker.')
-parser.add_argument('-m', '--mac', dest='mac_address', required=True,
-                    help='Ruuvitag MAC address')
-parser.add_argument('-b', '--broker', dest='mqtt_broker', required=True,
-		    help='mqtt broker address, ip or fqdn')
-parser.add_argument('-t', '--topic', dest='mqtt_topic', required=True,
-                    help='mqtt topic, e.g. ruuvitag/sauna')
-parser.add_argument('-a', '--all', action='store_true', required=False,
-	            help='send all Ruuvitag values')
-parser.add_argument('-i', '--interval', dest='interval', default=60, type=int, required=False,
-	            help='seconds to wait between data queries')
-parser.add_argument('-l', '--location', dest='location', required=False,
-	            help='additional location tag for json')
+    description='Program relays Ruuvitag BLE temperature and humidity'
+    'advertisements to MQTT broker.')
+parser.add_argument(
+    '-m', '--mac', dest='mac_address', required=True,
+    help='Ruuvitag MAC address')
+parser.add_argument(
+    '-b', '--broker', dest='mqtt_broker', required=True,
+    help='mqtt broker address, ip or fqdn')
+parser.add_argument(
+    '-t', '--topic', dest='mqtt_topic', required=True,
+    help='mqtt topic, e.g. ruuvitag/sauna')
+parser.add_argument(
+    '-a', '--all', action='store_true', required=False,
+    help='send all Ruuvitag values')
+parser.add_argument(
+    '-i', '--interval', dest='interval', default=60,
+    type=int, required=False,
+    help='seconds to wait between data queries')
+parser.add_argument(
+    '-l', '--location', dest='location', required=False,
+    help='additional location tag for json')
 args = parser.parse_args()
 
 mac_address = args.mac_address
 mqtt_broker = args.mqtt_broker
 mqtt_topic = args.mqtt_topic
 interval = args.interval
-send_all = args.all 
+send_all = args.all
 location = args.location
 
 # let's trap ctrl-c, SIGINT and come down nicely
@@ -60,7 +76,7 @@ client.on_connect = on_connect
 client.connect(mqtt_broker, 1883, 60)
 client.loop_start()
 
-print ('Start listening to Ruuvitag')
+print('Start listening to Ruuvitag')
 
 sensor = RuuviTag(mac_address)
 while True:
@@ -79,13 +95,12 @@ while True:
         # extract temp and humidity values, and format data into custom JSON
         for_json = {
             'location':state['location'],
-            'temperature': round(state['temperature'],1),
-            'humidity': round(state['humidity'],1)
+            'temperature': round(state['temperature'], 1),
+            'humidity': round(state['humidity'], 1)
             }
         mqtt_msg = json.dumps(for_json)
 
     publish.single(mqtt_topic, mqtt_msg, hostname=mqtt_broker)
-    print ('.', end='', flush=True)
+    print('.', end='', flush=True)
 
-    time.sleep (interval)
-
+    time.sleep(interval)
