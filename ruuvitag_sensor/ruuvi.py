@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import logging
+from multiprocessing import Manager
 
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder
@@ -131,7 +132,7 @@ class RuuviTagSensor(object):
             tuple: MAC and State of RuuviTag sensor data
         """
 
-        mac_blacklist = []
+        mac_blacklist = Manager().list()
         start_time = time.time()
         data_iter = ble.get_datas(mac_blacklist, bt_device)
 
