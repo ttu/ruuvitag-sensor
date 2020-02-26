@@ -2,7 +2,7 @@
 
 ### [Unreleased]
 * Fix usage of bt_device parameter when opening the BLE connection
-* Refactor adaptors into own modules
+* Refactor adapters into own modules
 * Fix blacklisting of non Ruuvitag devices
 
 ## [0.13.0] - 2019-07-01

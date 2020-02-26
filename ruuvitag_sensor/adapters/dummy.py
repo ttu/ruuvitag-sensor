@@ -1,4 +1,4 @@
-from ruuvitag_sensor.adaptors import BleCommunication
+from ruuvitag_sensor.adapters import BleCommunication
 
 
 class BleCommunicationDummy(BleCommunication):
