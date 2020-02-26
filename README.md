@@ -9,22 +9,11 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * RuuviTag with Weather Station firmware
     * Setup [guide](https://ruu.vi/setup/)
     * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
-* Linux
-    * Package's Windows and macOS supports are only for testing and url decoding
-* Bluez
-    * `sudo apt-get install bluez bluez-hcidump`
-    * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
-* Superuser rights
-    * BlueZ tools require superuser rights
-* __NOTE:__ Experimental implementation with cross-platform BLE communication 
-    * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
-    * Doesn't require superuser rights
-    * Works with Linux, maybe with macOS and Windows
-    * Install Bleson manually from GitHub
-      * `pip install git+https://github.com/TheCellule/python-bleson`
-    * Set env variable `RUUVI_BLE_ADAPTER` to `Bleson`
-      * e.g. `export RUUVI_BLE_ADAPTER="Bleson"`
-    * More info on issue [#78](https://github.com/ttu/ruuvitag-sensor/issues/78)
+* Bluez (Linux-only)
+    * [BlueZ install guide](#BlueZ)
+* __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
+    * [Bleson install guide](#Bleson)
+   
 
 ### Installation
 
@@ -260,11 +249,48 @@ optional arguments:
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
 ```
-## Bluez limitations
+
+## BlueZ
+
+BlueZ works only on __Linux__. Windows and macOS supports are only for testing and url decoding. 
+
+BlueZ tools require __superuser__ rights.
+
+Install BlueZ.
+
+```sh
+$ sudo apt-get install bluez bluez-hcidump
+```
+
+Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
+
+### BlueZ limitations
 
 The ruuvitag-sensor use Bluez to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well unexpected errors or changes, e.g. when adapter is busy, rebooted or powered down.
 
 In case of errors, application tries to exit immediately, so it can be automatically restarted.
+
+## Bleson
+
+Works with Linux, macOS and Windows. Doesn't require Bluez or superuser rights.
+
+Requires _Python 3_.
+
+Bleson is not installed automatically with `ruuvitag_sensor` package. Install it manually from GitHub.
+
+```sh
+$ pip install git+https://github.com/TheCellule/python-bleson
+```
+
+Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="Bleson"
+```
+
+More info on issues [#31](https://github.com/ttu/ruuvitag-sensor/issues/31) and [#18](https://github.com/ttu/ruuvitag-sensor/issues/18).
+
+__NOTE:__ On Windows Bleson works only with _Python 3.6_.
 
 ## Examples
 
