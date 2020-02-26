@@ -2,6 +2,7 @@ import os
 
 
 def get_raw_hci(raw, data_format):
+    # pylint: disable=unused-argument
     return raw
 
 
