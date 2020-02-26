@@ -10,7 +10,7 @@ from ruuvitag_sensor.decoder import get_decoder
 log = logging.getLogger(__name__)
 
 
-if not sys.platform.startswith('linux') or os.environ.get('CI') == 'True':
+if not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
     # Use BleCommunicationDummy also for CI as it can't use bluez
     from ruuvitag_sensor.adaptors.dummy import BleCommunicationDummy
     ble = BleCommunicationDummy()
