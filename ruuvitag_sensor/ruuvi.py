@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
-    from ruuvitag_sensor.adaptors.bleson import BleCommunicationBleson
+    from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
     # Use BleCommunicationDummy also for CI as it can't use bluez

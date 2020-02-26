@@ -6,7 +6,7 @@ import time
 
 from bleson import get_provider, Observer
 
-from ruuvitag_sensor.adaptors import BleCommunication
+from ruuvitag_sensor.adapters import BleCommunication
 
 
 log = logging.getLogger(__name__)
