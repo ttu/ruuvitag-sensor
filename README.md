@@ -10,15 +10,21 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * Setup [guide](https://ruu.vi/setup/)
     * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
 * Linux
-    * Package's Windows and OSX supports are only for testing and url decoding
+    * Package's Windows and macOS supports are only for testing and url decoding
 * Bluez
     * `sudo apt-get install bluez bluez-hcidump`
     * Package uses internally hciconfig, hcitool and hcidump. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 * Superuser rights
     * BlueZ tools require superuser rights
-* __NOTE:__ Experimental implementation with cross-platform BLE communication in branch: [bleson-ble-communication](https://github.com/ttu/ruuvitag-sensor/tree/bleson-ble-communication)
+* __NOTE:__ Experimental implementation with cross-platform BLE communication 
     * Uses [Bleson](https://github.com/TheCellule/python-bleson) module instead of Bluez
-    * More info and instrutions on issue [#78](https://github.com/ttu/ruuvitag-sensor/issues/78)
+    * Doesn't require superuser rights
+    * Works with Linux, maybe with macOS and Windows
+    * Install Bleson manually from GitHub
+      * `pip install git+https://github.com/TheCellule/python-bleson`
+    * Set env variable `BLE_ADAPTOR` to `Bleson`
+      * e.g. `export BLE_ADAPTOR="Bleson"`
+    * More info on issue [#78](https://github.com/ttu/ruuvitag-sensor/issues/78)
 
 ### Installation
 

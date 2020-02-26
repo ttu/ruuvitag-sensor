@@ -4,6 +4,7 @@
 * Fix usage of bt_device parameter when opening the BLE connection
 * Refactor adapters into own modules
 * Fix blacklisting of non Ruuvitag devices
+* Add Bleson BLE adaptor
 
 ## [0.13.0] - 2019-07-01
 * Fix hcitool subprocess closing

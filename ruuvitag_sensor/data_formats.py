@@ -1,3 +1,21 @@
+import os
+
+
+def get_raw_hci(raw, data_format):
+    return raw
+
+
+def get_raw_bleson(raw, data_format):
+    # Bleson drops FF from the raw data and it is required for DF 3 and 5
+    # TODO: Move convert_data to adaptor specific code
+    if data_format in (2, 4):
+        return raw
+    return 'FF' + raw
+
+
+get_raw = get_raw_bleson if os.environ.get('BLE_ADAPTOR') == 'Bleson' else get_raw_hci
+
+
 class DataFormats(object):
     """
     RuuviTag broadcasted raw data handling for each data format
@@ -11,19 +29,19 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        data = DataFormats._get_data_format_3(raw)
+        data = DataFormats._get_data_format_3(get_raw(raw, 3))
 
         if data is not None:
             return (3, data)
 
-        data = DataFormats._get_data_format_5(raw)
+        data = DataFormats._get_data_format_5(get_raw(raw, 5))
 
         if data is not None:
             return (5, data)
 
         # TODO: Check from raw data correct data format
         # Now this returns 2 also for Data Format 4
-        data = DataFormats._get_data_format_2and4(raw)
+        data = DataFormats._get_data_format_2and4(get_raw(raw, 2))
 
         if data is not None:
             return (2, data)
