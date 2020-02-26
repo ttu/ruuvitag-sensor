@@ -22,8 +22,8 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * Works with Linux, maybe with macOS and Windows
     * Install Bleson manually from GitHub
       * `pip install git+https://github.com/TheCellule/python-bleson`
-    * Set env variable `BLE_ADAPTOR` to `Bleson`
-      * e.g. `export BLE_ADAPTOR="Bleson"`
+    * Set env variable `RUUVI_BLE_ADAPTER` to `Bleson`
+      * e.g. `export RUUVI_BLE_ADAPTER="Bleson"`
     * More info on issue [#78](https://github.com/ttu/ruuvitag-sensor/issues/78)
 
 ### Installation

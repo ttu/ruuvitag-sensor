@@ -13,7 +13,7 @@ def get_raw_bleson(raw, data_format):
     return 'FF' + raw
 
 
-get_raw = get_raw_bleson if os.environ.get('BLE_ADAPTOR') == 'Bleson' else get_raw_hci
+get_raw = get_raw_bleson if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson' else get_raw_hci
 
 
 class DataFormats(object):
