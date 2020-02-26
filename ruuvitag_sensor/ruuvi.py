@@ -12,10 +12,10 @@ log = logging.getLogger(__name__)
 
 if not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
     # Use BleCommunicationDummy also for CI as it can't use bluez
-    from ruuvitag_sensor.adaptors.dummy import BleCommunicationDummy
+    from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
     ble = BleCommunicationDummy()
 else:
-    from ruuvitag_sensor.adaptors.nix_hci import BleCommunicationNix
+    from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
     ble = BleCommunicationNix()
 
 

@@ -4,7 +4,7 @@ import subprocess
 import sys
 import time
 
-from ruuvitag_sensor.adaptors import BleCommunication
+from ruuvitag_sensor.adapters import BleCommunication
 
 log = logging.getLogger(__name__)
 
