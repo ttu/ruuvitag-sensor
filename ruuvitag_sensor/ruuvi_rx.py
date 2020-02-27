@@ -3,7 +3,7 @@ from threading import Thread
 from datetime import datetime
 from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
-from rx.subjects import Subject
+from rx.subject import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
