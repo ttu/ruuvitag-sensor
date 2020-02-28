@@ -11,6 +11,14 @@ log = logging.getLogger(__name__)
 
 
 if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
+    def get_raw_bleson(raw, data_format):
+        # Bleson drops FF from the raw data and it is required for DF 3 and 5
+        # TODO: Move convert_data to adaptor specific code
+        if data_format in (2, 4):
+            return raw
+        return 'FF' + raw
+
+    DataFormats._parse_raw = get_raw_bleson  # pylint: disable=protected-access
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
