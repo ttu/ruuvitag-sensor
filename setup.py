@@ -32,7 +32,7 @@ setup(name='ruuvitag_sensor',
       ],
       keywords='RuuviTag BLE',
       install_requires=[
-          'rx',
+          'rx<3',
           'futures;python_version<"3.3"',
           'ptyprocess;platform_system=="Linux"'
       ],
