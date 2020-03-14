@@ -4,6 +4,8 @@
 * Fix usage of bt_device parameter when opening the BLE connection
 * Refactor adapters into own modules
 * Fix blacklisting of non Ruuvitag devices
+* Pin rx version to 1.x for Python 2 support
+* Fix RuuviTag-object
 
 ## [0.13.0] - 2019-07-01
 * Fix hcitool subprocess closing
