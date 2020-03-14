@@ -114,7 +114,7 @@ class BleCommunicationNix(BleCommunication):
     @staticmethod
     def get_data(mac, bt_device=''):
         data = None
-        data_iter = BleCommunicationNix.get_datas(bt_device)
+        data_iter = BleCommunicationNix.get_datas([], bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')
