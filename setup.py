@@ -13,8 +13,8 @@ except ImportError:
 
 setup(name='ruuvitag_sensor',
       version=ruuvitag_sensor.__version__,
-      description='Find RuuviTag sensor beacons and get data from selected ' +
-                  'sensor and decode data from eddystone url',
+      description='Find RuuviTag sensor beacons, get and encode data from ' +
+                  'selected sensors',
       long_description=readme,
       url='https://github.com/ttu/ruuvitag-sensor',
       download_url='https://github.com/ttu/ruuvitag-sensor/tarball/' +
@@ -23,7 +23,7 @@ setup(name='ruuvitag_sensor',
       author_email='tomi.tuhkanen@iki.fi',
       platforms='any',
       classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
