@@ -2,6 +2,9 @@
 
 ### [Unreleased]
 
+## [1.0.1] - 2020-03-21
+* Fix missing module from released package
+
 ## [1.0.0] - 2020-03-21
 * Fix usage of bt_device parameter when opening the BLE connection
 * Refactor adapters into own modules
