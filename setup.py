@@ -34,7 +34,7 @@ setup(name='ruuvitag_sensor',
           'ptyprocess;platform_system=="Linux"'
       ],
       license='MIT',
-      packages=['ruuvitag_sensor'],
+      packages=['ruuvitag_sensor', 'ruuvitag_sensor.adapters'],
       include_package_data=True,
       tests_require=[
           'nose',
