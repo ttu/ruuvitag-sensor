@@ -8,7 +8,6 @@ from bleson import get_provider, Observer
 
 from ruuvitag_sensor.adapters import BleCommunication
 
-
 log = logging.getLogger(__name__)
 
 
@@ -109,8 +108,7 @@ class BleCommunicationBleson(BleCommunication):
     @staticmethod
     def get_data(mac, bt_device=''):
         data = None
-        data_iter = BleCommunicationBleson.get_datas(bt_device)
-
+        data_iter = BleCommunicationBleson.get_datas([], bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')
