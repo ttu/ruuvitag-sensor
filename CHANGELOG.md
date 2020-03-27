@@ -1,10 +1,17 @@
 ## Changelog
 
 ### [Unreleased]
+* Add Bleson BLE adapter
+
+## [1.0.1] - 2020-03-21
+* Fix missing module from released package
+
+## [1.0.0] - 2020-03-21
 * Fix usage of bt_device parameter when opening the BLE connection
 * Refactor adapters into own modules
 * Fix blacklisting of non Ruuvitag devices
-* Add Bleson BLE adaptor
+* Pin rx version to 1.x for Python 2 support
+* Fix RuuviTag-object
 
 ## [0.13.0] - 2019-07-01
 * Fix hcitool subprocess closing
