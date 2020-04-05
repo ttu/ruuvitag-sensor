@@ -272,7 +272,7 @@ In case of errors, application tries to exit immediately, so it can be automatic
 
 ## Bleson
 
-Works with Linux, macOS and Windows. Doesn't require Bluez or superuser rights.
+Works with Linux, macOS and Windows.
 
 Requires _Python 3_.
 
