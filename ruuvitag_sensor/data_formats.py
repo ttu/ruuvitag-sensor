@@ -11,24 +11,28 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        data = DataFormats._get_data_format_3(raw)
+        data = DataFormats._get_data_format_3(DataFormats._parse_raw(raw, 3))
 
         if data is not None:
             return (3, data)
 
-        data = DataFormats._get_data_format_5(raw)
+        data = DataFormats._get_data_format_5(DataFormats._parse_raw(raw, 5))
 
         if data is not None:
             return (5, data)
 
         # TODO: Check from raw data correct data format
         # Now this returns 2 also for Data Format 4
-        data = DataFormats._get_data_format_2and4(raw)
+        data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
 
         if data is not None:
             return (2, data)
 
         return (None, None)
+
+    @staticmethod
+    def _parse_raw(raw, data_format):  # pylint: disable=unused-argument
+        return raw
 
     @staticmethod
     def _get_data_format_2and4(raw):

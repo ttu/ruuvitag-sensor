@@ -10,6 +10,11 @@ if [ "$1" = "pypi" ]; then
 else
   python3 -m pip install -e .
 fi
+
+if [ "$RUUVI_BLE_ADAPTER" = "Bleson" ]; then
+  python3 -m pip install git+https://github.com/TheCellule/python-bleson
+fi
+
 python3 verification.py
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -19,6 +24,12 @@ if [ $ret -ne 0 ]; then
 fi
 deactivate
 rm -rf venv_py3
+
+if [ "$RUUVI_BLE_ADAPTER" = "Bleson" ]; then
+  echo 'Python 2 verification not executed for Bleson'
+  echo 'VERIFICATION COMPLETED'
+  exit 0
+fi
 
 virtualenv --python=/usr/bin/python2.7 venv_py2
 source venv_py2/bin/activate

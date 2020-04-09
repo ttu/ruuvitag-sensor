@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* Add Bleson BLE adapter
 
 ## [1.0.1] - 2020-03-21
 * Fix missing module from released package
