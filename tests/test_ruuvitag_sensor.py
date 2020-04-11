@@ -49,7 +49,9 @@ class TestRuuviTagSensor(TestCase):
             ('EE:2C:6A:1E:59:3D', '1F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'),
             ('FF:2C:6A:1E:59:3D', '1902010415FF990403291A1ECE1E02DEF94202CA0B5300000000BB'),
             ('00:2C:6A:1E:59:3D', '1902010415FF990403291A1ECE1E02DEF94202CA0B53BB'),
-            ('11:2C:6A:1E:59:3D', '043E2B020100014F884C33B8CB1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4')
+            ('11:2C:6A:1E:59:3D', '043E2B020100014F884C33B8CB1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4'),
+            (None, '043E2B020100014F884C33B8CB1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4'),
+            ('', '043E2B020100014F884C33B8CB1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4')
         ]
 
         for data in datas:
@@ -61,7 +63,7 @@ class TestRuuviTagSensor(TestCase):
            get_datas)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        self.assertEqual(7, len(tags))
+        self.assertEqual(9, len(tags))
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_datas',
            get_datas)
@@ -84,7 +86,7 @@ class TestRuuviTagSensor(TestCase):
     def test_get_datas(self):
         datas = []
         RuuviTagSensor.get_datas(datas.append)
-        self.assertEqual(7, len(datas))
+        self.assertEqual(9, len(datas))
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_datas',
            get_datas)
