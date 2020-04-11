@@ -39,6 +39,17 @@ def rshift(val, n):
     return (val % 0x100000000) >> n
 
 
+def parse_mac(data_format, payload_mac):
+    """
+    Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
+
+    Returns:
+        string: MAC separated and in upper case e.g. E6:2E:B9:2E:73:E5
+    """
+    if data_format == 5:
+        return ':'.join(payload_mac[i:i+2] for i in range(0, 12, 2)).upper()
+    return payload_mac
+
 class UrlDecoder(object):
     """
     Decodes data from RuuviTag url
