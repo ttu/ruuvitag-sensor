@@ -293,6 +293,8 @@ $ export RUUVI_BLE_ADAPTER="Bleson"
 
 __NOTE:__ On Windows Bleson works only with _Python 3.6_.
 
+__NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload.
+
 ## Examples
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
