@@ -98,6 +98,8 @@ __NOTE:__ This method shouldn't be used for a long duration with short timeout. 
 
 ##### Get data from sensor
 
+__NOTE:__ Even for single sensor it is recommended to use `RuuviTagSensor.get_datas` or `RuuviTagSensor.get_data_for_sensors` functions. 
+
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
@@ -293,7 +295,7 @@ $ export RUUVI_BLE_ADAPTER="Bleson"
 
 __NOTE:__ On Windows Bleson works only with _Python 3.6_.
 
-__NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload.
+__NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 ## Examples
 
