@@ -2,7 +2,7 @@
 
 ### [Unreleased]
 * Add Bleson BLE adapter
-* Fix MAC handling for macOS
+* Fix Bleson advertised data handling for macOS
 
 ## [1.0.1] - 2020-03-21
 * Fix missing module from released package

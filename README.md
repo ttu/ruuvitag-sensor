@@ -277,7 +277,7 @@ In case of errors, application tries to exit immediately, so it can be automatic
 
 Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
 
-Bleson works with Linux, macOS and Windows.
+Bleson works with Linux, macOS and partially with Windows.
 
 Requires _Python 3_.
 
@@ -293,9 +293,9 @@ Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
 $ export RUUVI_BLE_ADAPTER="Bleson"
 ```
 
-__NOTE:__ On Windows Bleson works only with _Python 3.6_.
-
 __NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
+
+__NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
 
 ## Examples
 
