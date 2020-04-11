@@ -1,4 +1,4 @@
-
+import sys
 import logging
 from multiprocessing import Manager, Process
 from queue import Queue
@@ -22,12 +22,16 @@ class BleCommunicationBleson(BleCommunication):
             if shared_data['stop']:
                 break
             try:
-                mac = line.address.address if line.address.address else None
+                # macOS doesn't return address on advertised package
+                mac = line.address.address if line.address else None
                 if mac and mac in shared_data['blacklist']:
                     continue
-                data = line.service_data or line.mfg_data
-                if data is None:
+                if line.mfg_data is None:
                     continue
+                # Linux returns bytearray for mfg_data, but macOS returns _NSInlineData
+                # which casts to byte array. We need to explicitly cast it to use hex
+                data = bytearray(line.mfg_data) if sys.platform.startswith('darwin') \
+                    else line.mfg_data
                 queue.put((mac, data.hex()))
             except GeneratorExit:
                 break
