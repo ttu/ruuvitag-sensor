@@ -23,7 +23,7 @@ class BleCommunicationBleson(BleCommunication):
                 break
             try:
                 mac = line.address.address
-                if mac in shared_data['blacklist']:
+                if mac and mac in shared_data['blacklist']:
                     continue
                 data = line.service_data or line.mfg_data
                 if data is None:

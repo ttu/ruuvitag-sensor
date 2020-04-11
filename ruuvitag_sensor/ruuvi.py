@@ -156,17 +156,22 @@ class RuuviTagSensor(object):
             if not run_flag.running:
                 data_iter.send(StopIteration)
                 break
-            # Check MAC whitelist
-            if macs and not ble_data[0] in macs:
+            # Check MAC whitelist if advertised MAC available
+            if ble_data[0] and macs and not ble_data[0] in macs:
                 continue
+
             (data_format, data) = DataFormats.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
-            # If data is not valid RuuviTag data add MAC to blacklist
+            # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
             if data is not None:
-                state = get_decoder(data_format).decode_data(data)
-                if state is not None:
-                    yield (ble_data[0], state)
+                decoded = get_decoder(data_format).decode_data(data)
+                if decoded is not None:
+                    # Check whitelist using MAC from decoded data if advertised MAC is not available
+                    if not ble_data[0] and decoded['mac'] and macs and not decoded['mac'] in macs:
+                        continue
+                    yield (ble_data[0], decoded)
                 else:
                     log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
             else:
-                mac_blacklist.append(ble_data[0])
+                if ble_data[0]:
+                    mac_blacklist.append(ble_data[0])
