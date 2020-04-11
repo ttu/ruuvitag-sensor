@@ -23,7 +23,7 @@ class BleCommunicationBleson(BleCommunication):
                 break
             try:
                 # macOS doesn't return address on advertised package
-                mac = line.address.address if line.address else None
+                mac = line.address.address if line.address is not None else None
                 if mac and mac in shared_data['blacklist']:
                     continue
                 if line.mfg_data is None:
