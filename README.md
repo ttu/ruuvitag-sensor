@@ -9,6 +9,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * RuuviTag with Weather Station firmware
     * Setup [guide](https://ruu.vi/setup/)
     * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
+      * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
     * [BlueZ install guide](#BlueZ)
 * __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
@@ -262,17 +263,19 @@ Install BlueZ.
 $ sudo apt-get install bluez bluez-hcidump
 ```
 
-Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, older version of Bluez is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
+Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 
 ### BlueZ limitations
 
-The ruuvitag-sensor use Bluez to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well unexpected errors or changes, e.g. when adapter is busy, rebooted or powered down.
+The ruuvitag-sensor use BlueZ to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well unexpected errors or changes, e.g. when adapter is busy, rebooted or powered down.
 
 In case of errors, application tries to exit immediately, so it can be automatically restarted.
 
 ## Bleson
 
-Works with Linux, macOS and Windows.
+Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
+
+Bleson works with Linux, macOS and Windows.
 
 Requires _Python 3_.
 
@@ -287,8 +290,6 @@ Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
 ```sh
 $ export RUUVI_BLE_ADAPTER="Bleson"
 ```
-
-More info on issues [#31](https://github.com/ttu/ruuvitag-sensor/issues/31) and [#18](https://github.com/ttu/ruuvitag-sensor/issues/18).
 
 __NOTE:__ On Windows Bleson works only with _Python 3.6_.
 
