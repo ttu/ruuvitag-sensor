@@ -1,4 +1,4 @@
-
+import sys
 import logging
 from multiprocessing import Manager, Process
 from queue import Queue
@@ -18,20 +18,27 @@ class BleCommunicationBleson(BleCommunication):
     def _run_get_data_background(queue, shared_data, bt_device):
         (observer, q) = BleCommunicationBleson.start(bt_device)
 
-        for line in BleCommunicationBleson.get_lines(q):
+        for advertisement in BleCommunicationBleson.get_lines(q):
+            log.debug('Data: %s', advertisement)
             if shared_data['stop']:
                 break
             try:
-                mac = line.address.address
-                if mac in shared_data['blacklist']:
+                # macOS doesn't return address on advertised package
+                mac = advertisement.address.address if advertisement.address is not None else None
+                if mac and mac in shared_data['blacklist']:
+                    log.debug('MAC blacklised: %s', mac)
                     continue
-                data = line.service_data or line.mfg_data
-                if data is None:
+                if advertisement.mfg_data is None:
                     continue
+                # Linux returns bytearray for mfg_data, but macOS returns _NSInlineData
+                # which casts to byte array. We need to explicitly cast it to use hex
+                data = bytearray(advertisement.mfg_data) if sys.platform.startswith('darwin') \
+                    else advertisement.mfg_data
                 queue.put((mac, data.hex()))
             except GeneratorExit:
                 break
             except:
+                log.exception('Error in advertisement handling')
                 continue
 
         BleCommunicationBleson.stop(observer)

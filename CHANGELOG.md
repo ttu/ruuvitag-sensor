@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * Add Bleson BLE adapter
+* Use MAC from payload for white/blacklist if MAC not in advertised data
 
 ## [1.0.1] - 2020-03-21
 * Fix missing module from released package

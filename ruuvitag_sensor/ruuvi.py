@@ -5,7 +5,7 @@ import logging
 from multiprocessing import Manager
 
 from ruuvitag_sensor.data_formats import DataFormats
-from ruuvitag_sensor.decoder import get_decoder
+from ruuvitag_sensor.decoder import get_decoder, parse_mac
 
 log = logging.getLogger(__name__)
 
@@ -156,17 +156,25 @@ class RuuviTagSensor(object):
             if not run_flag.running:
                 data_iter.send(StopIteration)
                 break
-            # Check MAC whitelist
-            if macs and not ble_data[0] in macs:
+            # Check MAC whitelist if advertised MAC available
+            if ble_data[0] and macs and not ble_data[0] in macs:
                 continue
+
             (data_format, data) = DataFormats.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
-            # If data is not valid RuuviTag data add MAC to blacklist
+            # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
             if data is not None:
-                state = get_decoder(data_format).decode_data(data)
-                if state is not None:
-                    yield (ble_data[0], state)
+                decoded = get_decoder(data_format).decode_data(data)
+                if decoded is not None:
+                    # If advertised MAC is missing, try to parse it from the payload
+                    mac = ble_data[0] if ble_data[0] else \
+                        parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
+                    # Check whitelist using MAC from decoded data if advertised MAC is not available
+                    if mac and macs and mac not in macs:
+                        continue
+                    yield (mac, decoded)
                 else:
                     log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
             else:
-                mac_blacklist.append(ble_data[0])
+                if ble_data[0]:
+                    mac_blacklist.append(ble_data[0])

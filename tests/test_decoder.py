@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from ruuvitag_sensor.decoder import get_decoder, UrlDecoder, Df3Decoder, Df5Decoder
+from ruuvitag_sensor.decoder import get_decoder, parse_mac, UrlDecoder, Df3Decoder, Df5Decoder
 
 # pylint: disable=line-too-long
 
@@ -171,3 +171,10 @@ class TestDecoder(TestCase):
         self.assertEqual(data['movement_counter'], 66)
         self.assertEqual(data['measurement_sequence_number'], 205)
         self.assertEqual(data['mac'], 'cbb8334c884f')
+
+    def test_parse_df5_mac(self):
+        mac_payload = 'e62eb92e73e5'
+        mac = 'E6:2E:B9:2E:73:E5'
+
+        parsed = parse_mac(5, mac_payload)
+        self.assertEqual(parsed, mac)
