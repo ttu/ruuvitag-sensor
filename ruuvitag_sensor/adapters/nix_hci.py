@@ -26,10 +26,7 @@ class BleCommunicationNix(BleCommunication):
             bt_device = 'hci0'
 
         log.info('Start receiving broadcasts (device %s)', bt_device)
-        if sys.version_info >= (3, 3):
-            DEVNULL = subprocess.DEVNULL
-        else:
-            open(os.devnull, 'wb')
+        DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         def reset_ble_adapter():
             log.info("FYI: Calling a process with sudo!")
