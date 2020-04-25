@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [1.1.0] - 2020-04-25
 * Add Bleson BLE adapter
 * Use MAC from payload for white/blacklist if MAC not in advertised data
 * Fix DEVNULL initialization when using Python 2
