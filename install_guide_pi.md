@@ -121,7 +121,7 @@ $ sudo pip3 install --upgrade setuptools
 
 Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add --user to install for current user
 ```sh
-$ pip3 install --user ruuvitag-sensor
+$ sudo pip3 install --user ruuvitag-sensor
 ```
 This library includes a command line utility.
 
