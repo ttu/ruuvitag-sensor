@@ -116,11 +116,11 @@ class BleCommunicationBleson(BleCommunication):
     def get_data(mac, bt_device=''):
         data = None
         data_iter = BleCommunicationBleson.get_datas([], bt_device)
-        for data in data_iter:
-            if mac == data[0]:
+        for d in data_iter:
+            if mac == d[0]:
                 log.info('Data found')
                 data_iter.send(StopIteration)
-                data = data[1]
+                data = d[1]
                 break
 
         return data
