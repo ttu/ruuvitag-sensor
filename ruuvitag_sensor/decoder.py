@@ -118,7 +118,19 @@ class UrlDecoder(object):
             return None
 
 
-class Df3Decoder(object):
+class DfDecodeBase(object):
+    """
+    Decodes RSSI signal strength and distance from bluetooth data
+    """
+
+    def _get_rssi(self, data):
+        """ return Rssi value in dBm """
+        rssi = data[-1]
+        if rssi > 127: rssi = (256 - rssi) * (-1)
+        return rssi
+
+
+class Df3Decoder(DfDecodeBase):
     """
     Decodes data from RuuviTag with Data Format 3
     Protocol specification:
@@ -173,14 +185,15 @@ class Df3Decoder(object):
                 'acceleration_x': acc_x,
                 'acceleration_y': acc_y,
                 'acceleration_z': acc_z,
-                'battery': self._get_battery(byte_data)
+                'battery': self._get_battery(byte_data),
+                'rssi': self._get_rssi(byte_data)
             }
         except Exception:
             log.exception('Value: %s not valid', data)
             return None
 
 
-class Df5Decoder(object):
+class Df5Decoder(DfDecodeBase):
     """
     Decodes data from RuuviTag with Data Format 5
     Protocol specification:
@@ -279,7 +292,8 @@ class Df5Decoder(object):
                 'battery': self._get_battery(byte_data),
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data)
+                'mac': self._get_mac(byte_data),
+                'rssi': self._get_rssi(byte_data)
             }
         except Exception:
             log.exception('Value: %s not valid', data)
