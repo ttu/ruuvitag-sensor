@@ -44,7 +44,7 @@ class TestRuuviTagSensor(TestCase):
         datas = [
             ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('BB:2C:6A:1E:59:3D', 'some other device'),
-            ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('cc:2c:6a:1e:59:3d', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
             ('EE:2C:6A:1E:59:3D', '1F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'),
             ('FF:2C:6A:1E:59:3D', '1902010415FF990403291A1ECE1E02DEF94202CA0B5300000000BB'),
@@ -69,12 +69,12 @@ class TestRuuviTagSensor(TestCase):
     @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_datas',
            get_datas)
     def test_get_data_for_sensors(self):
-        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D']
+        macs = ['cc:2c:6a:1e:59:3d', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D']
         data = RuuviTagSensor.get_data_for_sensors(macs, 4)
         self.assertEqual(3, len(data))
-        self.assertTrue('CC:2C:6A:1E:59:3D' in data)
+        self.assertTrue('cc:2c:6a:1e:59:3d' in data)
         self.assertTrue('DD:2C:6A:1E:59:3D' in data)
-        self.assertTrue(data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0)
+        self.assertTrue(data['cc:2c:6a:1e:59:3d']['temperature'] == 24.0)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12)
         self.assertTrue(data['EE:2C:6A:1E:59:3D']['identifier'] == '0')
 

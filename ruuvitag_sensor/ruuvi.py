@@ -157,7 +157,7 @@ class RuuviTagSensor(object):
                 data_iter.send(StopIteration)
                 break
             # Check MAC whitelist if advertised MAC available
-            if ble_data[0] and macs and not ble_data[0] in macs:
+            if ble_data[0] and macs and not ble_data[0].upper() in map(str.upper, macs):
                 continue
 
             (data_format, data) = DataFormats.convert_data(ble_data[1])
@@ -170,7 +170,7 @@ class RuuviTagSensor(object):
                     mac = ble_data[0] if ble_data[0] else \
                         parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
                     # Check whitelist using MAC from decoded data if advertised MAC is not available
-                    if mac and macs and mac not in macs:
+                    if mac and macs and mac.upper() not in map(str.upper, macs):
                         continue
                     yield (mac, decoded)
                 else:
