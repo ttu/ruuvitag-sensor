@@ -74,12 +74,12 @@ def run_get_datas_background(queue):
 
     RuuviTagSensor.get_datas(handle_new_data)
 
+if __name__ == "__main__":
+    m = Manager()
+    q = m.Queue()
 
-m = Manager()
-q = m.Queue()
+    executor = ProcessPoolExecutor()
+    executor.submit(run_get_datas_background, q)
 
-executor = ProcessPoolExecutor()
-executor.submit(run_get_datas_background, q)
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(handle_queue(q))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(handle_queue(q))

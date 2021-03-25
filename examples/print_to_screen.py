@@ -39,5 +39,5 @@ def print_data(received_data):
     print(line_pre)
     print('\n\r\n\r.......')
 
-
-RuuviTagSensor.get_datas(print_data, mac)
+if __name__ == "__main__":
+    RuuviTagSensor.get_datas(print_data, mac)
