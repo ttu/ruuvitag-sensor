@@ -106,16 +106,17 @@ class BleCommunicationBluegiga(BleCommunication):
                         if mac and mac in shared_data['blacklist']:
                             log.debug('MAC blacklisted: %s', mac)
                             continue
-                        rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
-                        log.debug('Received manufacturer data from %s: %s', mac, rawdata)
-                        hexa = binascii.hexlify(rawdata).decode("ascii").upper()
-                        queue.put((mac, hexa))
+                        try:
+                            rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
+                            log.debug('Received manufacturer data from %s: %s', mac, rawdata)
+                            hexa = binascii.hexlify(rawdata).decode("ascii").upper()
+                            queue.put((mac, hexa))
+                        except KeyError:
+                            pass
                 except GeneratorExit:
                     return
                 except KeyboardInterrupt as ex:
                     return
-                except Exception as ex:
-                    pass                    
         finally:
             log.debug('Stop scan')
             adapter.stop()
