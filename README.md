@@ -297,6 +297,27 @@ __NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-addre
 
 __NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
 
+## Bluegiga
+
+Use Bluegiga's BGAPI, which is compatible with USB adapters like the BLED112. Bluegiga should work with Linux, macOS and Windows.
+
+Requires pygatt and pexpect, which are not installed automatically with `ruuvitag_sensor` package. You can install those manually e.g. via pip.
+
+```sh
+$ pip install pygatt pexpect
+```
+
+Add environment variable `RUUVI_BLE_ADAPTER` with value `Bluegiga`. E.g.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="Bluegiga"
+```
+By default, Pygatt will automatically detect USB adapters serial port, but if you have multiple Bluegiga adapters installed or pygatt can not find correct serial port automatically, serial port can be passed with `bt_device` parameter.
+
+```sh
+bt_device='/dev/ttyACM0'
+```
+
 ## Examples
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
