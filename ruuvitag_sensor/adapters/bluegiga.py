@@ -5,6 +5,7 @@ import time
 import pygatt
 import binascii
 import threading
+import os
 
 from multiprocessing import Manager
 from queue import Queue
@@ -28,10 +29,11 @@ class BleCommunicationBluegiga(BleCommunication):
                 log.debug('Received data from device: %s %s', addr, packet_type)
                 return True # stop scan
 
-        adapter.start(True)
+        reset = False if os.environ.get('BLUEGIGA_RESET', '').upper() == 'FALSE' else True
+        adapter.start(reset=reset)
         log.debug('Start receiving broadcasts (device %s)', bt_device)
         try:
-            devices = adapter.scan(timeout=60, scan_interval=1, scan_window=100, scan_cb=scan_received)
+            devices = adapter.scan(timeout=60, scan_interval=1, scan_window=100, active=False, scan_cb=scan_received)
             for dev in devices:
                 if mac and mac ==  dev['address']:
                     log.debug('Result found for device %s', mac )
@@ -90,13 +92,14 @@ class BleCommunicationBluegiga(BleCommunication):
         else:
             adapter = pygatt.BGAPIBackend()
 
-        adapter.start(True)
+        reset = False if os.environ.get('BLUEGIGA_RESET', '').upper() == 'FALSE' else True
+        adapter.start(reset=reset)
         try:
             while True:
                 try:
                     if shared_data['stop']:
                         break
-                    devices = adapter.scan(timeout=0.5, scan_interval=1, scan_window=100)
+                    devices = adapter.scan(timeout=0.5, scan_interval=1, scan_window=100, active=False, )
                     for dev in devices:
                         log.debug('received: %s', dev)
                         mac = str(dev['address'])
