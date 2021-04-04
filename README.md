@@ -312,11 +312,19 @@ Add environment variable `RUUVI_BLE_ADAPTER` with value `Bluegiga`. E.g.
 ```sh
 $ export RUUVI_BLE_ADAPTER="Bluegiga"
 ```
-By default, Pygatt will automatically detect USB adapters serial port, but if you have multiple Bluegiga adapters installed or pygatt can not find correct serial port automatically, serial port can be passed with `bt_device` parameter.
+By default, pygatt will automatically detect USB adapters serial port, but if you have multiple Bluegiga adapters installed or pygatt can not find correct serial port automatically, serial port can be passed with `bt_device` parameter.
 
 ```sh
 bt_device='/dev/ttyACM0'
 ```
+
+Pygatt reset Bluegiga USB adapter during start, which might cause issues e.g. in VM environment. Reset can be disabled by environment variable `BLUEGIGA_RESET` with value `False`. E.g.
+
+```sh
+$ export BLUEGIGA_RESET="False"
+```
+
+Any other value is interpreted as a True.
 
 ## Examples
 
