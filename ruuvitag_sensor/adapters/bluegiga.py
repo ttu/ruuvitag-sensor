@@ -33,7 +33,7 @@ class BleCommunicationBluegiga(BleCommunication):
         adapter.start(reset=reset)
         log.debug('Start receiving broadcasts (device %s)', bt_device)
         try:
-            devices = adapter.scan(timeout=60, scan_interval=1, scan_window=100, active=False, scan_cb=scan_received)
+            devices = adapter.scan(timeout=60, active=False, scan_cb=scan_received)
             for dev in devices:
                 if mac and mac ==  dev['address']:
                     log.debug('Result found for device %s', mac )
@@ -99,7 +99,7 @@ class BleCommunicationBluegiga(BleCommunication):
                 try:
                     if shared_data['stop']:
                         break
-                    devices = adapter.scan(timeout=0.5, scan_interval=1, scan_window=100, active=False, )
+                    devices = adapter.scan(timeout=0.5, active=False, )
                     for dev in devices:
                         log.debug('received: %s', dev)
                         mac = str(dev['address'])
