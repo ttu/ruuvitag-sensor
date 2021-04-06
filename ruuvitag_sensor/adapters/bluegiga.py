@@ -113,10 +113,20 @@ class BleCommunicationBluegiga(BleCommunication):
                             queue.put((mac, hexa))
                         except KeyError:
                             pass
+
+                    # Prevent endless loop if device data never found
+                    # Remove when #81 is fixed
+                    queue.put(('', ''))
                 except GeneratorExit:
                     return
                 except KeyboardInterrupt as ex:
                     return
+                except:
+                    # Prevent endless loop if continous error situation in bluegiga adapter
+                    # Remove when #81 is fixed
+                    queue.put(('', ''))
+                    time.sleep(0.1)
+                    continue
         finally:
             log.debug('Stop scan')
             adapter.stop()
