@@ -56,6 +56,7 @@ class BleCommunicationBluegiga(BleCommunication):
 
         # Start background process
         scanner = threading.Thread(
+            name='Bluegiga scanner',
             target=BleCommunicationBluegiga._run_get_data_background,
             args=[q, shared_data, bt_device])
         scanner.start()
@@ -67,6 +68,8 @@ class BleCommunicationBluegiga(BleCommunication):
                     log.debug('Found data: %s', data)
                     yield data
                 time.sleep(0.1)
+                if not scanner.is_alive():
+                    raise Exception('Bluegiga scanner is not alive')
         except GeneratorExit:
             pass
         except KeyboardInterrupt as ex:
@@ -121,12 +124,6 @@ class BleCommunicationBluegiga(BleCommunication):
                     return
                 except KeyboardInterrupt as ex:
                     return
-                except:
-                    # Prevent endless loop if continous error situation in bluegiga adapter
-                    # Remove when #81 is fixed
-                    queue.put(('', ''))
-                    time.sleep(0.1)
-                    continue
         finally:
             log.debug('Stop scan')
             adapter.stop()
