@@ -155,7 +155,7 @@ class Df3Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = struct.unpack('>BBbBHhhhH', bytes.fromhex(data[:28]))
+            byte_data = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 3,
@@ -239,7 +239,7 @@ class Df5Decoder(object):
         return data[9]
 
     def _get_mac(self, data):
-        return ''.join('{:02x}'.format(x) for x in data[10])
+        return ''.join('{:02x}'.format(x) for x in data[10:])
 
     def decode_data(self, data):
         """
@@ -249,7 +249,7 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = struct.unpack('>BhHHhhhHBH6s', bytes.fromhex(data[:48]))
+            byte_data = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
