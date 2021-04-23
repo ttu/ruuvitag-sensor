@@ -1,5 +1,6 @@
 import sys
 import argparse
+import logging
 
 import ruuvitag_sensor
 from ruuvitag_sensor.log import log
@@ -31,7 +32,14 @@ if __name__ == '__main__':
                         dest='stream_action', help='Stream broadcasts from all RuuviTags')
     parser.add_argument('--version', action='version',
                         version='%(prog)s {}'.format(ruuvitag_sensor.__version__))
+    parser.add_argument('--debug', action='store_true',
+                        dest='debug_action', help='Enable debug logging')
     args = parser.parse_args()
+
+    if args.debug_action:
+        log.setLevel(logging.DEBUG)
+        for handler in log.handlers:
+            handler.setLevel(logging.DEBUG)
 
     if args.mac_address:
         sensor = RuuviTag(args.mac_address, args.bt_device)
