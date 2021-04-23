@@ -29,7 +29,7 @@ class BleCommunicationNix(BleCommunication):
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         def reset_ble_adapter():
-            log.info("FYI: Calling a process with sudo!")
+            log.info("FYI: Calling a process with sudo: hciconfig %s reset", bt_device)
             return subprocess.call(
                 'sudo hciconfig %s reset' % bt_device,
                 shell=True,
@@ -53,9 +53,10 @@ class BleCommunicationNix(BleCommunication):
             log.info('Problem with hciconfig reset. Exit.')
             exit(1)
 
-        log.info("FYI: Spawning 2 processes with sudo!")
+        log.info("FYI: Spawning process with sudo: hcitool -i %s lescan2 --duplicates", bt_device)
         hcitool = ptyprocess.PtyProcess.spawn(
             ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
+        log.info("FYI: Spawning process with sudo: hcidump -i %s --raw", bt_device)
         hcidump = ptyprocess.PtyProcess.spawn(
             ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
         return (hcitool, hcidump)
@@ -72,46 +73,88 @@ class BleCommunicationNix(BleCommunication):
         try:
             while True:
                 line = hcidump.readline().decode()
+                if line == '':
+                    # EOF reached
+                    raise Exception("EOF received from hcidump")
+
+                line = line.strip()
+                log.debug("Read line from hcidump: %s", line)
                 if line.startswith('> '):
+                    log.debug("Yielding %s", data)
                     yield data
-                    data = line[2:].strip().replace(' ', '')
+                    data = line[2:].replace(' ', '')
                 elif line.startswith('< '):
                     data = None
                 else:
                     if data:
-                        data += line.strip().replace(' ', '')
+                        data += line.replace(' ', '')
         except KeyboardInterrupt:
             return
         except Exception as ex:
             log.info(ex)
             return
 
-    @staticmethod
-    def get_datas(blacklist=[], bt_device=''):
-        procs = BleCommunicationNix.start(bt_device)
+    def get_datas(self, blacklist=[], bt_device=''):
+        procs = self.start(bt_device)
 
         data = None
-        for line in BleCommunicationNix.get_lines(procs[1]):
+        for line in self.get_lines(procs[1]):
+            log.debug("Parsing line %s", line)
             try:
-                found_mac = line[14:][:12]
+                # Make sure we're in upper case
+                line = line.upper()
+                # We're interested in LE meta events, sent by Ruuvitags.
+                # Those start with "043E", followed by a length byte.
+
+                if not line.startswith("043E"):
+                    log.debug("Not a LE meta packet")
+                    continue
+
+                # The third byte is the parameter length, this should cover
+                # the lenght of the entire packet, minus the first three bytes.
+                # Note that the data is in hex format, so uses two chars per
+                # byte
+                plen = int(line[4:6], 16)
+                if plen != (len(line) / 2) - 3:
+                    log.debug("Invalid parameter length")
+                    continue
+
+                # The following two bytes should be "0201", indicating
+                # 02  LE Advertising report
+                # 01  1 report
+
+                if line[6:10] != "0201":
+                    log.debug("Not a Ruuvi advertisement")
+                    continue
+
+                # The next four bytes indicate whether the endpoint is
+                # connectable or not, and whether the MAC address is random
+                # or not. Different tags set different values here, so
+                # ignore those.
+
+                # The following 6 bytes are the MAC address of the sender,
+                # in reverse order
+
+                found_mac = line[14:26]
                 reversed_mac = ''.join(
                     reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
                 mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
                 if mac in blacklist:
+                    log.debug('MAC blacklisted: %s', mac)
                     continue
                 data = line[26:]
+                log.debug("MAC: %s, data: %s", mac, data)
                 yield (mac, data)
             except GeneratorExit:
                 break
             except:
                 continue
 
-        BleCommunicationNix.stop(procs[0], procs[1])
+        self.stop(procs[0], procs[1])
 
-    @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_data(self, mac, bt_device=''):
         data = None
-        data_iter = BleCommunicationNix.get_datas([], bt_device)
+        data_iter = self.get_datas([], bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')
