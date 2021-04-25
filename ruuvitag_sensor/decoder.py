@@ -3,6 +3,7 @@ from __future__ import division
 import base64
 import math
 import logging
+import struct
 
 log = logging.getLogger(__name__)
 
@@ -31,20 +32,6 @@ def get_decoder(data_type):
     return Df5Decoder()
 
 
-def twos_complement(value, bits):
-    if (value & (1 << (bits - 1))) != 0:
-        value = value - (1 << bits)
-    return value
-
-
-def rshift(val, n):
-    """
-    Arithmetic right shift, preserves sign bit.
-    https://stackoverflow.com/a/5833119 .
-    """
-    return (val % 0x100000000) >> n
-
-
 def parse_mac(data_format, payload_mac):
     """
     Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
@@ -55,6 +42,7 @@ def parse_mac(data_format, payload_mac):
     if data_format == 5:
         return ':'.join(payload_mac[i:i+2] for i in range(0, 12, 2)).upper()
     return payload_mac
+
 
 class UrlDecoder(object):
     """
@@ -127,11 +115,21 @@ class Df3Decoder(object):
 
     def _get_temperature(self, data):
         """Return temperature in celsius"""
-        temp = (data[2] & ~(1 << 7)) + (data[3] / 100)
-        sign = (data[2] >> 7) & 1
-        if sign == 0:
-            return round(temp, 2)
-        return round(-1 * temp, 2)
+
+        # The temperature is in two fields, one for the integer part,
+        # one for the fraction
+        #
+        # The integer part was decoded as a signed two's complement number,
+        # but this isn't how it's really stored. The MSB is a sign, the lower
+        # 7 bits are the unsigned temperature value.
+        #
+        # To convert from the decoded value we have to add 128 and then negate,
+        # if the decoded value was negative
+        frac = data[3] / 100
+        if data[2] < 0:
+            return -(data[2] + 128 + frac)
+        else:
+            return data[2] + frac
 
     def _get_humidity(self, data):
         """Return humidity %"""
@@ -139,19 +137,15 @@ class Df3Decoder(object):
 
     def _get_pressure(self, data):
         """Return air pressure hPa"""
-        pres = (data[4] << 8) + data[5] + 50000
-        return pres / 100
+        return (data[4] + 50000) / 100
 
     def _get_acceleration(self, data):
         """Return acceleration mG"""
-        acc_x = twos_complement((data[6] << 8) + data[7], 16)
-        acc_y = twos_complement((data[8] << 8) + data[9], 16)
-        acc_z = twos_complement((data[10] << 8) + data[11], 16)
-        return (acc_x, acc_y, acc_z)
+        return data[5:8]
 
     def _get_battery(self, data):
         """Return battery mV"""
-        return (data[12] << 8) + data[13]
+        return data[8]
 
     def decode_data(self, data):
         """
@@ -161,7 +155,7 @@ class Df3Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = bytearray.fromhex(data)
+            byte_data = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 3,
@@ -189,72 +183,63 @@ class Df5Decoder(object):
 
     def _get_temperature(self, data):
         """Return temperature in celsius"""
-        if data[1:2] == 0x7FFF:
+        if data[1] == -32768:
             return None
 
-        temperature = twos_complement((data[1] << 8) + data[2], 16) / 200
-        return round(temperature, 2)
+        return round(data[1] / 200, 2)
 
     def _get_humidity(self, data):
         """Return humidity %"""
-        if data[3:4] == 0xFFFF:
+        if data[2] == 65535:
             return None
 
-        humidity = ((data[3] & 0xFF) << 8 | data[4] & 0xFF) / 400
-        return round(humidity, 2)
+        return round(data[2] / 400, 2)
 
     def _get_pressure(self, data):
         """Return air pressure hPa"""
-        if data[5:6] == 0xFFFF:
+        if data[3] == 0xFFFF:
             return None
 
-        pressure = ((data[5] & 0xFF) << 8 | data[6] & 0xFF) + 50000
-        return round((pressure / 100), 2)
+        return round((data[3] + 50000) / 100, 2)
 
     def _get_acceleration(self, data):
         """Return acceleration mG"""
-        if (data[7:8] == 0x7FFF or
-                data[9:10] == 0x7FFF or
-                data[11:12] == 0x7FFF):
+        if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
             return (None, None, None)
 
-        acc_x = twos_complement((data[7] << 8) + data[8], 16)
-        acc_y = twos_complement((data[9] << 8) + data[10], 16)
-        acc_z = twos_complement((data[11] << 8) + data[12], 16)
-        return (acc_x, acc_y, acc_z)
+        return data[4:7]
 
     def _get_powerinfo(self, data):
         """Return battery voltage and tx power"""
-        power_info = (data[13] & 0xFF) << 8 | (data[14] & 0xFF)
-        battery_voltage = rshift(power_info, 5) + 1600
-        tx_power = (power_info & 0b11111) * 2 - 40
+        battery_voltage = data[7] >> 5
+        tx_power = data[7] & 0x001F
 
-        if rshift(power_info, 5) == 0b11111111111:
-            battery_voltage = None
-        if (power_info & 0b11111) == 0b11111:
-            tx_power = None
-
-        return (round(battery_voltage, 3), tx_power)
+        return (battery_voltage, tx_power)
 
     def _get_battery(self, data):
         """Return battery mV"""
         battery_voltage = self._get_powerinfo(data)[0]
-        return battery_voltage
+        if battery_voltage == 0b11111111111:
+            return None
+
+        return battery_voltage + 1600
 
     def _get_txpower(self, data):
         """Return transmit power"""
         tx_power = self._get_powerinfo(data)[1]
-        return tx_power
+        if tx_power == 0b11111:
+            return None
+
+        return -40 + (tx_power * 2)
 
     def _get_movementcounter(self, data):
-        return data[15] & 0xFF
+        return data[8]
 
     def _get_measurementsequencenumber(self, data):
-        measurementSequenceNumber = (data[16] & 0xFF) << 8 | data[17] & 0xFF
-        return measurementSequenceNumber
+        return data[9]
 
     def _get_mac(self, data):
-        return ''.join('{:02x}'.format(x) for x in data[18:24])
+        return ''.join('{:02x}'.format(x) for x in data[10:])
 
     def decode_data(self, data):
         """
@@ -264,7 +249,8 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = bytearray.fromhex(data)
+            byte_data = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 5,

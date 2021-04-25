@@ -11,14 +11,6 @@ log = logging.getLogger(__name__)
 
 
 if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
-    def get_raw_bleson(raw, data_format):
-        # Bleson drops FF from the raw data and it is required for DF 3 and 5
-        # TODO: Move convert_data to adaptor specific code
-        if data_format in (2, 4):
-            return raw
-        return 'FF' + raw
-
-    DataFormats._parse_raw = get_raw_bleson  # pylint: disable=protected-access
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif os.environ.get('RUUVI_BLE_ADAPTER') == 'Bluegiga':
@@ -32,6 +24,10 @@ elif os.environ.get('RUUVI_BLE_ADAPTER') == 'Bluegiga':
     DataFormats._parse_raw = get_raw_bluegiga  # pylint: disable=protected-access
     from ruuvitag_sensor.adapters.bluegiga import BleCommunicationBluegiga
     ble = BleCommunicationBluegiga()
+elif "RUUVI_NIX_FROMFILE" in os.environ:
+    # Emulate BleCommunicationNix by reading hcidump data from a file
+    from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
+    ble = BleCommunicationNixFile()
 elif not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
     # Use BleCommunicationDummy also for CI as it can't use bluez
     from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
@@ -169,12 +165,18 @@ class RuuviTagSensor(object):
                 break
             # Check MAC whitelist if advertised MAC available
             if ble_data[0] and macs and not ble_data[0] in macs:
+                log.debug('MAC not whitelisted: %s', ble_data[0])
                 continue
 
             (data_format, data) = DataFormats.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
             # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
             if data is not None:
+                if data_format is None:
+                    # Whatever we heard was from a Ruuvitag, but did not contain
+                    # any measurements. Ignore this.
+                    continue
+
                 decoded = get_decoder(data_format).decode_data(data)
                 if decoded is not None:
                     # If advertised MAC is missing, try to parse it from the payload
@@ -182,10 +184,12 @@ class RuuviTagSensor(object):
                         parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
                     # Check whitelist using MAC from decoded data if advertised MAC is not available
                     if mac and macs and mac not in macs:
+                        log.debug('MAC not whitelisted: %s', ble_data[0])
                         continue
                     yield (mac, decoded)
                 else:
                     log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
             else:
                 if ble_data[0]:
+                    log.debug("Blacklisting MAC %s", ble_data[0])
                     mac_blacklist.append(ble_data[0])

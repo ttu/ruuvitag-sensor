@@ -9,8 +9,8 @@ class TestDataFormats(TestCase):
 
     def test_convert_data_valid_data(self):
         test_cases = [
-            ('1502010611FF990403651652CAE900080018041C0C8BC6', 3, '03651652CAE900080018041C0C8BC6'),
-            ('1502010611FF990403411540C84AFC72FE2FFFC50B89C6', 3, '03411540C84AFC72FE2FFFC50B89C6')
+            ('1502010611FF990403651652CAE900080018041C0C8BC6', 3, '03651652CAE900080018041C0C8B'),
+            ('1502010611FF990403411540C84AFC72FE2FFFC50B89C6', 3, '03411540C84AFC72FE2FFFC50B89')
         ]
         for x, data_format, result in test_cases:
             encoded = DataFormats.convert_data(x)

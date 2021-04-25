@@ -34,7 +34,24 @@ class BleCommunicationBleson(BleCommunication):
                 # which casts to byte array. We need to explicitly cast it to use hex
                 data = bytearray(advertisement.mfg_data) if sys.platform.startswith('darwin') \
                     else advertisement.mfg_data
-                queue.put((mac, data.hex()))
+                # Bleson returns data in a different format than the nix_hci
+                # adapter. Since the rest of the processing pipeline is
+                # somewhat reliant on the additional data, add to the
+                # beginning of the actual data:
+                #
+                # - An FF type marker
+                # - A length marker, covering the vendor specific data
+                # - Another length marker, covering the length-marked
+                #   vendor data.
+                #
+                # Thus extended, the result can be parsed by the rest of
+                # the pipeline.
+                #
+                # TODO: This is kinda awkward, and should be handled better.
+                data = 'FF' + data.hex()
+                data = '%02x%s' % (len(data) >> 1, data)
+                data = '%02x%s' % (len(data) >> 1, data)
+                queue.put((mac, data.upper()))
             except GeneratorExit:
                 break
             except:
