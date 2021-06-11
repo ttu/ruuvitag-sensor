@@ -19,9 +19,6 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 app = Flask(__name__)
 
-m = Manager()
-q = m.Queue()
-
 allData = {}
 
 tags = {
@@ -70,6 +67,9 @@ def get_data(mac):
 
 
 if __name__ == '__main__':
+    m = Manager()
+    q = m.Queue()
+
     # Start background process
     executor = ProcessPoolExecutor(1)
     executor.submit(run_get_data_background, list(tags.keys()), q)
