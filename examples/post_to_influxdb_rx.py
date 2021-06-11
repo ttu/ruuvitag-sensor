@@ -4,6 +4,8 @@ Get data for sensors using rx and write it to InfluxDB
 Check guide and requirements from post_to_influxdb.py
 """
 
+# TODO: Migrate Rx to v3
+
 from influxdb import InfluxDBClient
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 

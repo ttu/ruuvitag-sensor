@@ -2,6 +2,8 @@
 RuuviTagReactive and Reactive Extensions Subject examples
 """
 
+# TODO: Migrate Rx to v3
+
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 tags = {
