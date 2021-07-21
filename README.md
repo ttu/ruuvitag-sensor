@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/ttu/ruuvitag-sensor.svg?branch=master)](https://travis-ci.com/ttu/ruuvitag-sensor) [![PyPI](https://img.shields.io/pypi/v/ruuvitag_sensor.svg)](https://pypi.python.org/pypi/ruuvitag_sensor)
 
-RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](http://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
+RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](https://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
 
 ### Requirements
 
@@ -48,11 +48,11 @@ def handle_data(found_data):
     print('MAC ' + found_data[0])
     print(found_data[1])
 
-if __name_ == '__main__':
+if __name__ == '__main__':
     RuuviTagSensor.get_datas(handle_data)
 ```
 
-The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
+The line `if __name__ == '__main__':` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
 
 Optional list of macs and run flag can be passed to the get_datas function. Callback is called only for macs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
 
