@@ -7,7 +7,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 ### Requirements
 
 * RuuviTag with Weather Station firmware
-    * Setup [guide](https://ruu.vi/setup/)
+    * Setup [guide](https://lab.ruuvi.com/start/)
     * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
@@ -147,7 +147,7 @@ ruuvi_rx.get_subject().\
 ruuvi_rx.stop()
 ```
 
-More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/rx.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
+More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
 
 Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
 
