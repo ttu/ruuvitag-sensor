@@ -9,6 +9,13 @@ from ruuvitag_sensor.adapters import BleCommunication
 log = logging.getLogger(__name__)
 
 
+def _convert_rssi(rssi_byte: str) -> int:
+    """ return Rssi value in dBm """
+    rssi = int(rssi_byte, 16)
+    if rssi > 127: rssi = (256 - rssi) * (-1)
+    return rssi
+
+
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
 
@@ -111,7 +118,7 @@ class BleCommunicationNix(BleCommunication):
                     continue
 
                 # The third byte is the parameter length, this should cover
-                # the lenght of the entire packet, minus the first three bytes.
+                # the length of the entire packet, minus the first three bytes.
                 # Note that the data is in hex format, so uses two chars per
                 # byte
                 plen = int(line[4:6], 16)
@@ -127,7 +134,7 @@ class BleCommunicationNix(BleCommunication):
                     log.debug("Not a Ruuvi advertisement")
                     continue
 
-                # The next four bytes indicate whether the endpoint is
+                # The next two bytes indicate whether the endpoint is
                 # connectable or not, and whether the MAC address is random
                 # or not. Different tags set different values here, so
                 # ignore those.
@@ -142,9 +149,10 @@ class BleCommunicationNix(BleCommunication):
                 if mac in blacklist:
                     log.debug('MAC blacklisted: %s', mac)
                     continue
-                data = line[26:]
-                log.debug("MAC: %s, data: %s", mac, data)
-                yield (mac, data)
+                data = line[26:-2]
+                rssi = _convert_rssi(line[-2:])
+                log.debug("MAC: %s, data: %s, rssi: %s", mac, data, rssi)
+                yield (mac, data, rssi)
             except GeneratorExit:
                 break
             except:

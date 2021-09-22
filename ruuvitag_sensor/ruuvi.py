@@ -157,6 +157,8 @@ class RuuviTagSensor(object):
                 log.debug('MAC not whitelisted: %s', ble_data[0])
                 continue
 
+            rssi = ble_data[2]
+
             (data_format, data) = DataFormats.convert_data(ble_data[1])
             # Check that encoded data is valid RuuviTag data and it is sensor data
             # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
@@ -175,7 +177,7 @@ class RuuviTagSensor(object):
                     if mac and macs and mac not in macs:
                         log.debug('MAC not whitelisted: %s', ble_data[0])
                         continue
-                    yield (mac, decoded)
+                    yield (mac, decoded, rssi)
                 else:
                     log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
             else:
