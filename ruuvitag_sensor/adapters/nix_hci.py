@@ -28,10 +28,16 @@ class BleCommunicationNix(BleCommunication):
         log.info('Start receiving broadcasts (device %s)', bt_device)
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
+        def get_sudo():
+            if os.getuid() == 0:
+                return '', '', []
+            else:
+                return 'sudo ', ' with sudo', ['sudo', '-n']
+
         def reset_ble_adapter():
-            log.info("FYI: Calling a process with sudo: hciconfig %s reset", bt_device)
+            log.info("FYI: Calling a process%s: hciconfig %s reset", get_sudo()[1], bt_device)
             return subprocess.call(
-                'sudo hciconfig %s reset' % bt_device,
+                '%shciconfig %s reset' % (get_sudo()[0], bt_device),
                 shell=True,
                 stdout=DEVNULL)
 
@@ -53,12 +59,13 @@ class BleCommunicationNix(BleCommunication):
             log.info('Problem with hciconfig reset. Exit.')
             exit(1)
 
-        log.info("FYI: Spawning process with sudo: hcitool -i %s lescan2 --duplicates", bt_device)
+        log.info("FYI: Spawning process%s: hcitool -i %s lescan2 --duplicates", get_sudo()[1], bt_device)
         hcitool = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
-        log.info("FYI: Spawning process with sudo: hcidump -i %s --raw", bt_device)
+            get_sudo()[2] + ['hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
+
+        log.info("FYI: Spawning process%s: hcidump -i %s --raw", get_sudo()[1], bt_device)
         hcidump = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
+            get_sudo()[2] + ['hcidump', '-i', bt_device, '--raw'])
         return (hcitool, hcidump)
 
     @staticmethod
