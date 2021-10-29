@@ -70,7 +70,7 @@ $ sudo hciconfig hci0 reset
 
 Scan bluetooth devices:
 ```sh
-$ sudo hcitool lescan --duplicates
+$ sudo hcitool lescan2 --duplicates --passive
 ```
 
 Get broadcasted data:
@@ -213,7 +213,7 @@ Get data from Bluetooth device ([BleCommunicationNix.get_datas](https://github.c
 BleCommunicationNix.get_datas
  Start BLE processes
    Reset BLE device (hciconfig hci0 reset)
-   Start scanning (hcitool lescan --duplicates)
+   Start scanning (hcitool lescan2 --duplicates --passive)
    Start hcidump (hcidump --raw)
  While new data from hcidump
    Get data from hcidump
@@ -290,7 +290,7 @@ Or use e.g. VS Code to execute and debug tests.
 
 ## Exeuting Verification Test
 
-Verification test sciprt executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
+Verification test script executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
 
 ```sh
 $ chmod +x verification.sh
