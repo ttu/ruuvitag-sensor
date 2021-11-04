@@ -121,28 +121,31 @@ $ sudo pip3 install --upgrade setuptools
 
 Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add --user to install for current user
 ```sh
-$ sudo pip3 install --user ruuvitag-sensor
+$ python3 -m pip install --user ruuvitag_sensor
 ```
 This library includes a command line utility.
 
 Try displaying the help. 
 ```sh
-$ python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor --help
+$ python3 -m ruuvitag_sensor --help
 ```
 Expect
 ```sh
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-l] [-s] [--version]
+usage: __main__.py [-h] [-g MAC_ADDRESS] [-d BT_DEVICE] [-f] [-l] [-s] [--version] [--debug]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
+  -d BT_DEVICE, --device BT_DEVICE
+                        Set Bluetooth device id (default hci0)
   -f, --find            Find broadcasting RuuviTags
   -l, --latest          Get latest data for found RuuviTags
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
+  --debug               Enable debug logging
 ```
- If this fails with a Traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6. then path is ~/.local/lib/python3.6/...
+ If this fails with a traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6 then path is `~/.local/lib/python3.6/...`.
 
 Make an alias if you choose
 ```sh
