@@ -53,9 +53,9 @@ class BleCommunicationNix(BleCommunication):
             log.info('Problem with hciconfig reset. Exit.')
             exit(1)
 
-        log.info("FYI: Spawning process with sudo: hcitool -i %s lescan2 --duplicates", bt_device)
+        log.info("FYI: Spawning process with sudo: hcitool -i %s lescan2 --duplicates --passive", bt_device)
         hcitool = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
+            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive'])
         log.info("FYI: Spawning process with sudo: hcidump -i %s --raw", bt_device)
         hcidump = ptyprocess.PtyProcess.spawn(
             ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
