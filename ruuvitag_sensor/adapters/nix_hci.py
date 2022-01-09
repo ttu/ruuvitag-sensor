@@ -31,18 +31,12 @@ class BleCommunicationNix(BleCommunication):
         DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
 
         def reset_ble_adapter():
-            log.info("FYI: Calling a process{}: hciconfig {} reset".format(
-                "" if is_root else " with sudo", bt_device))
-            if is_root:
-                return subprocess.call(
-                    'hciconfig %s reset' % bt_device,
-                    shell=True,
-                    stdout=DEVNULL)
-            else:
-                return subprocess.call(
-                    'sudo hciconfig %s reset' % bt_device,
-                    shell=True,
-                    stdout=DEVNULL)
+            cmd = 'hciconfig %s reset' % bt_device
+            log.info("FYI: Calling a process{}: {}".format(
+                "" if is_root else " with sudo", cmd))
+
+            cmd = "sudo {}".format(cmd) if not is_root else cmd
+            return subprocess.call(cmd, shell=True, stdout=DEVNULL)
 
         def start_with_retry(func, try_count, interval, msg):
             retcode = func()
@@ -62,23 +56,22 @@ class BleCommunicationNix(BleCommunication):
             log.info('Problem with hciconfig reset. Exit.')
             exit(1)
 
-        log.info("FYI: Spawning process{}: hcitool -i {} lescan2 --duplicates --passive".format(
-            "" if is_root else " with sudo", bt_device))
-        if is_root:
-            hcitool = ptyprocess.PtyProcess.spawn(
-                ['hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive'])
-        else:
-            hcitool = ptyprocess.PtyProcess.spawn(
-                ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive'])
+        cmd = ['hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive']
+        log.info("FYI: Spawning process{}: {}".format(
+            "" if is_root else " with sudo", ' '.join(str(i) for i in cmd)))
 
-        log.info("FYI: Spawning process{}: hcidump -i %s --raw".format(
-            "" if is_root else " with sudo", bt_device))
-        if is_root:
-            hcidump = ptyprocess.PtyProcess.spawn(
-                ['hcidump', '-i', bt_device, '--raw'])
-        else:
-            hcidump = ptyprocess.PtyProcess.spawn(
-                ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
+        if not is_root:
+            cmd.insert(0, "sudo")
+        hcitool = ptyprocess.PtyProcess.spawn(cmd)
+
+        cmd = ['hcidump', '-i', bt_device, '--raw']
+        log.info("FYI: Spawning process{}: {}".format(
+            "" if is_root else " with sudo", ' '.join(str(i) for i in cmd)))
+
+        if not is_root:
+            cmd.insert(0, "sudo")
+        hcidump = ptyprocess.PtyProcess.spawn(cmd)
+
         return (hcitool, hcidump)
 
     @staticmethod
