@@ -254,6 +254,33 @@ for handler in log.handlers:
 
 datas = RuuviTagSensor.get_data_for_sensors()
 ```
+
+##### Custom event handler for a specific log event
+
+If custom functionality is required when a specific evet happens, e.g. exit when specific sensor is blacklisted, logging event handlers can be utilized for this functionality.
+
+```py
+from logging import StreamHandler
+from ruuvitag_sensor.log import log
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+
+class ExitHandler(StreamHandler):
+
+    def emit(self, record):
+        if (record.levelname != "DEBUG"):
+            return
+        msg = self.format(record)
+        if "Blacklisting MAC F4:A5:74:89:16:57E" in msg:
+            exit(1)
+
+
+exit_handler = ExitHandler()
+log.addHandler(exit_handler)
+
+data = RuuviTagSensor.get_data_for_sensors()
+```
+
 ##### Command line application
 
 ```
