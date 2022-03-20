@@ -27,7 +27,6 @@ Install latest developement version
 ```sh
 $ python -m venv .venv
 $ source .venv/bin/activate
-$ python -m pip install wheel
 $ python -m pip install git+https://github.com/ttu/ruuvitag-sensor
 # Or clone this repository and install locally
 $ python -m pip install -e .
@@ -240,7 +239,7 @@ datas = RuuviTagSensor.get_data_for_sensors()
 print(datas)
 ```
 
-##### Logging all data to file
+##### Log all events to log-file
 
 By default only errors are logged to `ruuvitag_sensor.log`-file. Level can be changed by changing FileHandlers log level.
 

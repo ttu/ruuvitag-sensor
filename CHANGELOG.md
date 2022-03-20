@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Add wheel to setup requirements
+* FIX: Do not use sudo if already sudo
 
 ## [1.2.0] - 2021-04-29
 * FIX: Bleson return correct data if get_data returns before desired mac is seen
