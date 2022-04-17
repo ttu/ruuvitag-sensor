@@ -3,6 +3,10 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class ShortDataError(Exception):
+    pass
+
+
 def _dechunk(raw):
     """
     Given a BLE advertisement in hex format, interpret the first
@@ -14,11 +18,11 @@ def _dechunk(raw):
     If the length indicated is longer than the data, raise a ValueError
     """
     if len(raw) < 2:
-        raise ValueError("Data too short")
+        raise ShortDataError("Data too short")
 
     dlen = int(raw[:2], 16)
     if (dlen + 1) * 2 > len(raw):
-        raise ValueError("Cannot read %d bytes, data too short: %s" % (dlen, raw))
+        raise ShortDataError("Cannot read %d bytes, data too short: %s" % (dlen, raw))
 
     return raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:]
 
@@ -64,11 +68,17 @@ class DataFormats(object):
                 ctype = cdata[:2]
                 log.debug("Found chunk of type %s: %s", ctype, cdata)
 
-                # See if we found a potential candidate. Break
-                # the loop
+                # See if we found a potential candidate. Break the loop
                 if ctype in ('FF', '16', '09'):
                     candidate = cdata
                     break
+        except ShortDataError as ex:
+            # Data might be from RuuviTag, but received data was invalid
+            # e.g. it's possile that bluetooth stack received only partial data
+            # Set the format to None, and data to '', this allows the
+            # caller to determine that we did indeed see a Ruuvitag.
+            log.debug("Error parsing advertisement data: %s", ex)
+            return (None, '')
         except Exception:
             log.exception("Invalid advertisement data: %s", raw)
             return (None, None)
@@ -96,9 +106,7 @@ class DataFormats(object):
                 return (2, data)
 
         elif candidate.startswith("095275757669"):
-            # This is a Ruuvitag, but this advertisement does not
-            # contain any data.
-            #
+            # This is a Ruuvitag, but this advertisement does not contain any data.
             # Set the format to None, and data to '', this allows the
             # caller to determine that we did indeed see a Ruuvitag.
             return (None, '')
