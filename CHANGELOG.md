@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [1.2.1] - 2022-05-23
 * FIX: Handle too shot BLE data from RuuviTag as valida data
 * CHANGE: Add wheel to setup requirements
 * FIX: BlueZ - Do not use sudo if sudo not availabele or if already superuser
