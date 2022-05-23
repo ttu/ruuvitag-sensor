@@ -9,26 +9,33 @@
 2. Create virtualenv and activate it
 
 ```sh
-$ python3 -m venv venv
-$ source venv/bin/activate
+$ python -m venv .venv
+$ source .venv/bin/activate
 ```
 
 3. Install required dependencies
 ```sh
-$ sudo python3 -m pip install -e .
+$ sudo python -m pip install -e .
 ```
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
 
 4. Test that application works 
 ```sh
-$ sudo python3 ruuvitag_sensor --help
+$ sudo python ruuvitag_sensor --help
 ```
 
 ## Project files
 
-* ble_communication.py
-  * Bluetooth LE communication
+* adapters
+  * nix_hci.py
+    * Bluetooth LE communication (BlueZ)
+  * bleson.py
+    * Bluetooth LE communication (Bleson)
+  * nix_hci_file.py
+    * Emulate Bluetooth LE communication (file)
+  * dummy.py
+    * Emulate Bluetooth LE communication (hard coded values)
 * data_formats.py
   * Data format decision logic and raw data encoding 
 * decoder.py
@@ -371,4 +378,38 @@ Set scan parameters failed: Input/output error
 Fix:
 ```sh
 $ hciconfig hci0 reset
+```
+
+## Relese a new version
+
+### Build release
+
+https://packaging.python.org/en/latest/tutorials/packaging-projects/#generating-distribution-archives
+
+```sh
+$ python -m build
+```
+
+### Test in testpypi
+
+Upload to test pypi to verify that descriptions etc. are correct
+
+https://test.pypi.org/project/ruuvitag-sensor/
+
+https://twine.readthedocs.io/en/stable/#using-twine
+```sh
+$ twine upload -r testpypi dist/*
+```
+
+### Release a new version
+
+1. Update version and push to master ([example](https://github.com/ttu/ruuvitag-sensor/commit/a141e73952949a37bdcfd5e2902968135ed48146)). 
+2. Update Tags
+```sh
+$ git tag x.x.x
+$ git push origin --tags
+```
+3. Upload new version to pypi
+```
+$ twine upload dist/*
 ```
