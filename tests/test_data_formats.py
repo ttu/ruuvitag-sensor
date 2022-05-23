@@ -57,3 +57,9 @@ class TestDataFormats(TestCase):
         for x in test_cases:
             encoded = DataFormats._get_data_format_2and4(x)
             self.assertIsNotNone(encoded)
+
+    def test_convert_data_too_short_data(self):
+        test_case = '1E1107DC00240EE5A9E093F3A3B50100406E0B0952757576692042333634AC04'
+        (data_format, data) = DataFormats.convert_data(test_case)
+        self.assertIsNone(data_format)
+        self.assertEqual(data, '')

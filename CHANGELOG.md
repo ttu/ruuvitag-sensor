@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* FIX: Handle too shot BLE data from RuuviTag as valida data
 * CHANGE: Add wheel to setup requirements
 * FIX: Do not use sudo if already sudo
 
