@@ -150,7 +150,7 @@ ruuvi_rx.stop()
 
 More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
 
-Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
+Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
 ##### Find sensors
 
@@ -307,7 +307,7 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 
 * Keep track of each sensors current status and send updated data to server. [Sync](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_sync.py) and [async](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_async.py) version.
 * Send found sensor data to InfluxDB. [Reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb_rx.py) and [non-reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb.py) version. Naming convention of sent data matches [RuuviCollector library](https://github.com/scrin/ruuvicollector).
-* Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with Rx](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
+* Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with ReactiveX](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
 
 ## Changelog
 
