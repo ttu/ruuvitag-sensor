@@ -123,7 +123,7 @@ Reactive wrapper and background process for RuuviTagSensor get_datas. Optional M
 
 ```python
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
-from rx import operators as ops
+from reactivex import operators as ops
 
 ruuvi_rx = RuuviTagReactive()
 

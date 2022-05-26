@@ -6,7 +6,7 @@ Check guide and requirements from post_to_influxdb.py
 
 from influxdb import InfluxDBClient
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
-from rx import operators as ops
+from reactivex import operators as ops
 
 client = InfluxDBClient(host='localhost', port=8086, database='ruuvi')
 
