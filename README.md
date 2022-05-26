@@ -134,7 +134,7 @@ ruuvi_rx.get_subject().\
 # Print only last data every 10 seconds for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(
       ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
-      ops.buffer_with_time(10000)
+      ops.buffer_with_time(10.0)
     ).subscribe(lambda datas: print(datas[len(datas) - 1]))
 
 # Execute only every time when temperature changes for F4:A5:74:89:16:57
