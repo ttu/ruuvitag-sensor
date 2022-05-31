@@ -125,6 +125,7 @@ Reactive wrapper and background process for RuuviTagSensor get_datas. Optional M
 
 ```python
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from reactivex import operators as ops
 
 ruuvi_rx = RuuviTagReactive()
 
@@ -133,17 +134,17 @@ ruuvi_rx.get_subject().\
     subscribe(print)
 
 # Print only last data every 10 seconds for F4:A5:74:89:16:57
-ruuvi_rx.get_subject().\
-    filter(lambda x: x[0] == 'F4:A5:74:89:16:57').\
-    buffer_with_time(10000).\
-    subscribe(lambda datas: print(datas[len(datas) - 1]))
+ruuvi_rx.get_subject().pipe(
+      ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
+      ops.buffer_with_time(10.0)
+    ).subscribe(lambda datas: print(datas[len(datas) - 1]))
 
 # Execute only every time when temperature changes for F4:A5:74:89:16:57
-ruuvi_rx.get_subject().\
-    filter(lambda x: x[0] == 'F4:A5:74:89:16:57').\
-    map(lambda x: x[1]['temperature']).\
-    distinct_until_changed().\
-    subscribe(lambda x: print('Temperature changed: {}'.format(x)))
+ruuvi_rx.get_subject().pipe(
+      ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
+      ops.map(lambda x: x[1]['temperature']),
+      ops.distinct_until_changed()
+    ).subscribe(lambda x: print('Temperature changed: {}'.format(x)))
 
 # Close all connections and stop bluetooth communication
 ruuvi_rx.stop()
@@ -151,7 +152,7 @@ ruuvi_rx.stop()
 
 More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
 
-Check official documentation from RxPy [GitHub](https://github.com/ReactiveX/RxPY) and [RxPY Public API](https://ninmesara.github.io/RxPY/api/operators/index.html)
+Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
 ##### Find sensors
 
@@ -350,7 +351,7 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 
 * Keep track of each sensors current status and send updated data to server. [Sync](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_sync.py) and [async](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_async.py) version.
 * Send found sensor data to InfluxDB. [Reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb_rx.py) and [non-reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb.py) version. Naming convention of sent data matches [RuuviCollector library](https://github.com/scrin/ruuvicollector).
-* Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with Rx](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
+* Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with ReactiveX](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
 
 ## Changelog
 
