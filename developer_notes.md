@@ -341,7 +341,7 @@ time.sleep(60)
 
 Normal scanning function is good for running normal long duration tests without abusing BLE scanning process as it will just initialize the connection once in the beginning
 ```sh
-$ sudo python3 ruuvitag_sensor -s
+$ sudo python ruuvitag_sensor -s
 ```
 
 ## Randomly create bad BLE broadcast data
