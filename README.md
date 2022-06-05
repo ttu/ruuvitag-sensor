@@ -15,7 +15,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
     * [Bleson install guide](#Bleson)
 * Python 3.7+
-    * If you need to use Python 2.x or <3.7, check [install instructions](#Python-2-and-under-3.7) for older version
+    * If you need to use Python 2.x or <3.7, check [install instructions](#Python-2.x-and-under-3.7) for an older version
    
 
 ### Installation

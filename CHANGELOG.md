@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-* CHANGE: Support only Python 3.7 and greater
+* CHANGE: Support only Python 3.7 and above
 * CHANGE: Updated RxPy to v4
 
 ## [1.2.1] - 2022-05-23
