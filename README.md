@@ -14,6 +14,8 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * [BlueZ install guide](#BlueZ)
 * __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
     * [Bleson install guide](#Bleson)
+* Python 3.7+
+    * If you need to use Python 2.x or <3.7, check [install instructions](#python-2x-and-36-and-below) for an older version
    
 
 ### Installation
@@ -344,6 +346,21 @@ $ export RUUVI_BLE_ADAPTER="Bleson"
 __NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 __NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
+
+## Python 2.x and 3.6 and below
+
+Last version of ruuvitag-sensor with Python 2.x and <3.7 support is [1.2.1](https://pypi.org/project/ruuvitag-sensor/1.2.1/).
+
+[Branch](https://github.com/ttu/ruuvitag-sensor/tree/release/1.2.1) / [Tag / commit](https://github.com/ttu/ruuvitag-sensor/commit/12ca3cfcb7fbed28477bb34f3bffd3eee0f9888d)
+
+```sh
+$ git checkout release/1.2.1
+```
+
+Install from pypi
+```sh
+$ python -m pip install ruuvitag-sensor==1.2.1
+```
 
 ## Examples
 

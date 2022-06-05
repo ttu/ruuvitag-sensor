@@ -24,14 +24,12 @@ setup(name='ruuvitag_sensor',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3'
       ],
       keywords='RuuviTag BLE',
       setup_requires=['wheel'],
       install_requires=[
           'reactivex',
-          'futures;python_version<"3.3"',
           'ptyprocess;platform_system=="Linux"'
       ],
       license='MIT',
