@@ -11,7 +11,10 @@ from ruuvitag_sensor.decoder import get_decoder, parse_mac
 log = logging.getLogger(__name__)
 
 
-if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
+if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleak':
+    from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
+    ble = BleCommunicationBleak()
+elif os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif 'RUUVI_NIX_FROMFILE' in os.environ:
@@ -108,6 +111,18 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
+    async def get_datas_async(callback, macs=[], run_flag=RunFlag(), bt_device=''):
+        mac_blacklist = Manager().list()
+        start_time = time.time()
+        data_iter = ble.get_datas(mac_blacklist, bt_device)
+
+        async for ble_data in data_iter:
+            print(ble_data)
+            data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
+            if data:
+                callback(data)
+
+    @staticmethod
     def get_data(callback, macs=[], run_flag=RunFlag(), bt_device=''):
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
@@ -169,28 +184,34 @@ class RuuviTagSensor(object):
                 log.debug('MAC not whitelisted: %s', ble_data[0])
                 continue
 
-            (data_format, data) = DataFormats.convert_data(ble_data[1])
-            # Check that encoded data is valid RuuviTag data and it is sensor data
-            # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
-            if data is not None:
-                if data_format is None:
-                    # Whatever we heard was from a Ruuvitag, but did not contain
-                    # any measurements. Ignore this.
-                    continue
+            data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
+            if data:
+                yield data
 
-                decoded = get_decoder(data_format).decode_data(data)
-                if decoded is not None:
-                    # If advertised MAC is missing, try to parse it from the payload
-                    mac = ble_data[0] if ble_data[0] else \
-                        parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
-                    # Check whitelist using MAC from decoded data if advertised MAC is not available
-                    if mac and macs and mac not in macs:
-                        log.debug('MAC not whitelisted: %s', ble_data[0])
-                        continue
-                    yield (mac, decoded)
-                else:
-                    log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
+    @staticmethod
+    def _parse_data(ble_data, mac_blacklist, macs=[]):
+        (data_format, data) = DataFormats.convert_data(ble_data[1])
+        # Check that encoded data is valid RuuviTag data and it is sensor data
+        # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
+        if data is not None:
+            if data_format is None:
+                # Whatever we heard was from a Ruuvitag, but did not contain
+                # any measurements. Ignore this.
+                return
+
+            decoded = get_decoder(data_format).decode_data(data)
+            if decoded is not None:
+                # If advertised MAC is missing, try to parse it from the payload
+                mac = ble_data[0] if ble_data[0] else \
+                    parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
+                # Check whitelist using MAC from decoded data if advertised MAC is not available
+                if mac and macs and mac not in macs:
+                    log.debug('MAC not whitelisted: %s', ble_data[0])
+                    return
+                return (mac, decoded)
             else:
-                if ble_data[0]:
-                    log.debug("Blacklisting MAC %s", ble_data[0])
-                    mac_blacklist.append(ble_data[0])
+                log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
+        else:
+            if ble_data[0]:
+                log.debug("Blacklisting MAC %s", ble_data[0])
+                mac_blacklist.append(ble_data[0])
