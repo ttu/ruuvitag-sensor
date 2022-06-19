@@ -117,7 +117,6 @@ class RuuviTagSensor(object):
         data_iter = ble.get_datas(mac_blacklist, bt_device)
 
         async for ble_data in data_iter:
-            print(ble_data)
             data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
             if data:
                 callback(data)
