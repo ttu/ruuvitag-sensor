@@ -11,10 +11,10 @@ from ruuvitag_sensor.decoder import get_decoder, parse_mac
 log = logging.getLogger(__name__)
 
 
-if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleak':
+if os.environ.get('RUUVI_BLE_ADAPTER', '').lower() == 'bleak':
     from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
     ble = BleCommunicationBleak()
-elif os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
+elif os.environ.get('RUUVI_BLE_ADAPTER', '').lower() == 'bleson':
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif 'RUUVI_NIX_FROMFILE' in os.environ:
@@ -112,8 +112,8 @@ class RuuviTagSensor(object):
 
     @staticmethod
     async def get_datas_async(macs=[], bt_device=''):
-        if not 'Bleak' in os.environ.get('RUUVI_BLE_ADAPTER'):
-            raise Exception('Only Bleak is BLE communication is supported')
+        if not 'bleak' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+            raise Exception('Only Bleak BLE communication is supported')
 
         mac_blacklist = Manager().list()
         data_iter = ble.get_datas(mac_blacklist, bt_device)
