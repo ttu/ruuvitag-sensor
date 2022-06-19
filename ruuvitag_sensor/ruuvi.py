@@ -111,15 +111,23 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def get_datas_async(callback, macs=[], run_flag=RunFlag(), bt_device=''):
+    async def get_datas_async(macs=[], bt_device=''):
+        if not 'Bleak' in os.environ.get('RUUVI_BLE_ADAPTER'):
+            raise Exception('Only Bleak is BLE communication is supported')
+
         mac_blacklist = Manager().list()
-        start_time = time.time()
         data_iter = ble.get_datas(mac_blacklist, bt_device)
 
         async for ble_data in data_iter:
             data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
+
+            # Check MAC whitelist if advertised MAC available
+            if ble_data[0] and macs and not ble_data[0] in macs:
+                log.debug('MAC not whitelisted: %s', ble_data[0])
+                continue
+
             if data:
-                callback(data)
+                yield data
 
     @staticmethod
     def get_data(callback, macs=[], run_flag=RunFlag(), bt_device=''):
