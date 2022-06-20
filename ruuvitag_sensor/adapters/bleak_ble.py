@@ -56,7 +56,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await scanner.stop()
 
     @staticmethod
-    async def get_datas(blacklist: list[str] = [], bt_device: str = '') -> Tuple[str, str]:
+    async def get_datas(blacklist: List[str] = [], bt_device: str = '') -> Tuple[str, str]:
         await BleCommunicationBleak._start(q, blacklist)
 
         try:

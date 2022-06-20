@@ -1,5 +1,7 @@
 from unittest.mock import patch
 from pytest import raises
+import os
+os.environ['RUUVI_BLE_ADAPTER'] = ''
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag

@@ -1,9 +1,10 @@
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from typing import Tuple
 from unittest.mock import patch
 import pytest
 import os
 os.environ['RUUVI_BLE_ADAPTER'] = 'bleak'
 
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # pylint: disable=line-too-long,no-self-use,unused-argument
 
@@ -12,7 +13,7 @@ os.environ['RUUVI_BLE_ADAPTER'] = 'bleak'
 
 class TestRuuviTagSensorAsync:
 
-    async def _get_datas(self, blacklist=[], bt_device=''):
+    async def _get_datas(self, blacklist=[], bt_device='') -> Tuple[str, str]:
         datas = [
             ('EB:A5:D1:02:CE:68', '1c1bFF99040513844533c43dffe0ffd804189ff645fcffeba5d102ce68'),
             ('CD:D4:FA:52:7A:F2', '1c1bFF990405128a423bc45fffd8ff98040cafd6497a83cdd4fa527af2'),
