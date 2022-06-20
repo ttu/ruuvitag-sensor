@@ -1,11 +1,9 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.data_formats import DataFormats
 
 # pylint: disable=protected-access
 
 
-class TestDataFormats(TestCase):
+class TestDataFormats:
 
     def test_convert_data_valid_data(self):
         test_cases = [
@@ -15,19 +13,19 @@ class TestDataFormats(TestCase):
         for x, data_format, result in test_cases:
             encoded = DataFormats.convert_data(x)
             print(encoded[1])
-            self.assertEqual(data_format, encoded[0])
-            self.assertEqual(result, encoded[1])
+            assert data_format == encoded[0]
+            assert result == encoded[1]
 
     def test_convert_data_not_valid_binary(self):
         data = b'\x99\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00'
         encoded = DataFormats.convert_data(data)
-        self.assertIsNone(encoded[0])
-        self.assertIsNone(encoded[1])
+        assert encoded[0] == None
+        assert encoded[1] == None
 
     def test_convert_data_not_valid(self):
         encoded = DataFormats.convert_data('not_valid')
-        self.assertIsNone(encoded[0])
-        self.assertIsNone(encoded[1])
+        assert encoded[0] == None
+        assert encoded[1] == None
 
     def test_get_data_format_3_valid_data(self):
         test_cases = [
@@ -36,7 +34,7 @@ class TestDataFormats(TestCase):
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_3(x)
-            self.assertIsNotNone(encoded)
+            assert encoded != None
 
     def test_get_data_format_5_valid_data(self):
         test_cases = [
@@ -45,7 +43,7 @@ class TestDataFormats(TestCase):
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_5(x)
-            self.assertIsNotNone(encoded)
+            assert encoded != None
 
     def test_get_data_format_2and4_valid_data(self):
         test_cases = [
@@ -56,10 +54,10 @@ class TestDataFormats(TestCase):
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_2and4(x)
-            self.assertIsNotNone(encoded)
+            assert encoded != None
 
     def test_convert_data_too_short_data(self):
         test_case = '1E1107DC00240EE5A9E093F3A3B50100406E0B0952757576692042333634AC04'
         (data_format, data) = DataFormats.convert_data(test_case)
-        self.assertIsNone(data_format)
-        self.assertEqual(data, '')
+        assert data_format == None
+        assert data == ''
