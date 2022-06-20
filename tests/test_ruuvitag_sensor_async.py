@@ -25,7 +25,7 @@ class TestRuuviTagSensorAsync:
 
     @patch('ruuvitag_sensor.adapters.bleak_ble.BleCommunicationBleak.get_datas', _get_datas)
     @pytest.mark.asyncio
-    async def test_get_datas(self):
+    async def test_get_datas_async(self):
         datas = []
         gener = RuuviTagSensor.get_datas_async()
         async for data in gener:
@@ -35,7 +35,7 @@ class TestRuuviTagSensorAsync:
 
     @patch('ruuvitag_sensor.adapters.bleak_ble.BleCommunicationBleak.get_datas', _get_datas)
     @pytest.mark.asyncio
-    async def test_get_datas_with_macs(self):
+    async def test_get_datas_async_with_macs(self):
         datas = []
         macs = ['EB:A5:D1:02:CE:68', 'EC:4D:A7:95:08:6B']
         gener = RuuviTagSensor.get_datas_async(macs)
