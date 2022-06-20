@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Switch unit test framework from nose to pytest
 * CHANGE: Support only Python 3.7 and above
 * CHANGE: Updated RxPy to v4
 

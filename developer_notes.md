@@ -269,28 +269,23 @@ RuuviTagSensor._get_ruuvitag_datas
 
 ## Executing Unit Tests
 
-Run with nosetests
+Run with pytest:
 
 ```sh
-$ pip install nose
-$ nosetests
+$ python -m pip install pytest
+$ pytest
 ```
 
-Run with setup
+
+Execute single test:
 
 ```sh
-$ python setup.py test
-```
-
-Execute single test: `nosetests <file>:<Test_Case>.<test_method>`
-
-```sh
-$ nosetests test_ruuvitag_sensor:TestRuuviTagSensor.test_convert_data_valid_df3
+$ pytest tests/test_ruuvitag_sensor.py -k 'test_tag_update_is_valid'
 ```
 
 Show print statements on console:
 ```sh
-$ nosetest --nocapture
+$ pytest --show-capture
 ```
 
 Or use e.g. VS Code to execute and debug tests.
