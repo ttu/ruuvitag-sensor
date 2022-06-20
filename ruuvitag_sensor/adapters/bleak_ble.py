@@ -1,12 +1,13 @@
 import asyncio
 import logging
+from typing import List, Tuple
 from bleak import BleakScanner
 from bleak.backends.scanner import BLEDevice, AdvertisementData
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 
 scanner = BleakScanner()
-q = asyncio.Queue()
+q = asyncio.Queue[Tuple[str, str]]()
 
 log = logging.getLogger(__name__)
 
@@ -14,10 +15,10 @@ log = logging.getLogger(__name__)
 class BleCommunicationBleak(BleCommunicationAsync):
 
     @staticmethod
-    async def _start(queue: asyncio.Queue, blacklist: list[str]):
+    async def _start(queue: asyncio.Queue[Tuple[str, str]], blacklist: List[str]):
 
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
-            mac = device.address
+            mac: str = device.address
             if mac and mac in blacklist:
                 log.debug('MAC blacklised: %s', mac)
                 return
@@ -44,6 +45,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data = 'FF9904' + data.hex()
             data = '%02x%s' % (len(data) >> 1, data)
             data = '%02x%s' % (len(data) >> 1, data)
+            log.info((mac, data))
             await queue.put((mac, data))
 
         scanner.register_detection_callback(detection_callback)
@@ -51,10 +53,10 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     @staticmethod
     async def _stop():
-        scanner.stop()
+        await scanner.stop()
 
     @staticmethod
-    async def get_datas(blacklist: list[str] = [], bt_device: str = '') -> tuple[str, str]:
+    async def get_datas(blacklist: list[str] = [], bt_device: str = '') -> Tuple[str, str]:
         await BleCommunicationBleak._start(q, blacklist)
 
         try:
