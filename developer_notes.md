@@ -47,11 +47,11 @@ $ sudo python ruuvitag_sensor --help
     * Reactive wrapper and background process for RuuviTagSensor get_datas
 * ruuvi.py
   * RuuviTagSensor-class
-    * Main communicaton logic
+    * Main communication logic
     * This is the class mainly used
 * ruuvitag.py
   * RuuviTag Sensors object
-     * Helper class to be used to handle singe RuuviTag and it's state.
+     * Helper class to be used to handle a single RuuviTag and its state.
 
 
 ## Testing
@@ -67,6 +67,8 @@ you have in your system. Travis, however, will pick up all the combinations and 
 1. Select DFU icon and choose firmware's zip package
 1. Choose mode by pressing `B`
 
+Nowadays the firmware can also be updated with the Ruuvi Station app which is available
+for Android and iOS.
 
 ## Bluez commands used by RuuviTag package
 
@@ -375,7 +377,7 @@ Fix:
 $ hciconfig hci0 reset
 ```
 
-## Relese a new version
+## Release a new version
 
 ### Build release
 

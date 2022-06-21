@@ -36,7 +36,7 @@ client = InfluxDBClient(host='localhost', port=8086, database='ruuvi')
 
 def write_to_influxdb(received_data):
     """
-    Convert data into RuuviCollector naming schme and scale
+    Convert data into RuuviCollector naming scheme and scale
 
     returns:
         Object to be written to InfluxDB

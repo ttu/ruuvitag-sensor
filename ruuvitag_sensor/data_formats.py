@@ -13,7 +13,7 @@ def _dechunk(raw):
     byte as a length byte, return the data indicated by the length
     byte, and the remainder of the data in a tuple.
 
-    The lenght byte itself is not included in the length.
+    The length byte itself is not included in the length.
 
     If the length indicated is longer than the data, raise a ValueError
     """

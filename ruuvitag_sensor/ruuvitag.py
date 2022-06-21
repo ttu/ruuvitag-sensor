@@ -31,7 +31,7 @@ class RuuviTag(object):
 
     def update(self):
         """
-        Get lates data from the sensor and update own state.
+        Get latest data from the sensor and update own state.
 
         Returns:
             dict: Latest state

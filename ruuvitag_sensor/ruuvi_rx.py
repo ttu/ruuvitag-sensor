@@ -33,7 +33,7 @@ class RuuviTagReactive(object):
     @staticmethod
     def _data_update(subjects, queue, run_flag):
         """
-        Get data from backgound process and notify all subscribed observers
+        Get data from background process and notify all subscribed observers
         with the new data
         """
         while run_flag.running:
