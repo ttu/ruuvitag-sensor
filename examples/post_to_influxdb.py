@@ -76,4 +76,4 @@ def write_to_influxdb(received_data):
 
 
 if __name__ == "__main__":
-    RuuviTagSensor.get_datas(write_to_influxdb)
+    RuuviTagSensor.get_data(write_to_influxdb)

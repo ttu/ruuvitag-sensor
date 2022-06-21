@@ -44,4 +44,4 @@ def print_data(received_data):
 
 
 if __name__ == "__main__":
-    RuuviTagSensor.get_datas(print_data, mac)
+    RuuviTagSensor.get_data(print_data, mac)

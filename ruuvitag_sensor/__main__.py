@@ -48,10 +48,10 @@ if __name__ == '__main__':
     elif args.find_action:
         RuuviTagSensor.find_ruuvitags(args.bt_device)
     elif args.latest_action:
-        datas = RuuviTagSensor.get_data_for_sensors(bt_device=args.bt_device)
-        log.info(datas)
+        data = RuuviTagSensor.get_data_for_sensors(bt_device=args.bt_device)
+        log.info(data)
     elif args.stream_action:
-        RuuviTagSensor.get_datas(
+        RuuviTagSensor.get_data(
             lambda x: log.info('%s - %s', x[0], x[1]),
             bt_device=args.bt_device)
     else:

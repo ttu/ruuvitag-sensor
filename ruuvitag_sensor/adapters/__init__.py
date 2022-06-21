@@ -12,5 +12,5 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_datas(blacklist=[], bt_device=''):
+    def get_data(blacklist=[], bt_device=''):
         pass

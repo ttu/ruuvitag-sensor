@@ -34,7 +34,7 @@ def run_get_data_background(macs, queue):
         data[1]['time'] = str(datetime.now())
         queue.put(data)
 
-    RuuviTagSensor.get_datas(callback, macs)
+    RuuviTagSensor.get_data(callback, macs)
 
 
 async def data_update(queue):

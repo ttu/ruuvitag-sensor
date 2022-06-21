@@ -3,6 +3,7 @@ import os
 import time
 import logging
 from multiprocessing import Manager
+from warnings import warn
 
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
@@ -69,15 +70,15 @@ class RuuviTagSensor(object):
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
-        datas = {}
-        for new_data in RuuviTagSensor._get_ruuvitag_datas(bt_device=bt_device):
-            if new_data[0] in datas:
+        data = {}
+        for new_data in RuuviTagSensor._get_ruuvitag_data(bt_device=bt_device):
+            if new_data[0] in data:
                 continue
-            datas[new_data[0]] = new_data[1]
+            data[new_data[0]] = new_data[1]
             log.info(new_data[0])
             log.info(new_data[1])
 
-        return datas
+        return data
 
     @staticmethod
     def get_data_for_sensors(macs=[], search_duratio_sec=5, bt_device=''):
@@ -96,18 +97,18 @@ class RuuviTagSensor(object):
         log.info('Stops automatically in %ss', search_duratio_sec)
         log.info('MACs: %s', macs)
 
-        datas = {}
+        data = {}
 
-        for new_data in RuuviTagSensor._get_ruuvitag_datas(
+        for new_data in RuuviTagSensor._get_ruuvitag_data(
                 macs,
                 search_duratio_sec,
                 bt_device=bt_device):
-            datas[new_data[0]] = new_data[1]
+            data[new_data[0]] = new_data[1]
 
-        return datas
+        return data
 
     @staticmethod
-    def get_datas(callback, macs=[], run_flag=RunFlag(), bt_device=''):
+    def get_data(callback, macs=[], run_flag=RunFlag(), bt_device=''):
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -121,11 +122,22 @@ class RuuviTagSensor(object):
         log.info('Get latest data for sensors. Stop with Ctrl+C.')
         log.info('MACs: %s', macs)
 
-        for new_data in RuuviTagSensor._get_ruuvitag_datas(macs, None, run_flag, bt_device):
+        for new_data in RuuviTagSensor._get_ruuvitag_data(macs, None, run_flag, bt_device):
             callback(new_data)
 
     @staticmethod
-    def _get_ruuvitag_datas(macs=[], search_duratio_sec=None, run_flag=RunFlag(), bt_device=''):
+    def get_datas(callback, macs=[], run_flag=RunFlag(), bt_device=''):
+        """
+        DEPRECATED
+        This method will be removed in a future version.
+        Use get_data-method instead.
+        """
+        warn('This method will be removed in a future version, use get_data() instead',
+             FutureWarning)
+        return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
+
+    @staticmethod
+    def _get_ruuvitag_data(macs=[], search_duratio_sec=None, run_flag=RunFlag(), bt_device=''):
         """
         Get data from BluetoothCommunication and handle data encoding.
 
@@ -141,7 +153,7 @@ class RuuviTagSensor(object):
 
         mac_blacklist = Manager().list()
         start_time = time.time()
-        data_iter = ble.get_datas(mac_blacklist, bt_device)
+        data_iter = ble.get_data(mac_blacklist, bt_device)
 
         for ble_data in data_iter:
             # Check duration
