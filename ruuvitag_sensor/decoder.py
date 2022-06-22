@@ -59,7 +59,7 @@ class UrlDecoder(object):
     4-5: uint16_t    pressure;        // (-50kPa)
     6-7: uint16_t    time;            // seconds (now from reset)
 
-    The bytes for temperature, pressure and time are swaped during the encoding
+    The bytes for temperature, pressure and time are swapped during the encoding
     """
 
     def _get_temperature(self, decoded):
@@ -76,8 +76,8 @@ class UrlDecoder(object):
 
     def _get_pressure(self, decoded):
         """Return air pressure hPa"""
-        pres = ((decoded[4] << 8) + decoded[5]) + 50000
-        return pres / 100
+        pressure = ((decoded[4] << 8) + decoded[5]) + 50000
+        return pressure / 100
 
     def decode_data(self, encoded):
         """

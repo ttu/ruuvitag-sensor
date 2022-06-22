@@ -25,7 +25,7 @@ Install latest released version
 $ python -m pip install ruuvitag_sensor
 ```
 
-Install latest developement version
+Install latest development version
 ```sh
 $ python -m venv .venv
 $ source .venv/bin/activate
@@ -48,9 +48,11 @@ RuuviTag sensors can be identified using MAC addresses.
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
+
 def handle_data(found_data):
-    print('MAC ' + found_data[0])
-    print(found_data[1])
+    print(f'MAC {found_data[0]}')
+    print(f'Data {found_data[1]}')
+
 
 if __name__ == '__main__':
     RuuviTagSensor.get_datas(handle_data)
@@ -68,8 +70,9 @@ counter = 10
 run_flag = RunFlag()
 
 def handle_data(found_data):
-    print('MAC ' + found_data[0])
-    print(found_data[1])
+    print(f'MAC {found_data[0]}')
+    print(f'Data {found_data[1]}')
+
     global counter
     counter = counter - 1
     if counter < 0:
@@ -96,7 +99,7 @@ timeout_in_sec = 4
 
 datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
 
-# Dictionary will have lates data for each sensor
+# Dictionary will have latest data for each sensor
 print(datas['AA:2C:6A:1E:59:3D'])
 print(datas['CC:2C:6A:1E:59:3D'])
 ```
@@ -227,7 +230,7 @@ There is no reason to use Data Format 2 or 4.
 
 Original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users to view the tags without the need to install any app. Since the _Nearby_ has been discontinued there isn't any benefit in using Eddystone format anymore.
 
-##### Logging and Print to console
+##### Logging and Printing to console
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. Command line application has console logging enabled by default.
 

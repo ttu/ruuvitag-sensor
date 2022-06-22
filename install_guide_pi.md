@@ -5,11 +5,11 @@ Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as 
 
 Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017', and '4.14.79-v7+ #1159 SMP Sun Nov 4 17:50:20 GMT 2018 armv7l GNU/Linux'
 
-Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+Official startup guide: https://www.raspberrypi.org/documentation/configuration/raspi-config.md
 
-Summerized here:
+Summarised here:
 
-### Start the pi
+### Start the Pi
 
 Plug display and keyboard
 
@@ -98,7 +98,7 @@ $ reboot
 
 ### Install ruuvitag-sensor package
 
-<!-- seems extraenous, but that's up to you
+<!-- seems extraneous, but that's up to you
 leave in as a comment may be of interest later
 In this example we use default installed version of Python 3, which is 3.4.2. 
 Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3

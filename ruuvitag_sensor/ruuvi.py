@@ -82,7 +82,7 @@ class RuuviTagSensor(object):
     @staticmethod
     def get_data_for_sensors(macs=[], search_duratio_sec=5, bt_device=''):
         """
-        Get lates data for sensors in the MAC's list.
+        Get latest data for sensors in the MAC address list.
 
         Args:
             macs (array): MAC addresses
@@ -112,7 +112,7 @@ class RuuviTagSensor(object):
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
         Args:
-            callback (func): callback funcion to be called when new data is received
+            callback (func): callback function to be called when new data is received
             macs (list): MAC addresses
             run_flag (object): RunFlag object. Function executes while run_flag.running
             bt_device (string): Bluetooth device id
