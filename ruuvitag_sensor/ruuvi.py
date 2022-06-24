@@ -43,7 +43,7 @@ class RuuviTagSensor(object):
     """
 
     @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_first_raw_data(mac, bt_device=''):
         """
         Get raw data for selected RuuviTag
 
