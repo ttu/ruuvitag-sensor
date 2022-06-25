@@ -112,7 +112,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     async def get_datas_async(macs=[], bt_device=''):
-        if not 'bleak' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+        if 'bleak' not in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
             raise Exception('Only Bleak BLE communication is supported')
 
         mac_blacklist = Manager().list()
