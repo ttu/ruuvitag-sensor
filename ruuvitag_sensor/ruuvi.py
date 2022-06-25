@@ -13,11 +13,11 @@ log = logging.getLogger(__name__)
 if os.environ.get('RUUVI_BLE_ADAPTER') == 'Bleson':
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
-elif "RUUVI_NIX_FROMFILE" in os.environ:
+elif 'RUUVI_NIX_FROMFILE' in os.environ:
     # Emulate BleCommunicationNix by reading hcidump data from a file
     from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
     ble = BleCommunicationNixFile()
-elif not sys.platform.startswith('linux') or os.environ.get('RUUVI_ENV') == 'CI':
+elif not sys.platform.startswith('linux') or 'CI' in os.environ:
     # Use BleCommunicationDummy also for CI as it can't use bluez
     from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
     ble = BleCommunicationDummy()
