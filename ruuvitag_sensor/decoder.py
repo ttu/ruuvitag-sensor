@@ -239,6 +239,13 @@ class Df5Decoder(object):
     def _get_mac(self, data):
         return ''.join(f'{x:02x}' for x in data[10:])
 
+    def _get_rssi(self, rssi_byte: str) -> int:
+        """Return RSSI value in dBm."""
+        rssi = int(rssi_byte, 16)
+        if rssi > 127:
+            rssi = (256 - rssi) * -1
+        return rssi
+
     def decode_data(self, data):
         """
         Decode sensor data.
@@ -248,6 +255,7 @@ class Df5Decoder(object):
         """
         try:
             byte_data = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+            rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
@@ -263,7 +271,8 @@ class Df5Decoder(object):
                 'battery': self._get_battery(byte_data),
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data)
+                'mac': self._get_mac(byte_data),
+                'rssi': self._get_rssi(rssi) if rssi else None
             }
         except Exception:
             log.exception('Value: %s not valid', data)

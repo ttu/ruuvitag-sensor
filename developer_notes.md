@@ -135,7 +135,7 @@ Kickstarter FW
 
 2.4.2 RAW v2-mode
 ```python
-{'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5'}
+{'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5', 'rssi': -55}
 ```
 
 ## BLE Broadcast data from RuuviTags

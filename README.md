@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
 The line `if __name__ == '__main__':` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
 
-Optional list of macs and run flag can be passed to the `get_data` function. Callback is called only for macs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
+Optional list of MACs and run flag can be passed to the `get_data` function. Callback is called only for MACs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
@@ -79,7 +79,7 @@ def handle_data(found_data):
     if counter < 0:
         run_flag.running = False
 
-# List of macs of sensors which will execute callback function
+# List of MACs of sensors which will execute callback function
 macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
 
 RuuviTagSensor.get_data(handle_data, macs, run_flag)
@@ -92,7 +92,7 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-# List of macs of sensors which data will be collected
+# List of MACs of sensors which data will be collected
 # If list is empty, data will be collected for all found sensors
 macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
 # get_data_for_sensors will look data for the duration of timeout_in_sec

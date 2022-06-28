@@ -132,9 +132,10 @@ class TestDecoder(TestCase):
         movement_counter = '42'
         measurement_sequence = '00CD'
         mac = 'CBB8334C884F'
+        rssi = 'C6'
         data = decoder.decode_data(
             f'{data_format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}'
-            f'{movement_counter}{measurement_sequence}{mac}')
+            f'{movement_counter}{measurement_sequence}{mac}{rssi}')
 
         assert data['temperature'] == 24.30
         assert data['humidity'] == 53.49
@@ -147,6 +148,14 @@ class TestDecoder(TestCase):
         assert data['movement_counter'] == 66
         assert data['measurement_sequence_number'] == 205
         assert data['mac'] == 'cbb8334c884f'
+        assert data['rssi'] == -58
+
+        # No RSSI case
+        data = decoder.decode_data(
+            f'{data_format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}'
+            f'{movement_counter}{measurement_sequence}{mac}')
+
+        assert data['rssi'] is None
 
     def test_parse_df5_mac(self):
         mac_payload = 'e62eb92e73e5'
