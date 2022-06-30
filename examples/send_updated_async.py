@@ -11,14 +11,14 @@ Requires:
     aiohttp - pip install aiohttp
 """
 
+import asyncio
+import json
+from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
 from multiprocessing import Manager
 from urllib.parse import quote
-import json
-from concurrent.futures import ProcessPoolExecutor
-import asyncio
-from aiohttp import ClientSession
 
+from aiohttp import ClientSession
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
@@ -30,7 +30,7 @@ async def handle_queue(queue):
 
     async def send_post(session, update_data):
         async with session.post(
-            '{url}/sensordatas'.format(url=server_url),
+            f'{server_url}/sensordatas',
             data=json.dumps(update_data),
             headers={'content-type': 'application/json'}
         ) as response:
@@ -38,7 +38,7 @@ async def handle_queue(queue):
 
     async def send_put(session, update_data):
         async with session.put(
-            '{url}/sensors/{mac}'.format(url=server_url, mac=quote(update_data['mac'])),
+            f'{server_url}/sensors/{quote(update_data["mac"])}',
             data=json.dumps(update_data),
             headers={'content-type': 'application/json'}
         ) as response:
@@ -68,11 +68,14 @@ def run_get_datas_background(queue):
         sensor_data = new_data[1]
 
         if sensor_mac not in all_data or all_data[sensor_mac]['data'] != sensor_data:
-            update_data = {'mac': sensor_mac, 'data': sensor_data, 'timestamp': current_time.isoformat()}
+            update_data = {'mac': sensor_mac,
+                           'data': sensor_data,
+                           'timestamp': current_time.isoformat()}
             all_data[sensor_mac] = update_data
             queue.put(update_data)
 
     RuuviTagSensor.get_datas(handle_new_data)
+
 
 if __name__ == "__main__":
     m = Manager()

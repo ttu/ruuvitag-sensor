@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--stream', action='store_true',
                         dest='stream_action', help='Stream broadcasts from all RuuviTags')
     parser.add_argument('--version', action='version',
-                        version='%(prog)s {}'.format(ruuvitag_sensor.__version__))
+                        version=f'%(prog)s {ruuvitag_sensor.__version__}')
     parser.add_argument('--debug', action='store_true',
                         dest='debug_action', help='Enable debug logging')
     args = parser.parse_args()

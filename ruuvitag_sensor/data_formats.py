@@ -22,7 +22,7 @@ def _dechunk(raw):
 
     dlen = int(raw[:2], 16)
     if (dlen + 1) * 2 > len(raw):
-        raise ShortDataError("Cannot read %d bytes, data too short: %s" % (dlen, raw))
+        raise ShortDataError(f"Cannot read {dlen} bytes, data too short: {raw}")
 
     return raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:]
 
@@ -32,6 +32,7 @@ class DataFormats(object):
     RuuviTag broadcasted raw data handling for each data format
     """
 
+    # pylint: disable=too-many-return-statements
     @staticmethod
     def convert_data(raw):
         """
@@ -94,10 +95,10 @@ class DataFormats(object):
         if candidate.startswith("FF990403"):
             return (3, candidate[6:])
 
-        elif candidate.startswith("FF990405"):
+        if candidate.startswith("FF990405"):
             return (5, candidate[6:])
 
-        elif candidate.startswith("16AAFE"):
+        if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
             # Now this returns 2 also for Data Format 4
             data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
@@ -139,7 +140,7 @@ class DataFormats(object):
                 return data[(index + 8):]
 
             return None
-        except:
+        except Exception:
             return None
 
     @staticmethod
@@ -158,7 +159,7 @@ class DataFormats(object):
 
             payload_start = raw.index('FF990403') + 6
             return raw[payload_start:]
-        except:
+        except Exception:
             return None
 
     @staticmethod
@@ -177,5 +178,5 @@ class DataFormats(object):
 
             payload_start = raw.index('FF990405') + 6
             return raw[payload_start:]
-        except:
+        except Exception:
             return None

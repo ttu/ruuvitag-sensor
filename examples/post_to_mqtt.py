@@ -20,9 +20,10 @@ import json
 import sys
 import signal
 import argparse
-from ruuvitag_sensor.ruuvitag import RuuviTag
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
+
+from paho.mqtt import publish
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 parser = argparse.ArgumentParser(
     description='Program relays Ruuvitag BLE temperature and humidity'
@@ -55,21 +56,27 @@ interval = args.interval
 send_all = args.all
 location = args.location
 
+
 # let's trap ctrl-c, SIGINT and come down nicely
+# pylint: disable=unused-argument,redefined-outer-name
 def signal_handler(signal, frame):
     print("\nterminating gracefully.")
     client.disconnect()
     sys.exit(0)
 
+
 signal.signal(signal.SIGINT, signal_handler)
 
+
 # The callback for when the client receives a CONNACK response from the MQTT server.
+# pylint: disable=unused-argument,redefined-outer-name
 def on_connect(client, userdata, flags, rc):
-    print("Connected to MQTT broker with result code "+str(rc))
+    print(f"Connected to MQTT broker with result code {str(rc)}")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("$SYS/#")
+
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -94,7 +101,7 @@ while True:
     else:
         # extract temp and humidity values, and format data into custom JSON
         for_json = {
-            'location':state['location'],
+            'location': state['location'],
             'temperature': round(state['temperature'], 1),
             'humidity': round(state['humidity'], 1)
             }

@@ -19,13 +19,13 @@ class TestDataFormats:
     def test_convert_data_not_valid_binary(self):
         data = b'\x99\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00'
         encoded = DataFormats.convert_data(data)
-        assert encoded[0] == None
-        assert encoded[1] == None
+        assert encoded[0] is None
+        assert encoded[1] is None
 
     def test_convert_data_not_valid(self):
         encoded = DataFormats.convert_data('not_valid')
-        assert encoded[0] == None
-        assert encoded[1] == None
+        assert encoded[0] is None
+        assert encoded[1] is None
 
     def test_get_data_format_3_valid_data(self):
         test_cases = [
@@ -34,7 +34,7 @@ class TestDataFormats:
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_3(x)
-            assert encoded != None
+            assert encoded is not None
 
     def test_get_data_format_5_valid_data(self):
         test_cases = [
@@ -43,7 +43,7 @@ class TestDataFormats:
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_5(x)
-            assert encoded != None
+            assert encoded is not None
 
     def test_get_data_format_2and4_valid_data(self):
         test_cases = [
@@ -54,10 +54,10 @@ class TestDataFormats:
         ]
         for x in test_cases:
             encoded = DataFormats._get_data_format_2and4(x)
-            assert encoded != None
+            assert encoded is not None
 
     def test_convert_data_too_short_data(self):
         test_case = '1E1107DC00240EE5A9E093F3A3B50100406E0B0952757576692042333634AC04'
         (data_format, data) = DataFormats.convert_data(test_case)
-        assert data_format == None
+        assert data_format is None
         assert data == ''

@@ -11,24 +11,26 @@ Requires:
     aiohttp - pip install aiohttp
 """
 
+# pylint: disable=duplicate-code
 
 from aiohttp import web
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
-allData = {}
+all_data = {}
 
 
-async def get_all_data(request):
-    return web.json_response(allData)
+async def get_all_data(_):
+    return web.json_response(all_data)
 
 
 async def get_data(request):
     mac = request.match_info.get('mac')
-    if mac not in allData:
+    if mac not in all_data:
         return web.json_response(status=404)
-    return web.json_response(allData[mac])
+    return web.json_response(all_data[mac])
 
 
+# pylint: disable=redefined-outer-name
 def setup_routes(app):
     app.router.add_get('/data', get_all_data)
     app.router.add_get('/data/{mac}', get_data)
@@ -42,9 +44,9 @@ if __name__ == '__main__':
     }
 
     def handle_new_data(data):
-        global allData
+        global all_data  # pylint: disable=global-variable-not-assigned
         data[1]['name'] = tags[data[0]]
-        allData[data[0]] = data[1]
+        all_data[data[0]] = data[1]
 
     ruuvi_rx = RuuviTagReactive(list(tags.keys()))
     data_stream = ruuvi_rx.get_subject()

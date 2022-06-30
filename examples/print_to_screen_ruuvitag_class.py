@@ -14,6 +14,8 @@ RuuviTag's update-method will always create new bluetooth scanning
 process and eventually process creation may fail.
 """
 
+# pylint: disable=duplicate-code
+
 import time
 import os
 from datetime import datetime

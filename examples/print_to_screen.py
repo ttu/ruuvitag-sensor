@@ -10,6 +10,8 @@ Humidity:    28
 Pressure:    689
 """
 
+# pylint: disable=duplicate-code
+
 import os
 from datetime import datetime
 
@@ -19,6 +21,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 mac = 'F4:A5:74:89:16:57'
 
 print('Starting')
+
 
 def print_data(received_data):
     received_mac = received_data[0]
@@ -38,6 +41,7 @@ def print_data(received_data):
     print(line_hum)
     print(line_pre)
     print('\n\r\n\r.......')
+
 
 if __name__ == "__main__":
     RuuviTagSensor.get_datas(print_data, mac)

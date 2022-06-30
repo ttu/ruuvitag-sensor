@@ -2,8 +2,8 @@
 RuuviTagReactive and Reactive Extensions Subject examples
 """
 
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 from reactivex import operators as ops
+from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 tags = {
     'F4:A5:74:89:16:57': 'sauna',
@@ -25,7 +25,7 @@ ruuvi_rx.get_subject().pipe(
 ruuvi_rx.get_subject().pipe(
       ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
       ops.sample(interval_in_s)
-    ).subscribe(lambda data: print(data))
+    ).subscribe(lambda data: print(data))  # pylint: disable=unnecessary-lambda
 
 # Print only last updated every 10 seconds for every foud sensor
 ruuvi_rx.get_subject().pipe(
@@ -36,7 +36,7 @@ ruuvi_rx.get_subject().pipe(
 ruuvi_rx.get_subject().pipe(
       ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
       ops.buffer_with_time(interval_in_s)
-    ).subscribe(lambda datas: print(datas))
+    ).subscribe(lambda datas: print(datas))  # pylint: disable=unnecessary-lambda
 
 # Execute subscribe only once for F4:A5:74:89:16:57
 # when temperature goes over 80 degrees
@@ -45,11 +45,11 @@ ruuvi_rx.get_subject().pipe(
       ops.filter(lambda x: x[1]['temperature'] > 80),
       ops.take(1)
     ).subscribe(lambda x: print(
-        'Sauna is ready! Temperature: {}'.format(x[1]['temperature'])))
+        f'Sauna is ready! Temperature: {x[1]["temperature"]}'))
 
 # Execute only every time when pressure changes for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(
       ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
       ops.distinct_until_changed(lambda x: x[1]['pressure'])
     ).subscribe(lambda x: print(
-        'Pressure changed: {}'.format(x[1]['pressure'])))
+        f'Pressure changed: {x[1]["pressure"]}'))
