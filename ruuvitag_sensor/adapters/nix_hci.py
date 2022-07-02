@@ -165,7 +165,7 @@ class BleCommunicationNix(BleCommunication):
 
         self.stop(procs[0], procs[1])
 
-    def get_data(self, mac, bt_device=''):
+    def get_first_data(self, mac, bt_device=''):
         data = None
         data_iter = self.get_datas([], bt_device)
         for data in data_iter:

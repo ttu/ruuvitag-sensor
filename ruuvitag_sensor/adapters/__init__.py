@@ -7,7 +7,7 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(mac, bt_device=''):
+    def get_first_data(mac, bt_device=''):
         pass
 
     @staticmethod

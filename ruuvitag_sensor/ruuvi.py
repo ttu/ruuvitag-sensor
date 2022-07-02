@@ -43,7 +43,7 @@ class RuuviTagSensor(object):
     """
 
     @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_first_raw_data(mac, bt_device=''):
         """
         Get raw data for selected RuuviTag
 
@@ -54,7 +54,7 @@ class RuuviTagSensor(object):
             tuple (int, string): Data Format type and raw Sensor data
         """
 
-        raw = ble.get_data(mac, bt_device)
+        raw = ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
     @staticmethod
