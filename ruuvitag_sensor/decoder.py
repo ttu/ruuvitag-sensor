@@ -5,6 +5,8 @@ import math
 import logging
 import struct
 
+from ruuvitag_sensor.ruuvi_types import SensorData
+
 log = logging.getLogger(__name__)
 
 # pylint: disable=no-self-use
@@ -241,7 +243,7 @@ class Df5Decoder(object):
     def _get_mac(self, data):
         return ''.join('{:02x}'.format(x) for x in data[10:])
 
-    def decode_data(self, data):
+    def decode_data(self, data) -> SensorData:
         """
         Decode sensor data.
 
