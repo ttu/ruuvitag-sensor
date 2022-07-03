@@ -14,5 +14,5 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_datas(blacklist: List(str) = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
+    def get_datas(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
         pass
