@@ -1,3 +1,4 @@
+from pytest import raises
 from unittest.mock import patch
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -8,13 +9,13 @@ from ruuvitag_sensor.ruuvitag import RuuviTag
 
 class TestRuuviTagSensor():
 
-    def get_data(self, mac, bt_device):
+    def get_first_data(self, mac, bt_device):
         # https://ruu.vi/#AjwYAMFc
         data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'  # noqa: E501
         return data[26:]
 
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data', get_data)
-    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
+    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_first_data', get_first_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_first_data', get_first_data)
     def test_tag_update_is_valid(self):
         tag = RuuviTag('48:2C:6A:1E:59:3D')
 
@@ -26,9 +27,9 @@ class TestRuuviTagSensor():
         assert state['pressure'] == 995
         assert state['humidity'] == 30
 
-    # def test_false_mac_raise_error(self):
-    #     with self.assertRaises(ValueError):
-    #         RuuviTag('48:2C:6A:1E')
+    def test_false_mac_raise_error(self):
+        with raises(ValueError):
+            RuuviTag('48:2C:6A:1E')
 
     def test_tag_correct_properties(self):
         org_mac = 'AA:2C:6A:1E:59:3D'

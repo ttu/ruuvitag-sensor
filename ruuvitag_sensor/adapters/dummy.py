@@ -5,7 +5,7 @@ class BleCommunicationDummy(BleCommunication):
     """TODO: Find some working BLE implementation for Windows and OSX"""
 
     @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_first_data(mac, bt_device=''):
         return '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
 
     @staticmethod

@@ -131,7 +131,7 @@ class BleCommunicationBleson(BleCommunication):
         proc.join()
 
     @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_first_data(mac, bt_device=''):
         data = None
         data_iter = BleCommunicationBleson.get_datas([], bt_device)
         for d in data_iter:
