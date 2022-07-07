@@ -20,7 +20,7 @@ class TestDecoder(TestCase):
         assert data['temperature'] == 24
         assert data['pressure'] == 995
         assert data['humidity'] == 30
-        assert data['identifier'] == None
+        assert data['identifier'] is None
 
     def test_decode_is_valid_case2(self):
         decoder = UrlDecoder()
@@ -29,7 +29,7 @@ class TestDecoder(TestCase):
         assert data['temperature'] == 27
         assert data['pressure'] == 995
         assert data['humidity'] == 28
-        assert data['identifier'] == None
+        assert data['identifier'] is None
 
     def test_decode_is_valid_weatherstation_2017_04_12(self):
         decoder = UrlDecoder()
@@ -75,7 +75,7 @@ class TestDecoder(TestCase):
         decoder = Df3Decoder()
         for x in test_cases:
             data = decoder.decode_data(x)
-            assert data != None
+            assert data is not None
 
     def test_df3decode_is_valid_max_values(self):
         decoder = Df3Decoder()
@@ -87,14 +87,7 @@ class TestDecoder(TestCase):
         accZ = '03E8'
         batt = 'FFFF'
         data = decoder.decode_data(
-            '03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
-                humidity=humidity,
-                temp=temp,
-                pressure=pressure,
-                accX=accX,
-                accY=accY,
-                accZ=accZ,
-                batt=batt))
+            f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
 
         assert data['temperature'] == 127.99
         assert data['pressure'] == 1155.35
@@ -115,14 +108,7 @@ class TestDecoder(TestCase):
         accZ = 'FC18'
         batt = '0000'
         data = decoder.decode_data(
-            '03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB'.format(
-                humidity=humidity,
-                temp=temp,
-                pressure=pressure,
-                accX=accX,
-                accY=accY,
-                accZ=accZ,
-                batt=batt))
+            f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
 
         assert data['temperature'] == -127.99
         assert data['pressure'] == 500.0
@@ -147,18 +133,8 @@ class TestDecoder(TestCase):
         measurement_sequence = '00CD'
         mac = 'CBB8334C884F'
         data = decoder.decode_data(
-            '{format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}{movement_counter}{measurement_sequence}{mac}'.format(
-                format=data_format,
-                humidity=humidity,
-                temp=temp,
-                pressure=pressure,
-                accX=accX,
-                accY=accY,
-                accZ=accZ,
-                power_info=power_info,
-                movement_counter=movement_counter,
-                measurement_sequence=measurement_sequence,
-                mac=mac))
+            f'{data_format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}'
+            f'{movement_counter}{measurement_sequence}{mac}')
 
         assert data['temperature'] == 24.30
         assert data['humidity'] == 53.49

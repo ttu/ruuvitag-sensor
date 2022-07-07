@@ -11,7 +11,8 @@ Download container
 $ docker pull samuelebistoletti/docker-statsd-influxdb-grafana
 
 Create and start new container
-$ docker run -d --name docker-statsd-influxdb-grafana -p 3003:3003 -p 3004:8083 -p 8086:8086 -p 22022:22 -p 8125:8125/udp samuelebistoletti/docker-statsd-influxdb-grafana:latest
+$ docker run -d --name docker-statsd-influxdb-grafana -p 3003:3003 -p 3004:8083 -p 8086:8086 \
+ -p 22022:22 -p 8125:8125/udp samuelebistoletti/docker-statsd-influxdb-grafana:latest
 
 Or start existing container
 $ docker start docker-statsd-influxdb-grafana
@@ -34,6 +35,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 client = InfluxDBClient(host='localhost', port=8086, database='ruuvi')
 
+
 def write_to_influxdb(received_data):
     """
     Convert data into RuuviCollector naming scheme and scale
@@ -46,18 +48,20 @@ def write_to_influxdb(received_data):
 
     dataFormat = payload['data_format'] if ('data_format' in payload) else None
     fields = {}
-    fields['temperature']               = payload['temperature'] if ('temperature' in payload) else None
-    fields['humidity']                  = payload['humidity'] if ('humidity' in payload) else None
-    fields['pressure']                  = payload['pressure'] if ('pressure' in payload) else None
-    fields['accelerationX']             = payload['acceleration_x'] if ('acceleration_x' in payload) else None
-    fields['accelerationY']             = payload['acceleration_y'] if ('acceleration_y' in payload) else None
-    fields['accelerationZ']             = payload['acceleration_z'] if ('acceleration_z' in payload) else None
-    fields['batteryVoltage']            = payload['battery']/1000.0 if ('battery' in payload) else None
-    fields['txPower']                   = payload['tx_power'] if ('tx_power' in payload) else None
-    fields['movementCounter']           = payload['movement_counter'] if ('movement_counter' in payload) else None
-    fields['measurementSequenceNumber'] = payload['measurement_sequence_number'] if ('measurement_sequence_number' in payload) else None
-    fields['tagID']                     = payload['tagID'] if ('tagID' in payload) else None
-    fields['rssi']                      = payload['rssi'] if ('rssi' in payload) else None
+    fields['temperature'] = payload['temperature'] if ('temperature' in payload) else None
+    fields['humidity'] = payload['humidity'] if ('humidity' in payload) else None
+    fields['pressure'] = payload['pressure'] if ('pressure' in payload) else None
+    fields['accelerationX'] = payload['acceleration_x'] if ('acceleration_x' in payload) else None
+    fields['accelerationY'] = payload['acceleration_y'] if ('acceleration_y' in payload) else None
+    fields['accelerationZ'] = payload['acceleration_z'] if ('acceleration_z' in payload) else None
+    fields['batteryVoltage'] = payload['battery']/1000.0 if ('battery' in payload) else None
+    fields['txPower'] = payload['tx_power'] if ('tx_power' in payload) else None
+    fields['movementCounter'] = payload['movement_counter'] if ('movement_counter' in payload) \
+        else None
+    fields['measurementSequenceNumber'] = payload['measurement_sequence_number'] \
+        if ('measurement_sequence_number' in payload) else None
+    fields['tagID'] = payload['tagID'] if ('tagID' in payload) else None
+    fields['rssi'] = payload['rssi'] if ('rssi' in payload) else None
     json_body = [
         {
             'measurement': 'ruuvi_measurements',
@@ -69,6 +73,7 @@ def write_to_influxdb(received_data):
         }
     ]
     client.write_points(json_body)
+
 
 if __name__ == "__main__":
     RuuviTagSensor.get_datas(write_to_influxdb)

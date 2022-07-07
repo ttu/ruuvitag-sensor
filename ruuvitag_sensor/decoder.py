@@ -7,8 +7,6 @@ import struct
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=no-self-use
-
 
 def get_decoder(data_type):
     """
@@ -101,7 +99,7 @@ class UrlDecoder(object):
                 'pressure': self._get_pressure(decoded),
                 'identifier': identifier
             }
-        except:
+        except Exception:
             log.exception('Encoded value: %s not valid', encoded)
             return None
 
@@ -128,8 +126,8 @@ class Df3Decoder(object):
         frac = data[3] / 100
         if data[2] < 0:
             return -(data[2] + 128 + frac)
-        else:
-            return data[2] + frac
+
+        return data[2] + frac
 
     def _get_humidity(self, data):
         """Return humidity %"""
@@ -239,7 +237,7 @@ class Df5Decoder(object):
         return data[9]
 
     def _get_mac(self, data):
-        return ''.join('{:02x}'.format(x) for x in data[10:])
+        return ''.join(f'{x:02x}' for x in data[10:])
 
     def decode_data(self, data):
         """

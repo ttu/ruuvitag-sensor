@@ -14,7 +14,7 @@ class RuuviTag(object):
     def __init__(self, mac, bt_device=''):
 
         if not re.match(mac_regex, mac.lower()):
-            raise ValueError('{} is not valid mac address'.format(mac))
+            raise ValueError(f'{mac} is not a valid MAC address')
 
         self._mac = mac
         self._state = {}

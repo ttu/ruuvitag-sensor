@@ -10,6 +10,8 @@ from ruuvitag_sensor.adapters import BleCommunication
 
 log = logging.getLogger(__name__)
 
+# pylint: disable=duplicate-code
+
 
 class BleCommunicationBleson(BleCommunication):
     '''Bluetooth LE communication with Bleson'''
@@ -48,13 +50,13 @@ class BleCommunicationBleson(BleCommunication):
                 # the pipeline.
                 #
                 # TODO: This is kinda awkward, and should be handled better.
-                data = 'FF' + data.hex()
-                data = '%02x%s' % (len(data) >> 1, data)
-                data = '%02x%s' % (len(data) >> 1, data)
+                data = f'FF{data.hex()}'
+                data = f'{(len(data) >> 1):02x}{data}'
+                data = f'{(len(data) >> 1):02x}{data}'
                 queue.put((mac, data.upper()))
             except GeneratorExit:
                 break
-            except:
+            except Exception:
                 log.exception('Error in advertisement handling')
                 continue
 
@@ -94,7 +96,7 @@ class BleCommunicationBleson(BleCommunication):
             while True:
                 next_item = queue.get(True, None)
                 yield next_item
-        except KeyboardInterrupt as ex:
+        except KeyboardInterrupt:
             return
         except Exception as ex:
             log.info(ex)
@@ -127,7 +129,6 @@ class BleCommunicationBleson(BleCommunication):
 
         shared_data['stop'] = True
         proc.join()
-        return
 
     @staticmethod
     def get_first_data(mac, bt_device=''):

@@ -69,7 +69,7 @@ class RuuviTagSensor(object):
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
-        datas = dict()
+        datas = {}
         for new_data in RuuviTagSensor._get_ruuvitag_datas(bt_device=bt_device):
             if new_data[0] in datas:
                 continue
@@ -96,7 +96,7 @@ class RuuviTagSensor(object):
         log.info('Stops automatically in %ss', search_duratio_sec)
         log.info('MACs: %s', macs)
 
-        datas = dict()
+        datas = {}
 
         for new_data in RuuviTagSensor._get_ruuvitag_datas(
                 macs,

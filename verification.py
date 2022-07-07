@@ -33,7 +33,7 @@ def wait_for_finish(run_flag, name):
         time.sleep(0.1)
         max_time -= 0.1
         if max_time < 0:
-            raise Exception('%s not finished' % name)
+            raise Exception(f'{name} not finished')
 
 
 #
@@ -47,8 +47,8 @@ print(data)
 
 if not data['temperature']:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -62,8 +62,8 @@ print(data)
 
 if not data['temperature']:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -76,8 +76,8 @@ print(datas)
 
 if not datas:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -90,8 +90,8 @@ print(datas)
 
 if not datas:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -105,8 +105,8 @@ print(tag.state)
 
 if not tag.state:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -121,8 +121,9 @@ def handle_data(found_data):
     flag.running = False
     if not found_data:
         raise Exception('FAILED')
-    else:
-        print('OK')
+
+    print('OK')
+
 
 RuuviTagSensor.get_datas(handle_data, run_flag=flag)
 
@@ -142,12 +143,14 @@ def hadle_rx(found_data):
     ruuvi_rx.stop()
     if not found_data:
         raise Exception('FAILED')
-    else:
-        print('OK')
+
+    print('OK')
+
 
 ruuvi_rx.get_subject().\
     subscribe(hadle_rx)
 
+# pylint: disable=protected-access
 wait_for_finish(ruuvi_rx._run_flag, 'ruuvi_rx.subscribe')
 
 

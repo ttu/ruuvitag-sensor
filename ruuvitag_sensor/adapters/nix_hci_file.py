@@ -19,7 +19,7 @@ class BleCommunicationNixFile(BleCommunicationNix):
            This is interpreted as a file to open
         """
         log.info("Start reading from file %s", bt_device)
-        handle = open(bt_device, 'rb')
+        handle = open(bt_device, 'rb')  # pylint: disable=consider-using-with
 
         return (None, handle)
 

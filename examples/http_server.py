@@ -19,7 +19,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 app = Flask(__name__)
 
-allData = {}
+all_data = {}
 
 tags = {
     'F4:A5:74:89:16:57': 'kitchen',
@@ -41,29 +41,29 @@ def run_get_data_background(macs, queue):
 
 def update_data():
     """
-    Update data sent by background process to global allData
+    Update data sent by background process to global all_data
     """
-    global allData
+    global all_data  # pylint: disable=global-variable-not-assigned
     while not q.empty():
         data = q.get()
-        allData[data[0]] = data[1]
+        all_data[data[0]] = data[1]
     for key, value in tags.items():
-        if key in allData:
-            allData[key]['name'] = value
+        if key in all_data:
+            all_data[key]['name'] = value
 
 
 @app.route('/data')
 def get_all_data():
     update_data()
-    return json.dumps(allData)
+    return json.dumps(all_data)
 
 
 @app.route('/data/<mac>')
 def get_data(mac):
     update_data()
-    if mac not in allData:
+    if mac not in all_data:
         abort(404)
-    return json.dumps(allData[mac])
+    return json.dumps(all_data[mac])
 
 
 if __name__ == '__main__':

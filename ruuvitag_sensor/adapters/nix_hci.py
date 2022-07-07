@@ -8,6 +8,8 @@ from ruuvitag_sensor.adapters import BleCommunication
 
 log = logging.getLogger(__name__)
 
+# pylint: disable=duplicate-code
+
 
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
@@ -20,7 +22,7 @@ class BleCommunicationNix(BleCommunication):
         """
         # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
-        import ptyprocess
+        import ptyprocess  # pylint: disable=import-outside-toplevel
 
         if not bt_device:
             bt_device = 'hci0'
@@ -28,14 +30,14 @@ class BleCommunicationNix(BleCommunication):
         is_root = os.getuid() == 0
 
         log.info('Start receiving broadcasts (device %s)', bt_device)
-        DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
+        DEVNULL = subprocess.DEVNULL
 
         def reset_ble_adapter():
-            cmd = 'hciconfig %s reset' % bt_device
-            log.info("FYI: Calling a process{}: {}".format(
-                "" if is_root else " with sudo", cmd))
+            cmd = f'hciconfig {bt_device} reset'
+            log.info("FYI: Calling a process%s: %s",
+                     "" if is_root else " with sudo", cmd)
 
-            cmd = "sudo {}".format(cmd) if not is_root else cmd
+            cmd = f"sudo {cmd}" if not is_root else cmd
             return subprocess.call(cmd, shell=True, stdout=DEVNULL)
 
         def start_with_retry(func, try_count, interval, msg):
@@ -54,19 +56,19 @@ class BleCommunicationNix(BleCommunication):
 
         if retcode != 0:
             log.info('Problem with hciconfig reset. Exit.')
-            exit(1)
+            sys.exit(1)
 
         cmd = ['hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive']
-        log.info("FYI: Spawning process{}: {}".format(
-            "" if is_root else " with sudo", ' '.join(str(i) for i in cmd)))
+        log.info("FYI: Spawning process%s: %s",
+                 "" if is_root else " with sudo", ' '.join(str(i) for i in cmd))
 
         if not is_root:
             cmd.insert(0, "sudo")
         hcitool = ptyprocess.PtyProcess.spawn(cmd)
 
         cmd = ['hcidump', '-i', bt_device, '--raw']
-        log.info("FYI: Spawning process{}: {}".format(
-            "" if is_root else " with sudo", ' '.join(str(i) for i in cmd)))
+        log.info("FYI: Spawning process%s: %s",
+                 "" if is_root else " with sudo", ' '.join(str(i) for i in cmd))
 
         if not is_root:
             cmd.insert(0, "sudo")
@@ -107,6 +109,7 @@ class BleCommunicationNix(BleCommunication):
             log.info(ex)
             return
 
+    # pylint: disable=arguments-renamed
     def get_datas(self, blacklist=[], bt_device=''):
         procs = self.start(bt_device)
 
@@ -160,11 +163,12 @@ class BleCommunicationNix(BleCommunication):
                 yield (mac, data)
             except GeneratorExit:
                 break
-            except:
+            except Exception:
                 continue
 
         self.stop(procs[0], procs[1])
 
+    # pylint: disable=arguments-renamed
     def get_first_data(self, mac, bt_device=''):
         data = None
         data_iter = self.get_datas([], bt_device)

@@ -4,14 +4,14 @@ from unittest.mock import patch
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
-# pylint: disable=line-too-long,no-self-use,unused-argument
+# pylint: disable=line-too-long,unused-argument
 
 
 class TestRuuviTagSensor():
 
     def get_first_data(self, mac, bt_device):
         # https://ruu.vi/#AjwYAMFc
-        data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
+        data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'  # noqa: E501
         return data[26:]
 
     @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_first_data', get_first_data)
@@ -42,23 +42,23 @@ class TestRuuviTagSensor():
 
     def get_datas(self, blacklist=[], bt_device=''):
         datas = [
-            ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
+            ('AA:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),  # noqa: E501
             ('BB:2C:6A:1E:59:3D', 'some other device'),
-            ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),
-            ('EE:2C:6A:1E:59:3D', '1F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'),
+            ('CC:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),  # noqa: E501
+            ('DD:2C:6A:1E:59:3D', '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'),  # noqa: E501
+            ('EE:2C:6A:1E:59:3D', '1F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'),  # noqa: E501
             ('FF:2C:6A:1E:59:3D', '1902010415FF990403291A1ECE1E02DEF94202CA0B5300000000BB'),
             # The following entry is invalid, the data is corrupted
             ('00:2C:6A:1E:59:3D', '1902010415FF990403291A1ECE1E02DEF94202CA0B53BB'),
-            ('11:2C:6A:1E:59:3D', '1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4'),
+            ('11:2C:6A:1E:59:3D', '1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4'),  # noqa: E501
             # The following entry is invalid, it has no MAC
             (None, '1F0201061BFF99040512FC5394C37C0004FFFC040CAC364200CDCBB8334C884FC4'),
             # The following is a ruuvitag with firmware 3.x, sending a non
             # measurement advertisement
-            ('CE:D6:05:F5:17:AA', '1E11079ECADC240EE5A9E093F3A3B50100406E0B0952757576692031374141CB'),
+            ('CE:D6:05:F5:17:AA', '1E11079ECADC240EE5A9E093F3A3B50100406E0B0952757576692031374141CB'),  # noqa: E501
             # The following is a ruuvitag with firmware 3.x, sending a
             # measurement advertisement again
-            ('CE:D6:05:F5:17:AA', '1F0201061BFF99040511F83B83CC5DFFFCFFFC03DCA7161427D2CED605F517AACB'),
+            ('CE:D6:05:F5:17:AA', '1F0201061BFF99040511F83B83CC5DFFFCFFFC03DCA7161427D2CED605F517AACB'),  # noqa: E501
         ]
 
         for data in datas:

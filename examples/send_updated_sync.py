@@ -1,5 +1,6 @@
 """
-Get latest sensor data for all sensors every 10 seconds an keep track of current states in own dictionary.
+Get latest sensor data for all sensors every 10 seconds an keep track of current
+states in own dictionary.
 Send updated data synchronously to server with requests.
 
 Example sends data (application/json) to:
@@ -30,14 +31,16 @@ def handle_data(received_data):
 
     all_data[mac] = {'mac': mac, 'data': value, 'timestamp': current_time}
 
-    # NOTE: Sending should be done in background and not in the same callback. Check send_updated_async.py
+    # NOTE: Sending should be done in background and not in the same callback.
+    # Check send_updated_async.py.
 
     data_copy = copy.copy(all_data[mac])
     data_copy['timestamp'] = current_time.isoformat()
-    requests.put('{url}/sensors/{mac}'.format(url=server_url, mac=quote(mac)), json=data_copy)
-    requests.post('{url}/sensordatas'.format(url=server_url), json=data_copy)
+    requests.put(f'{server_url}/sensors/{quote(mac)}')
+    requests.post(f'{server_url}/sensordatas')
 
-    not_found = [mac for mac, value in all_data.items() if value['timestamp'] < datetime.now() - timedelta(minutes=10)]
+    not_found = [mac for mac, value in all_data.items()
+                 if value['timestamp'] < datetime.now() - timedelta(minutes=10)]
     for mac in not_found:
         # TODO: Notify of lost sensors
         del all_data[mac]
