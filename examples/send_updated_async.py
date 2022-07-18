@@ -3,7 +3,7 @@ Get latest sensor data for all sensors and keep track of current states in own d
 Send updated data asynchronously to server with aiohttp.
 
 Example sends data (application/json) to:
-    POST http://10.0.0.1:5000/api/sensordatas
+    POST http://10.0.0.1:5000/api/sensordata
     PUT  http://10.0.0.1:5000/api/sensors/{mac}
 
 Requires:
@@ -30,7 +30,7 @@ async def handle_queue(queue):
 
     async def send_post(session, update_data):
         async with session.post(
-            f'{server_url}/sensordatas',
+            f'{server_url}/sensordata',
             data=json.dumps(update_data),
             headers={'content-type': 'application/json'}
         ) as response:
@@ -60,7 +60,7 @@ async def handle_queue(queue):
                 await asyncio.sleep(0.2)
 
 
-def run_get_datas_background(queue):
+def run_get_data_background(queue):
 
     def handle_new_data(new_data):
         current_time = datetime.now()
@@ -74,7 +74,7 @@ def run_get_datas_background(queue):
             all_data[sensor_mac] = update_data
             queue.put(update_data)
 
-    RuuviTagSensor.get_datas(handle_new_data)
+    RuuviTagSensor.get_data(handle_new_data)
 
 
 if __name__ == "__main__":
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     q = m.Queue()
 
     executor = ProcessPoolExecutor()
-    executor.submit(run_get_datas_background, q)
+    executor.submit(run_get_data_background, q)
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(handle_queue(q))

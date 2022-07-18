@@ -4,7 +4,7 @@ states in own dictionary.
 Send updated data synchronously to server with requests.
 
 Example sends data (application/json) to:
-    POST http://10.0.0.1:5000/api/sensordatas
+    POST http://10.0.0.1:5000/api/sensordata
     PUT  http://10.0.0.1:5000/api/sensors/{mac}
 
 Requires:
@@ -37,7 +37,7 @@ def handle_data(received_data):
     data_copy = copy.copy(all_data[mac])
     data_copy['timestamp'] = current_time.isoformat()
     requests.put(f'{server_url}/sensors/{quote(mac)}')
-    requests.post(f'{server_url}/sensordatas')
+    requests.post(f'{server_url}/sensordata')
 
     not_found = [mac for mac, value in all_data.items()
                  if value['timestamp'] < datetime.now() - timedelta(minutes=10)]
@@ -46,4 +46,4 @@ def handle_data(received_data):
         del all_data[mac]
 
 
-RuuviTagSensor.get_datas(handle_data)
+RuuviTagSensor.get_data(handle_data)

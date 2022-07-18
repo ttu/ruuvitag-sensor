@@ -71,10 +71,10 @@ print('OK')
 #
 print_header('RuuviTagSensor.get_data_for_sensors')
 
-datas = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
-print(datas)
+data = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
+print(data)
 
-if not datas:
+if not data:
     raise Exception('FAILED')
 
 print('OK')
@@ -85,10 +85,10 @@ print('OK')
 #
 print_header('RuuviTagSensor.get_data_for_sensors with macs')
 
-datas = RuuviTagSensor.get_data_for_sensors(list(datas.keys())[0], search_duratio_sec=15)
-print(datas)
+data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duratio_sec=15)
+print(data)
 
-if not datas:
+if not data:
     raise Exception('FAILED')
 
 print('OK')
@@ -99,7 +99,7 @@ print('OK')
 #
 print_header('RuuviTag.update')
 
-tag = RuuviTag(list(datas.keys())[0])
+tag = RuuviTag(list(data.keys())[0])
 tag.update()
 print(tag.state)
 
@@ -110,9 +110,9 @@ print('OK')
 
 
 #
-# RuuviTagSensor.get_datas
+# RuuviTagSensor.get_data
 #
-print_header('RuuviTagSensor.get_datas')
+print_header('RuuviTagSensor.get_data')
 
 flag = RunFlag()
 
@@ -125,9 +125,9 @@ def handle_data(found_data):
     print('OK')
 
 
-RuuviTagSensor.get_datas(handle_data, run_flag=flag)
+RuuviTagSensor.get_data(handle_data, run_flag=flag)
 
-wait_for_finish(flag, 'RuuviTagSensor.get_datas')
+wait_for_finish(flag, 'RuuviTagSensor.get_data')
 
 
 #

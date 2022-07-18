@@ -21,13 +21,13 @@ def _run_get_data_background(macs, queue, shared_data, bt_device):
         data[1]['time'] = datetime.utcnow().isoformat()
         queue.put(data)
 
-    RuuviTagSensor.get_datas(add_data, macs, run_flag, bt_device)
+    RuuviTagSensor.get_data(add_data, macs, run_flag, bt_device)
 
 
 class RuuviTagReactive(object):
     """
     Reactive wrapper and background process for RuuviTagSensor
-    get_datas
+    get_data
     """
 
     @staticmethod
@@ -45,7 +45,7 @@ class RuuviTagReactive(object):
 
     def __init__(self, macs=[], bt_device=''):
         """
-        Start background process for get_datas and async task for notifying
+        Start background process for get_data and async task for notifying
         all subscribed observers
 
         Args:
@@ -90,7 +90,7 @@ class RuuviTagReactive(object):
 
     def stop(self):
         """
-        Stop get_datas
+        Stop get_data
         """
 
         self._run_flag.running = False

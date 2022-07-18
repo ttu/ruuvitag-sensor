@@ -103,7 +103,7 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_datas(blacklist=[], bt_device=''):
+    def get_data(blacklist=[], bt_device=''):
         m = Manager()
         q = m.Queue()
 
@@ -133,7 +133,7 @@ class BleCommunicationBleson(BleCommunication):
     @staticmethod
     def get_first_data(mac, bt_device=''):
         data = None
-        data_iter = BleCommunicationBleson.get_datas([], bt_device)
+        data_iter = BleCommunicationBleson.get_data([], bt_device)
         for d in data_iter:
             if mac == d[0]:
                 log.info('Data found')

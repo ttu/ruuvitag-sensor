@@ -110,7 +110,7 @@ class BleCommunicationNix(BleCommunication):
             return
 
     # pylint: disable=arguments-renamed
-    def get_datas(self, blacklist=[], bt_device=''):
+    def get_data(self, blacklist=[], bt_device=''):
         procs = self.start(bt_device)
 
         data = None
@@ -171,7 +171,7 @@ class BleCommunicationNix(BleCommunication):
     # pylint: disable=arguments-renamed
     def get_first_data(self, mac, bt_device=''):
         data = None
-        data_iter = self.get_datas([], bt_device)
+        data_iter = self.get_data([], bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')

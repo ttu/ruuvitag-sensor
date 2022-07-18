@@ -44,7 +44,7 @@ $ sudo python ruuvitag_sensor --help
   * Module level logging
 * ruuvi_rx.py
   * RuuviTagReactive-class
-    * Reactive wrapper and background process for RuuviTagSensor get_datas
+    * Reactive wrapper and background process for RuuviTagSensor get_data
 * ruuvi.py
   * RuuviTagSensor-class
     * Main communication logic
@@ -101,7 +101,7 @@ List processes containing hci in order to find BLE scanning subprocesses
 $ ps aux | grep hci
 ```
 
-## Example datas from different firmwares and data formats
+## Example data from different firmwares and data formats
 
 Kickstarter FW
 ```python
@@ -217,9 +217,9 @@ Bytes is converted to a hex string before data format specific handling.
 
 ## Application flow
 
-Get data from Bluetooth device ([BleCommunicationNix.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ble_communication.py#L93))
+Get data from Bluetooth device ([BleCommunicationNix.get_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ble_communication.py#L93))
 ```
-BleCommunicationNix.get_datas
+BleCommunicationNix.get_data
  Start BLE processes
    Reset BLE device (hciconfig hci0 reset)
    Start scanning (hcitool lescan2 --duplicates --passive)
@@ -240,10 +240,10 @@ BleCommunicationNix.get_datas
 
 TODO: Application flow for Bleson
 
-[RuuviTagSensor._get_ruuvitag_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L117)
+[RuuviTagSensor._get_ruuvitag_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L117)
 ```
-RuuviTagSensor._get_ruuvitag_datas
- While data from BleCommunicationNix.get_datas
+RuuviTagSensor._get_ruuvitag_data
+ While data from BleCommunicationNix.get_data
    If timeout
      Break
    If runflag set to stopped
@@ -261,11 +261,11 @@ RuuviTagSensor._get_ruuvitag_datas
      Blacklist Mac   
 ```
 
-[RuuviTagSensor.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
+[RuuviTagSensor.get_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
 
 ```
-RuuviTagSensor._get_ruuvitag_datas
- While data from RuuviTagSensor._get_ruuvitag_datas
+RuuviTagSensor._get_ruuvitag_data
+ While data from RuuviTagSensor._get_ruuvitag_data
    Execute callback with data
 ```
 
@@ -322,9 +322,9 @@ ruuvitag_sensor.log.enable_console()
 macs = []
 
 while True:
-   datas = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
+   data = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
    print(datetime.utcnow().isoformat())
-   print(datas)
+   print(data)
 ```
 
 Create new connections with 1 minute interval
@@ -332,7 +332,7 @@ Create new connections with 1 minute interval
 ```python
 # Use sleep from time to pause the execution
 import time
-# Add after print(datas)
+# Add after print(data)
 time.sleep(60)
 ```
 
@@ -348,7 +348,7 @@ Add to `ble_communication.py`:
 import random
 ```
 
-Replace from `BleCommunicationNix get_datas`-method
+Replace from `BleCommunicationNix get_data`-method
 ```python
 data = line[26:]
 # with this line
