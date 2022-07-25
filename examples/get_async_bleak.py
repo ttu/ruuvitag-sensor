@@ -9,7 +9,7 @@ ruuvitag_sensor.log.enable_console()
 
 
 async def main():
-    async for data in RuuviTagSensor.get_datas_async():
+    async for data in RuuviTagSensor.get_data_async():
         print(data)
 
 if __name__ == '__main__':

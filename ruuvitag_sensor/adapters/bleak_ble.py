@@ -40,7 +40,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await scanner.stop()
 
     @staticmethod
-    async def get_datas(blacklist: List[str] = [], bt_device: str = '') -> Tuple[str, str]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Tuple[str, str]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
             if mac and mac in blacklist:
@@ -69,5 +69,5 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await BleCommunicationBleak._stop()
 
     @staticmethod
-    async def get_data(mac, bt_device=''):
+    async def get_first_data(mac, bt_device=''):
         pass

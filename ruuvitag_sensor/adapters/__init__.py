@@ -22,7 +22,7 @@ class BleCommunicationAsync(object):
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(mac, bt_device=''):
+    async def get_first_data(mac, bt_device=''):
         pass
 
     @staticmethod
