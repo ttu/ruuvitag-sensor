@@ -2,7 +2,7 @@
 
 [![Build Status](https://app.travis-ci.com/ttu/ruuvitag-sensor.svg?branch=master)](https://app.travis-ci.com/github/ttu/ruuvitag-sensor) [![PyPI](https://img.shields.io/pypi/v/ruuvitag_sensor.svg)](https://pypi.python.org/pypi/ruuvitag_sensor)
 
-RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](https://ruuvitag.com/) and for decoding sensord data from broadcasted eddystone-url.
+RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
 ### Requirements
 
@@ -15,8 +15,9 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
     * [Bleson install guide](#Bleson)
 * Python 3.7+
-    * If you need to use Python 2.x or <3.7, check [install instructions](#python-2x-and-36-and-below) for an older version
+    * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
+__NOTE:__ Latest changes include method renames. When using versions prior development version, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
 
 ### Installation
 

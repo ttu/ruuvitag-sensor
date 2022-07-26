@@ -1,10 +1,11 @@
 ## Changelog
 
 ### [Unreleased]
-* CHANGE: RuuviTagSensor get_data-method renamed to get_first_raw_data
-* CHANGE: Switch unit test framework from nose to pytest
 * CHANGE: Support only Python 3.7 and above
+* CHANGE: RuuviTagSensor get_datas-method renamed to get_data
+* CHANGE: RuuviTagSensor get_data-method renamed to get_first_raw_data
 * CHANGE: Updated RxPy to v4
+* CHANGE: Switch unit test framework from nose to pytest
 
 ## [1.2.1] - 2022-05-23
 * FIX: Handle too shot BLE data from RuuviTag as valida data
