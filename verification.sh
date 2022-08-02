@@ -2,6 +2,7 @@
 
 rm -rf venv_py
 
+# If python command is for 2.7, replace next line with: python3 -m venv venv_py
 python -m venv venv_py
 source venv_py/bin/activate
 if [ "$1" = "pypi" ]; then
