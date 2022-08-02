@@ -109,12 +109,11 @@ class BleCommunicationNix(BleCommunication):
             log.info(ex)
             return
 
-    # pylint: disable=arguments-renamed
-    def get_data(self, blacklist=[], bt_device=''):
-        procs = self.start(bt_device)
-
+    @staticmethod
+    def get_data(blacklist=[], bt_device=''):
+        procs = BleCommunicationNix.start(bt_device)
         data = None
-        for line in self.get_lines(procs[1]):
+        for line in BleCommunicationNix.get_lines(procs[1]):
             log.debug("Parsing line %s", line)
             try:
                 # Make sure we're in upper case
@@ -166,12 +165,12 @@ class BleCommunicationNix(BleCommunication):
             except Exception:
                 continue
 
-        self.stop(procs[0], procs[1])
+        BleCommunicationNix.stop(procs[0], procs[1])
 
-    # pylint: disable=arguments-renamed
-    def get_first_data(self, mac, bt_device=''):
+    @staticmethod
+    def get_first_data(mac, bt_device=''):
         data = None
-        data_iter = self.get_data([], bt_device)
+        data_iter = BleCommunicationNix.get_data([], bt_device)
         for data in data_iter:
             if mac == data[0]:
                 log.info('Data found')
