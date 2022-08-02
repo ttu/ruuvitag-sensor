@@ -17,7 +17,7 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
-__NOTE:__ Latest changes include method renames. When using versions prior development version, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
+__NOTE:__ Version 2.0 includes method renames. When using versions prior 2.0, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
 
 ### Installation
 

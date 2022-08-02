@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [2.0.0] - 2022-08-02
 * CHANGE: Support only Python 3.7 and above
 * CHANGE: RuuviTagSensor get_datas-method renamed to get_data
 * CHANGE: RuuviTagSensor get_data-method renamed to get_first_raw_data
