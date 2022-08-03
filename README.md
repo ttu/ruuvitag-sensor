@@ -12,8 +12,12 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
     * [BlueZ install guide](#BlueZ)
-* __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
-    * [Bleson install guide](#Bleson)
+* __BETA:__ Cross-platform BLE implementations
+    * [Bleak](https://github.com/hbldh/bleak) communication module
+      * Bleak only supports async methods
+      * [Bleak install guide](#Bleson)
+    * [Bleson](https://github.com/TheCellule/python-bleson) communication module
+        * [Bleson install guide](#Bleson)
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
@@ -309,7 +313,7 @@ optional arguments:
 
 ## BlueZ
 
-BlueZ works only on __Linux__. Windows and macOS supports are only for testing and url decoding.
+BlueZ works only on __Linux__. When using BlueZ, Windows and macOS support is only for testing with hard coded data and for data decoding.
 
 BlueZ tools require __superuser__ rights.
 
@@ -327,13 +331,38 @@ The ruuvitag-sensor use BlueZ to listen broadcasted BL information (uses _hcicon
 
 In case of errors, application tries to exit immediately, so it can be automatically restarted.
 
+## Bleak
+
+Bleak is not installed automatically with `ruuvitag_sensor` package. Install it manually from pypi.
+
+```sh
+$ python -m pip install bleak
+```
+
+Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="Bleak"
+```
+
+Bleak supports only async methods. Currently only implemented method is `get_data_async`.
+
+```py
+async def main():
+    async for data in RuuviTagSensor.get_data_async():
+        print(data)
+
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(main())
+```
+
+Check full [example](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.
+
 ## Bleson
 
 Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
 
 Bleson works with Linux, macOS and partially with Windows.
-
-Requires _Python 3_.
 
 Bleson is not installed automatically with `ruuvitag_sensor` package. Install it manually from GitHub.
 
@@ -350,6 +379,7 @@ $ export RUUVI_BLE_ADAPTER="Bleson"
 __NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 __NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
+
 
 ## Python 2.x and 3.6 and below
 
