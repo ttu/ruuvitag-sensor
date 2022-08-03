@@ -14,10 +14,10 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
     * [BlueZ install guide](#BlueZ)
 * __BETA:__ Cross-platform BLE implementations
     * [Bleak](https://github.com/hbldh/bleak) communication module
-      * Bleak only supports async methods
+      * Bleak only supports async methods (work in progress)
       * [Bleak install guide](#Bleson)
     * [Bleson](https://github.com/TheCellule/python-bleson) communication module
-        * [Bleson install guide](#Bleson)
+      * [Bleson install guide](#Bleson)
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
