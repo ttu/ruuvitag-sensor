@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * CHANGE: Add RSSI reporting
+* ADD: (Beta) Bleak cross-platform BLE adapter with async get_data_async-method
 
 ## [2.0.0] - 2022-08-03
 * CHANGE: Support only Python 3.7 and above

@@ -12,8 +12,12 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
     * [BlueZ install guide](#BlueZ)
-* __BETA:__ Cross-platform BLE implementation with [Bleson](https://github.com/TheCellule/python-bleson) communication module
-    * [Bleson install guide](#Bleson)
+* __BETA:__ Cross-platform BLE adapters
+    * [Bleak](https://github.com/hbldh/bleak) communication module
+      * Bleak only supports async methods (work in progress)
+      * [Bleak install guide](#Bleak)
+    * [Bleson](https://github.com/TheCellule/python-bleson) communication module
+      * [Bleson install guide](#Bleson)
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
@@ -218,10 +222,10 @@ Example data has data from 4 sensors with different firmwares.
 
 ```python
 {
-'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None },
-'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0' },
-'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3},
-'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70 }
+'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None, 'rssi': None },
+'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0', 'rssi': None },
+'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3, 'rssi': None },
+'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70, 'rssi': -65 }
 }
 ```
 
@@ -309,7 +313,7 @@ optional arguments:
 
 ## BlueZ
 
-BlueZ works only on __Linux__. Windows and macOS supports are only for testing and url decoding.
+BlueZ works only on __Linux__. When using BlueZ, Windows and macOS support is only for testing with hard coded data and for data decoding.
 
 BlueZ tools require __superuser__ rights.
 
@@ -327,13 +331,38 @@ The ruuvitag-sensor use BlueZ to listen broadcasted BL information (uses _hcicon
 
 In case of errors, application tries to exit immediately, so it can be automatically restarted.
 
+## Bleak
+
+Bleak is not installed automatically with `ruuvitag_sensor` package. Install it manually from pypi.
+
+```sh
+$ python -m pip install bleak
+```
+
+Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="Bleak"
+```
+
+Bleak supports only async methods. Currently only implemented method is `get_data_async` and `get_first_raw_data_async`.
+
+```py
+async def main():
+    async for data in RuuviTagSensor.get_data_async():
+        print(data)
+
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(main())
+```
+
+Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and [get_first_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_first_async_bleak.py) from examples.
+
 ## Bleson
 
 Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
 
 Bleson works with Linux, macOS and partially with Windows.
-
-Requires _Python 3_.
 
 Bleson is not installed automatically with `ruuvitag_sensor` package. Install it manually from GitHub.
 
@@ -350,6 +379,7 @@ $ export RUUVI_BLE_ADAPTER="Bleson"
 __NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 __NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
+
 
 ## Python 2.x and 3.6 and below
 
