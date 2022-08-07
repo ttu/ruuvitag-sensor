@@ -67,6 +67,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 yield next_item
         except KeyboardInterrupt:
             pass
+        except GeneratorExit:
+            pass
         except Exception as ex:
             log.info(ex)
 
