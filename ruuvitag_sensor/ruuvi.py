@@ -63,6 +63,22 @@ class RuuviTagSensor(object):
         raw = ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
+
+    @staticmethod
+    async def get_first_raw_data_async(mac, bt_device=''):
+        """
+        Get raw data for selected RuuviTag
+
+        Args:
+            mac (string): MAC address
+            bt_device (string): Bluetooth device id
+        Returns:
+            tuple (int, string): Data Format type and raw Sensor data
+        """
+        raw = await ble.get_first_data(mac, bt_device)
+        return DataFormats.convert_data(raw)
+
+
     @staticmethod
     def find_ruuvitags(bt_device=''):
         """

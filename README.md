@@ -345,7 +345,7 @@ Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
 $ export RUUVI_BLE_ADAPTER="Bleak"
 ```
 
-Bleak supports only async methods. Currently only implemented method is `get_data_async`.
+Bleak supports only async methods. Currently only implemented method is `get_data_async` and `get_first_raw_data_async`.
 
 ```py
 async def main():
@@ -356,7 +356,7 @@ if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
-Check full [example](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.
+Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and [get_first_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_first_async_bleak.py) from examples.
 
 ## Bleson
 

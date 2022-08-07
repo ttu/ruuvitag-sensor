@@ -76,4 +76,12 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     @staticmethod
     async def get_first_data(mac, bt_device=''):
-        pass
+        data = None
+        data_iter = BleCommunicationBleak.get_data([], bt_device)
+        async for d in data_iter:
+            if mac == d[0]:
+                log.info('Data found')
+                data = d[1]
+                await data_iter.aclose()
+
+        return data
