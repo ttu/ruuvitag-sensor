@@ -52,6 +52,10 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 return
 
             data = BleCommunicationBleak._parse_data(advertisement_data.manufacturer_data[1177])
+            
+            # Add RSSI to encoded data as hex. All aAdapters use common decoder.
+            data += hex(device.rssi)
+            
             await queue.put((mac, data))
 
         scanner.register_detection_callback(detection_callback)
