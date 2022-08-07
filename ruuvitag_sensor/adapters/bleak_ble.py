@@ -6,7 +6,7 @@ from bleak.backends.scanner import BLEDevice, AdvertisementData
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 
-scanner = BleakScanner()
+scanner = BleakScanner(scanning_mode='passive')
 queue = asyncio.Queue[Tuple[str, str]]()
 
 log = logging.getLogger(__name__)
