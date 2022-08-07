@@ -47,7 +47,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 log.debug('MAC blacklised: %s', mac)
                 return
 
-            # Do all RuuviTag's have data in 1177?
+            # TODO: Do all RuuviTags have data in 1177?
             if 1177 not in advertisement_data.manufacturer_data:
                 return
 
