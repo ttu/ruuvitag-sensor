@@ -27,5 +27,5 @@ class BleCommunicationAsync(object):
 
     @staticmethod
     @abc.abstractmethod
-    async def get_datas(blacklist=[], bt_device=''):
+    async def get_data(blacklist=[], bt_device=''):
         pass
