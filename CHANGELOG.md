@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Add RSSI reporting
 
 ## [2.0.0] - 2022-08-03
 * CHANGE: Support only Python 3.7 and above

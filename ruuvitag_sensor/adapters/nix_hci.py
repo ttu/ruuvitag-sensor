@@ -127,7 +127,7 @@ class BleCommunicationNix(BleCommunication):
 
                 # The third byte is the parameter length, this should cover
                 # the length of the entire packet, minus the first three bytes.
-                # Note that the data is in hex format, so uses two chars per
+                # Note that the data is in hex format, so use two chars per
                 # byte
                 plen = int(line[4:6], 16)
                 if plen != (len(line) / 2) - 3:

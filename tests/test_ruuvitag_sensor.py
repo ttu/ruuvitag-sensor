@@ -59,6 +59,8 @@ class TestRuuviTagSensor():
             # The following is a ruuvitag with firmware 3.x, sending a
             # measurement advertisement again
             ('CE:D6:05:F5:17:AA', '1F0201061BFF99040511F83B83CC5DFFFCFFFC03DCA7161427D2CED605F517AACB'),  # noqa: E501
+            # RuuviTag with firmware 3.3x sending RSSI
+            ('D5:57:97:65:88:14', '1F0201061BFF99040517B24633FFFFFFFCFFD403E4AF56388D51D55797658814B8'),  # noqa: E501
         ]
 
         for data in tag_data:
@@ -70,21 +72,24 @@ class TestRuuviTagSensor():
            get_data)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
-        assert len(tags) == 8
+        assert len(tags) == 9
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
            get_data)
     @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data',
            get_data)
     def test_get_data_for_sensors(self):
-        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D']
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D',
+                'D5:57:97:65:88:14']
         data = RuuviTagSensor.get_data_for_sensors(macs, 4)
-        assert len(data) == 3
+        assert len(data) == 4
         assert 'CC:2C:6A:1E:59:3D' in data
         assert 'DD:2C:6A:1E:59:3D' in data
+        assert 'D5:57:97:65:88:14' in data
         assert data['CC:2C:6A:1E:59:3D']['temperature'] == 24.0
         assert data['EE:2C:6A:1E:59:3D']['temperature'] == 25.12
         assert data['EE:2C:6A:1E:59:3D']['identifier'] == '0'
+        assert data['D5:57:97:65:88:14']['rssi'] == -72
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
            get_data)
@@ -93,7 +98,7 @@ class TestRuuviTagSensor():
     def test_get_data(self):
         data = []
         RuuviTagSensor.get_data(data.append)
-        assert len(data) == 8
+        assert len(data) == 9
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
            get_data)

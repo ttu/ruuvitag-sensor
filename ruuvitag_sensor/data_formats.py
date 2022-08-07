@@ -52,8 +52,8 @@ class DataFormats(object):
         try:
             # The data starts with a length byte, covering the data
             # length, minus the length byte itself. There might be additional
-            # data at the end (an RSSI value) which we're ignoring
-            data, _ = _dechunk(raw)
+            # data at the end: the RSSI value
+            data, rssi = _dechunk(raw)
 
             # The remaining data is a list of length:type:data chunks.
             # We look for a chunk with vendor specific data (type 0xff),
@@ -96,7 +96,7 @@ class DataFormats(object):
             return (3, candidate[6:])
 
         if candidate.startswith("FF990405"):
-            return (5, candidate[6:])
+            return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
