@@ -1,13 +1,19 @@
 import asyncio
 import logging
+import sys
 from typing import List, Tuple
 from bleak import BleakScanner
 from bleak.backends.scanner import BLEDevice, AdvertisementData
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 
-scanner = BleakScanner(scanning_mode='passive')
-queue = asyncio.Queue[Tuple[str, str]]()
+# NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
+scanning_mode = "active" if sys.platform.startswith('linux') else "passive"
+scanner = BleakScanner(scanning_mode=scanning_mode)
+
+# TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
+# queue = asyncio.Queue[Tuple[str, str]]()
+queue = asyncio.Queue()
 
 log = logging.getLogger(__name__)
 
