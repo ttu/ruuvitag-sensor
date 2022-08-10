@@ -21,16 +21,16 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
-__NOTE:__ Version 2.0 contains method renames. When using a version prior 2.0, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
+__NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
 
 ### Installation
 
-Install latest released version
+Install the latest released version
 ```sh
 $ python -m pip install ruuvitag_sensor
 ```
 
-Install latest development version
+Install the latest development version
 ```sh
 $ python -m venv .venv
 $ source .venv/bin/activate
@@ -48,7 +48,7 @@ RuuviTag sensors can be identified using MAC addresses.
 
 ##### Get sensor data with callback
 
-`get_data` calls the callback every time when a RuuviTag sensor broadcasts data. This method is the preferred way to use the library.
+`get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
 The line `if __name__ == '__main__':` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
 
-Optional list of MACs and run flag can be passed to the `get_data` function. Callback is called only for MACs in the list and setting run flag to false will stop execution. If run flag is not passed, function will execute forever.
+The optional list of MACs and run flag can be passed to the `get_data` function. The callback is called only for MACs in the list and setting the run flag to false will stop execution. If the run flag is not passed, the function will execute forever.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
@@ -91,7 +91,7 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 
 ##### Get data for specified sensors
 
-`get_data_for_sensors` will collect latest data from sensors for specified duration.
+`get_data_for_sensors` will collect the latest data from sensors for a specified duration.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -109,9 +109,9 @@ print(data['AA:2C:6A:1E:59:3D'])
 print(data['CC:2C:6A:1E:59:3D'])
 ```
 
-__NOTE:__ This method shouldn't be used for a long duration with short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For a long running processes it is recommended to use `get_data`-method with a callback.
+__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method with a callback.
 
-##### Get data from sensor
+##### Get data from a sensor
 
 __NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` functions instead of `RuuviTag`-class.
 
@@ -131,7 +131,7 @@ print(state)
 
 ##### RuuviTagReactive
 
-Reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with stop function.
+Reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
 
 ```python
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
@@ -160,13 +160,13 @@ ruuvi_rx.get_subject().pipe(
 ruuvi_rx.stop()
 ```
 
-More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under examples directory.
+More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and a simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under the examples directory.
 
 Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
 ##### Find sensors
 
-`find_ruuvitags` function will exeute forever and when new RuuviTag sensor is found it will print it's MAC address and state at that moment. This function can be used with a command line applications. Logging must be enabled and set to print to console.
+`find_ruuvitags` function will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -179,7 +179,7 @@ RuuviTagSensor.find_ruuvitags()
 
 ##### Using different Bluetooth device
 
-If you have multiple Bluetooth devices installed, device to be used might not be the default (Linux: hci0). Device can be passed with `bt_device` parameter.
+If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: hci0). The device can be passed with `bt_device` parameter.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -214,8 +214,8 @@ print(sensor_data)
 
 ##### Data Formats
 
-Example data has data from 4 sensors with different firmwares.
-* 1st is Data Format 2 (URL) so identifier is None as sensor doesn't broadcast any identifier data
+Example data has data from 4 sensors with different firmware.
+* 1st is Data Format 2 (URL), the identifier is None as the sensor doesn't broadcast any identifier data
 * 2nd is Data Format 4 (URL) and it has an identifier character
 * 3rd is Data Format 3 (RAW)
 * 4th is Data Format 5 (RAW v2)
@@ -233,11 +233,11 @@ Example data has data from 4 sensors with different firmwares.
 
 There is no reason to use Data Format 2 or 4.
 
-Original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users to view the tags without the need to install any app. Since the _Nearby_ has been discontinued there isn't any benefit in using Eddystone format anymore.
+The original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
 
 ##### Logging and Printing to console
 
-Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. Command line application has console logging enabled by default.
+Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. The command line application has console logging enabled by default.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -252,7 +252,7 @@ print(data)
 
 ##### Log all events to log-file
 
-By default only errors are logged to `ruuvitag_sensor.log`-file. Level can be changed by changing FileHandlers log level.
+By default only errors are logged to `ruuvitag_sensor.log`-file. The level can be changed by changing FileHandler's log level.
 
 ```py
 import logging
@@ -266,9 +266,9 @@ for handler in log.handlers:
 data = RuuviTagSensor.get_data_for_sensors()
 ```
 
-##### Custom event handler for a specific log event
+##### A custom event handler for a specific log event
 
-If custom functionality is required when a specific evet happens, e.g. exit when specific sensor is blacklisted, logging event handlers can be utilized for this functionality.
+If custom functionality is required when a specific event happens, e.g. exit when a specific sensor is blacklisted, logging event handlers can be utilized for this functionality.
 
 ```py
 from logging import StreamHandler
@@ -313,7 +313,7 @@ optional arguments:
 
 ## BlueZ
 
-BlueZ works only on __Linux__. When using BlueZ, Windows and macOS support is only for testing with hard coded data and for data decoding.
+BlueZ works only on __Linux__. When using BlueZ, Windows and macOS support is only for testing with hard-coded data and for data decoding.
 
 BlueZ tools require __superuser__ rights.
 
@@ -323,13 +323,13 @@ Install BlueZ.
 $ sudo apt-get install bluez bluez-hcidump
 ```
 
-Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
+Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, an older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 
 ### BlueZ limitations
 
-The ruuvitag-sensor use BlueZ to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well unexpected errors or changes, e.g. when adapter is busy, rebooted or powered down.
+`Ruuvitag_sensor` package uses BlueZ to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well all unexpected errors or changes, e.g. when the adapter is busy, rebooted or powered down.
 
-In case of errors, application tries to exit immediately, so it can be automatically restarted.
+In case of errors, the application tries to exit immediately, so it can be automatically restarted.
 
 ## Bleak
 
@@ -376,9 +376,9 @@ Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
 $ export RUUVI_BLE_ADAPTER="Bleson"
 ```
 
-__NOTE:__ On macOS only Data Format 5 works as macOS doesn't advertise MAC-address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
+__NOTE:__ On macOS, only Data Format 5 works as macOS doesn't advertise MAC address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
-__NOTE:__ On Windows Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for advertised package, so it is still unusable.
+__NOTE:__ On Windows, Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for the advertised package, so it is still unusable.
 
 
 ## Python 2.x and 3.6 and below
@@ -400,8 +400,8 @@ $ python -m pip install ruuvitag-sensor==1.2.1
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
 
-* Keep track of each sensors current status and send updated data to server. [Sync](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_sync.py) and [async](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_async.py) version.
-* Send found sensor data to InfluxDB. [Reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb_rx.py) and [non-reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb.py) version. Naming convention of sent data matches [RuuviCollector library](https://github.com/scrin/ruuvicollector).
+* Keep track of each sensor's current status and send updated data to the server. [Sync](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_sync.py) and [async](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/send_updated_async.py) version.
+* Send found sensor data to InfluxDB. [Reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb_rx.py) and [non-reactive](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/post_to_influxdb.py) version. The naming convention of sent data matches [RuuviCollector library](https://github.com/scrin/ruuvicollector).
 * Simple HTTP Server for serving found sensor data. [Flask](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server.py), [aiohttp](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio.py) and [aiohttp with ReactiveX](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py).
 
 ## Changelog
@@ -410,7 +410,7 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 
 ## Developer notes
 
-[Notes for developers](https://github.com/ttu/ruuvitag-sensor/blob/master/developer_notes.md) who are interested in developing RuuviTag Sensor package or interested in it's internal functionality.
+[Notes for developers](https://github.com/ttu/ruuvitag-sensor/blob/master/developer_notes.md) who are interested in developing RuuviTag Sensor package or are interested in its internal functionality.
 
 ## Contributing
 

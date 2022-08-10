@@ -37,7 +37,7 @@ class RunFlag(object):
     Wrapper for boolean run flag
 
     Attributes:
-        running (bool): Defines if function should continue execution
+        running (bool): Defines if the function should continue execution
     """
 
     running = True
@@ -83,7 +83,7 @@ class RuuviTagSensor(object):
     def find_ruuvitags(bt_device=''):
         """
         Find all RuuviTags. Function will print the mac and the state of the sensors when found.
-        Function will execute as long as it is stopped. Stop ecexution with Crtl+C.
+        Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
 
         Returns:
             dict: MAC and state of found sensors
