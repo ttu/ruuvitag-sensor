@@ -108,9 +108,9 @@ if __name__ == '__main__':
 
 The optional list of MACs and run flag can be passed to the `get_data_async` function.
 
-#### RuuviTagReactive
+#### Get sensor data with ReactiveX (RxPY)
 
-Reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
+`RuuviTagReactive` is a reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
 
 ```python
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
@@ -143,8 +143,9 @@ More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/react
 
 Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
+#### Other helper methods
 
-#### Get data for specified sensors for a specific duration
+##### Get data for specified sensors for a specific duration
 
 `get_data_for_sensors` will collect the latest data from sensors for a specified duration.
 
@@ -166,7 +167,7 @@ print(data['CC:2C:6A:1E:59:3D'])
 
 __NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method.
 
-#### Get data from a sensor
+##### Get data from a sensor
 
 __NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` methods instead of `RuuviTag`-class.
 
@@ -184,7 +185,7 @@ state = sensor.state
 print(state)
 ```
 
-#### Find sensors - command line application helper function
+##### Find sensors
 
 `find_ruuvitags` function will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
 
