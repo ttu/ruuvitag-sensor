@@ -51,7 +51,7 @@ class RuuviTagSensor(object):
     @staticmethod
     def get_first_raw_data(mac, bt_device=''):
         """
-        Get raw data for selected RuuviTag
+        Get raw data for selected RuuviTag. This method is intended to be used only by RuuviTag-class.
 
         Args:
             mac (string): MAC address
@@ -63,11 +63,11 @@ class RuuviTagSensor(object):
         raw = ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
-
     @staticmethod
     async def get_first_raw_data_async(mac, bt_device=''):
         """
-        Get raw data for selected RuuviTag
+        Get raw data for selected RuuviTag. This method is intended to be used only by RuuviTag-class.
+        It doesn't have asynchronous implementation.
 
         Args:
             mac (string): MAC address
@@ -78,10 +78,11 @@ class RuuviTagSensor(object):
         raw = await ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
-
     @staticmethod
     def find_ruuvitags(bt_device=''):
         """
+        CLI helper function.
+
         Find all RuuviTags. Function will print the mac and the state of the sensors when found.
         Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
 
