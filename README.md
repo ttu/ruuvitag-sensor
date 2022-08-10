@@ -49,7 +49,11 @@ The package provides 3 main ways to fetch data from sensors:
 2. Asynchronously with async/await (BETA)
 3. Observable streams with ReactiveX
 
-RuuviTag sensors can be identified using MAC addresses.
+RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with mac and data payload.
+
+```py
+('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
+```
 
 #### Get sensor data with callback
 
@@ -113,7 +117,7 @@ if __name__ == '__main__':
 
 The optional list of MACs and run flag can be passed to the `get_data_async` function.
 
-#### Get sensor data with ReactiveX (RxPY)
+#### Get sensor data with observable streams (ReactiveX / RxPY)
 
 `RuuviTagReactive` is a reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
 
