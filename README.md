@@ -46,7 +46,7 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 RuuviTag sensors can be identified using MAC addresses.
 
 
-##### Get sensor data with callback
+#### Get sensor data with callback
 
 `get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library.
 
@@ -75,8 +75,8 @@ counter = 10
 run_flag = RunFlag()
 
 def handle_data(found_data):
-    print(f'MAC {found_data[0]}')
-    print(f'Data {found_data[1]}')
+    print(f'MAC: {found_data[0]}')
+    print(f'Data: {found_data[1]}')
 
     global counter
     counter = counter - 1
@@ -89,47 +89,26 @@ macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
 RuuviTagSensor.get_data(handle_data, macs, run_flag)
 ```
 
-##### Get data for specified sensors
+#### Get sensor data asynchronously
 
-`get_data_for_sensors` will collect the latest data from sensors for a specified duration.
+__NOTE:__ Asynchronous functionality is currently in beta-state and works only with `Bleak`-adapter.
 
-```python
+```py
+import asyncio
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-# List of MACs of sensors which data will be collected
-# If list is empty, data will be collected for all found sensors
-macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
-# get_data_for_sensors will look data for the duration of timeout_in_sec
-timeout_in_sec = 4
+async def main():
+    async for found_data in RuuviTagSensor.get_data_async():
+        print(f'MAC: {found_data[0]}')
+        print(f'Data: {found_data[1]}')
 
-data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
-
-# Dictionary will have latest data for each sensor
-print(data['AA:2C:6A:1E:59:3D'])
-print(data['CC:2C:6A:1E:59:3D'])
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(main())
 ```
 
-__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method with a callback.
+The optional list of MACs and run flag can be passed to the `get_data_async` function.
 
-##### Get data from a sensor
-
-__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` functions instead of `RuuviTag`-class.
-
-```python
-from ruuvitag_sensor.ruuvitag import RuuviTag
-
-sensor = RuuviTag('AA:2C:6A:1E:59:3D')
-
-# update state from the device
-state = sensor.update()
-
-# get latest state (does not get it from the device)
-state = sensor.state
-
-print(state)
-```
-
-##### RuuviTagReactive
+#### RuuviTagReactive
 
 Reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
 
@@ -164,7 +143,48 @@ More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/react
 
 Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
-##### Find sensors
+
+#### Get data for specified sensors for a specific duration
+
+`get_data_for_sensors` will collect the latest data from sensors for a specified duration.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+# List of MACs of sensors which data will be collected
+# If list is empty, data will be collected for all found sensors
+macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+# get_data_for_sensors will look data for the duration of timeout_in_sec
+timeout_in_sec = 4
+
+data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+
+# Dictionary will have latest data for each sensor
+print(data['AA:2C:6A:1E:59:3D'])
+print(data['CC:2C:6A:1E:59:3D'])
+```
+
+__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method.
+
+#### Get data from a sensor
+
+__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` methods instead of `RuuviTag`-class.
+
+```python
+from ruuvitag_sensor.ruuvitag import RuuviTag
+
+sensor = RuuviTag('AA:2C:6A:1E:59:3D')
+
+# update state from the device
+state = sensor.update()
+
+# get latest state (does not get it from the device)
+state = sensor.state
+
+print(state)
+```
+
+#### Find sensors - command line application helper function
 
 `find_ruuvitags` function will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
 
@@ -177,7 +197,7 @@ ruuvitag_sensor.log.enable_console()
 RuuviTagSensor.find_ruuvitags()
 ```
 
-##### Using different Bluetooth device
+### Using different Bluetooth device
 
 If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: hci0). The device can be passed with `bt_device` parameter.
 
@@ -194,7 +214,7 @@ data = RuuviTagSensor.get_data_for_sensors(bt_device='hci1')
 RuuviTagSensor.get_data(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=device))
 ```
 
-##### Parse data
+#### Parse data
 
 ```python
 from ruuvitag_sensor.data_formats import DataFormats
@@ -212,7 +232,7 @@ print(sensor_data)
 # {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
-##### Data Formats
+### Data Formats
 
 Example data has data from 4 sensors with different firmware.
 * 1st is Data Format 2 (URL), the identifier is None as the sensor doesn't broadcast any identifier data
@@ -229,13 +249,13 @@ Example data has data from 4 sensors with different firmware.
 }
 ```
 
-##### Note on Data Format 2 and 4
+#### Note on Data Format 2 and 4
 
 There is no reason to use Data Format 2 or 4.
 
 The original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
 
-##### Logging and Printing to console
+### Logging and Printing to console
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. The command line application has console logging enabled by default.
 
@@ -250,7 +270,7 @@ data = RuuviTagSensor.get_data_for_sensors()
 print(data)
 ```
 
-##### Log all events to log-file
+#### Log all events to log-file
 
 By default only errors are logged to `ruuvitag_sensor.log`-file. The level can be changed by changing FileHandler's log level.
 
@@ -266,7 +286,7 @@ for handler in log.handlers:
 data = RuuviTagSensor.get_data_for_sensors()
 ```
 
-##### A custom event handler for a specific log event
+### A custom event handler for a specific log event
 
 If custom functionality is required when a specific event happens, e.g. exit when a specific sensor is blacklisted, logging event handlers can be utilized for this functionality.
 
@@ -292,7 +312,7 @@ log.addHandler(exit_handler)
 data = RuuviTagSensor.get_data_for_sensors()
 ```
 
-##### Command line application
+## Command line application
 
 ```
 $ python ruuvitag_sensor -h
