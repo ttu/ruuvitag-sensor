@@ -43,8 +43,13 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 ### Usage
 
-RuuviTag sensors can be identified using MAC addresses.
+The package provides 3 main ways to fetch data from sensors:
 
+1. Synchronously with callback
+2. Asynchronously with async/await (BETA)
+3. Observable streams with ReactiveX
+
+RuuviTag sensors can be identified using MAC addresses.
 
 #### Get sensor data with callback
 
