@@ -195,7 +195,7 @@ print(state)
 
 ##### Find sensors
 
-`find_ruuvitags` function will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
+`RuuviTagSensor.find_ruuvitags` and `RuuviTagSensor.find_ruuvitags_async` methods will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor

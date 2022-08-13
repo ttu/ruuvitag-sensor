@@ -83,7 +83,7 @@ class RuuviTagSensor(object):
         """
         CLI helper function.
 
-        Find all RuuviTags. Function will print the mac and the state of the sensors when found.
+        Find all RuuviTags. Function will print the MAC and the state of the sensors when found.
         Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
 
         Returns:
@@ -94,6 +94,36 @@ class RuuviTagSensor(object):
 
         data = {}
         for new_data in RuuviTagSensor._get_ruuvitag_data(bt_device=bt_device):
+            if new_data[0] in data:
+                continue
+            data[new_data[0]] = new_data[1]
+            log.info(new_data[0])
+            log.info(new_data[1])
+
+        return data
+
+    @staticmethod
+    async def find_ruuvitags_async(bt_device=''):
+        """
+        CLI helper function.
+
+        Find all RuuviTags. Function will print the MAC and the state of the sensors when found.
+        Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
+
+        Returns:
+            dict: MAC and state of found sensors
+        """
+
+        if 'bleak' not in RUUVI_BLE_ADAPTER_ENV:
+            raise Exception('Only Bleak BLE communication is supported')
+
+        log.info('Finding RuuviTags. Stop with Ctrl+C.')
+
+        data = {}
+        mac_blacklist = Manager().list()
+        data_iter = ble.get_data(mac_blacklist, bt_device)
+
+        async for new_data in data_iter:
             if new_data[0] in data:
                 continue
             data[new_data[0]] = new_data[1]
