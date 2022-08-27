@@ -3,6 +3,7 @@ import logging
 from multiprocessing import Manager, Process
 from queue import Queue
 import time
+from typing import Iterator, List, Tuple
 
 from bleson import get_provider, Observer
 
@@ -103,7 +104,7 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist=[], bt_device=''):
+    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
         m = Manager()
         q = m.Queue()
 
@@ -131,7 +132,7 @@ class BleCommunicationBleson(BleCommunication):
         proc.join()
 
     @staticmethod
-    def get_first_data(mac, bt_device=''):
+    def get_first_data(mac: str, bt_device: str = "") -> str:
         data = None
         data_iter = BleCommunicationBleson.get_data([], bt_device)
         for d in data_iter:

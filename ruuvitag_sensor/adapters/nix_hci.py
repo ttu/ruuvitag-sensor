@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import time
+from typing import Iterator, List, Tuple
 
 from ruuvitag_sensor.adapters import BleCommunication
 
@@ -110,7 +111,7 @@ class BleCommunicationNix(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist=[], bt_device=''):
+    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
         procs = BleCommunicationNix.start(bt_device)
         data = None
         for line in BleCommunicationNix.get_lines(procs[1]):
@@ -168,14 +169,14 @@ class BleCommunicationNix(BleCommunication):
         BleCommunicationNix.stop(procs[0], procs[1])
 
     @staticmethod
-    def get_first_data(mac, bt_device=''):
+    def get_first_data(mac: str, bt_device: str = "") -> str:
         data = None
         data_iter = BleCommunicationNix.get_data([], bt_device)
-        for data in data_iter:
-            if mac == data[0]:
+        for d in data_iter:
+            if mac == d[0]:
                 log.info('Data found')
                 data_iter.send(StopIteration)
-                data = data[1]
+                data = d[1]
                 break
 
         return data
