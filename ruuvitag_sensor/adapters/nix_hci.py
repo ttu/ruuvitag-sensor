@@ -174,7 +174,7 @@ class BleCommunicationNix(BleCommunication):
         data_iter = BleCommunicationNix.get_data([], bt_device)
         for d in data_iter:
             if mac == d[0]:
-                log.info('Data found')
+                log.info("Data found")
                 data_iter.send(StopIteration)
                 data = d[1]
                 break
