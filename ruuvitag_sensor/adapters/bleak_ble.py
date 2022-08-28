@@ -1,14 +1,14 @@
 import asyncio
 import logging
 import sys
-from typing import List, Tuple
+from typing import Iterator, List, Tuple
 from bleak import BleakScanner
 from bleak.backends.scanner import BLEDevice, AdvertisementData
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 
 # NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
-scanning_mode = "active" if sys.platform.startswith('linux') else "passive"
+scanning_mode = "active" if sys.platform.startswith("linux") else "passive"
 scanner = BleakScanner(scanning_mode=scanning_mode)
 
 # TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
@@ -36,21 +36,21 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # the pipeline.
         #
         # TODO: This is kinda awkward, and should be handled better.
-        data = 'FF9904' + data.hex()
-        data = '%02x%s' % (len(data) >> 1, data)
-        data = '%02x%s' % (len(data) >> 1, data)
-        return data
+        formatted = "FF9904" + data.hex()
+        formatted = "%02x%s" % (len(formatted) >> 1, formatted)
+        formatted = "%02x%s" % (len(formatted) >> 1, formatted)
+        return formatted
 
     @staticmethod
     async def _stop():
         await scanner.stop()
 
     @staticmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Tuple[str, str]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
             if mac and mac in blacklist:
-                log.debug('MAC blacklised: %s', mac)
+                log.debug(f"MAC blacklised: {mac}")
                 return
 
             # TODO: Do all RuuviTags have data in 1177?
@@ -60,7 +60,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data = BleCommunicationBleak._parse_data(advertisement_data.manufacturer_data[1177])
             
             # Add RSSI to encoded data as hex. All adapters use a common decoder.
-            data += hex((device.rssi + (1 << 8)) % (1 << 8)).replace('0x', '')
+            data += hex((device.rssi + (1 << 8)) % (1 << 8)).replace("0x", "")
             
             await queue.put((mac, data))
 
@@ -69,7 +69,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         try:
             while True:
-                next_item = await queue.get()
+                next_item: Tuple[str, str] = await queue.get()
                 yield next_item
         except KeyboardInterrupt:
             pass
@@ -81,12 +81,12 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await BleCommunicationBleak._stop()
 
     @staticmethod
-    async def get_first_data(mac, bt_device=''):
+    async def get_first_data(mac: str, bt_device: str = "") -> str:
         data = None
         data_iter = BleCommunicationBleak.get_data([], bt_device)
         async for d in data_iter:
             if mac == d[0]:
-                log.info('Data found')
+                log.info("Data found")
                 data = d[1]
                 await data_iter.aclose()
 
