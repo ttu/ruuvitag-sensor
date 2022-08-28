@@ -18,7 +18,7 @@ class BleCommunication(object):
 
 
 class BleCommunicationAsync(object):
-    """Bluetooth LE communication"""
+    """Asynchronous Bluetooth LE communication"""
     __metaclass__ = abc.ABCMeta
 
     @staticmethod
