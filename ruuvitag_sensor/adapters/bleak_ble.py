@@ -36,10 +36,10 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # the pipeline.
         #
         # TODO: This is kinda awkward, and should be handled better.
-        data = 'FF9904' + data.hex()
-        data = '%02x%s' % (len(data) >> 1, data)
-        data = '%02x%s' % (len(data) >> 1, data)
-        return data
+        formatted = 'FF9904' + data.hex()
+        formatted = '%02x%s' % (len(formatted) >> 1, formatted)
+        formatted = '%02x%s' % (len(formatted) >> 1, formatted)
+        return formatted
 
     @staticmethod
     async def _stop():
@@ -69,7 +69,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         try:
             while True:
-                next_item = await queue.get()
+                next_item: Tuple[str, str] = await queue.get()
                 yield next_item
         except KeyboardInterrupt:
             pass
