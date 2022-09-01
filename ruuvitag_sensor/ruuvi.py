@@ -13,10 +13,10 @@ log = logging.getLogger(__name__)
 RUUVI_BLE_ADAPTER_ENV = os.environ.get('RUUVI_BLE_ADAPTER', '').lower()
 
 
-if RUUVI_BLE_ADAPTER_ENV == 'bleak':
+if 'bleak' in RUUVI_BLE_ADAPTER_ENV:
     from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
     ble = BleCommunicationBleak()
-elif RUUVI_BLE_ADAPTER_ENV == 'bleson':
+elif 'bleson' in RUUVI_BLE_ADAPTER_ENV:
     from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
     ble = BleCommunicationBleson()
 elif 'RUUVI_NIX_FROMFILE' in os.environ:
@@ -269,5 +269,5 @@ class RuuviTagSensor(object):
                 log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
         else:
             if ble_data[0]:
-                log.debug("Blacklisting MAC %s", ble_data[0])
+                log.debug('Blacklisting MAC %s', ble_data[0])
                 mac_blacklist.append(ble_data[0])
