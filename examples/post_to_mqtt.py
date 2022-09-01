@@ -60,7 +60,7 @@ location = args.location
 # let's trap ctrl-c, SIGINT and come down nicely
 # pylint: disable=unused-argument,redefined-outer-name
 def signal_handler(signal, frame):
-    print("\nterminating gracefully.")
+    print('\nterminating gracefully.')
     client.disconnect()
     sys.exit(0)
 
@@ -71,11 +71,11 @@ signal.signal(signal.SIGINT, signal_handler)
 # The callback for when the client receives a CONNACK response from the MQTT server.
 # pylint: disable=unused-argument,redefined-outer-name
 def on_connect(client, userdata, flags, rc):
-    print(f"Connected to MQTT broker with result code {str(rc)}")
+    print(f'Connected to MQTT broker with result code {str(rc)}')
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
+    client.subscribe('$SYS/#')
 
 
 client = mqtt.Client()

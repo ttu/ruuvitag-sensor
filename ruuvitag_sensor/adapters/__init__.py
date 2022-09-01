@@ -8,12 +8,12 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_first_data(mac: str, bt_device: str = "") -> str:
+    def get_first_data(mac: str, bt_device: str = '') -> str:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
         pass
 
 
@@ -23,10 +23,10 @@ class BleCommunicationAsync(object):
 
     @staticmethod
     @abc.abstractmethod
-    async def get_first_data(mac: str, bt_device: str = "") -> str:
+    async def get_first_data(mac: str, bt_device: str = '') -> str:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
         pass

@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class BleCommunicationBleson(BleCommunication):
-    '''Bluetooth LE communication with Bleson'''
+    """Bluetooth LE communication with Bleson"""
 
     @staticmethod
     def _run_get_data_background(queue, shared_data, bt_device):
@@ -65,10 +65,10 @@ class BleCommunicationBleson(BleCommunication):
 
     @staticmethod
     def start(bt_device=''):
-        '''
+        """
         Attributes:
            device (string): BLE device (default 0)
-        '''
+        """
 
         if not bt_device:
             bt_device = 0
@@ -132,7 +132,7 @@ class BleCommunicationBleson(BleCommunication):
         proc.join()
 
     @staticmethod
-    def get_first_data(mac: str, bt_device: str = "") -> str:
+    def get_first_data(mac: str, bt_device: str = '') -> str:
         data = None
         data_iter = BleCommunicationBleson.get_data([], bt_device)
         for d in data_iter:

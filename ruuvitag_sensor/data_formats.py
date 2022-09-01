@@ -18,11 +18,11 @@ def _dechunk(raw):
     If the length indicated is longer than the data, raise a ValueError
     """
     if len(raw) < 2:
-        raise ShortDataError("Data too short")
+        raise ShortDataError('Data too short')
 
     dlen = int(raw[:2], 16)
     if (dlen + 1) * 2 > len(raw):
-        raise ShortDataError(f"Cannot read {dlen} bytes, data too short: {raw}")
+        raise ShortDataError(f'Cannot read {dlen} bytes, data too short: {raw}')
 
     return raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:]
 
@@ -47,7 +47,7 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        log.debug("Parsing advertisement data: %s", raw)
+        log.debug('Parsing advertisement data: %s', raw)
 
         try:
             # The data starts with a length byte, covering the data
@@ -67,7 +67,7 @@ class DataFormats(object):
                 cdata, data = _dechunk(data)
 
                 ctype = cdata[:2]
-                log.debug("Found chunk of type %s: %s", ctype, cdata)
+                log.debug('Found chunk of type %s: %s', ctype, cdata)
 
                 # See if we found a potential candidate. Break the loop
                 if ctype in ('FF', '16', '09'):
@@ -78,27 +78,27 @@ class DataFormats(object):
             # e.g. it's possile that bluetooth stack received only partial data
             # Set the format to None, and data to '', this allows the
             # caller to determine that we did indeed see a Ruuvitag.
-            log.debug("Error parsing advertisement data: %s", ex)
+            log.debug('Error parsing advertisement data: %s', ex)
             return (None, '')
         except Exception:
-            log.exception("Invalid advertisement data: %s", raw)
+            log.exception('Invalid advertisement data: %s', raw)
             return (None, None)
 
         if candidate is None:
-            log.debug("No candidate found")
+            log.debug('No candidate found')
             return (None, None)
 
-        log.debug("Found candidate %s", candidate)
+        log.debug('Found candidate %s', candidate)
 
         # Ruuvi advertisements start with FF9904 (for format 3 and 5),
         # or 16AAFE (for format 2 and 4).
-        if candidate.startswith("FF990403"):
+        if candidate.startswith('FF990403'):
             return (3, candidate[6:])
 
-        if candidate.startswith("FF990405"):
+        if candidate.startswith('FF990405'):
             return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
 
-        if candidate.startswith("16AAFE"):
+        if candidate.startswith('16AAFE'):
             # TODO: Check from raw data correct data format
             # Now this returns 2 also for Data Format 4
             data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
@@ -106,7 +106,7 @@ class DataFormats(object):
             if data is not None:
                 return (2, data)
 
-        elif candidate.startswith("095275757669"):
+        elif candidate.startswith('095275757669'):
             # This is a Ruuvitag, but this advertisement does not contain any data.
             # Set the format to None, and data to '', this allows the
             # caller to determine that we did indeed see a Ruuvitag.
