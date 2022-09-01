@@ -387,6 +387,10 @@ if __name__ == '__main__':
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.
 
+### Bleak dummy BLE data
+
+Bleak-adapter has a development-time generator for dummy data, which can be useful during development, when there are no sensors available. Set `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.
+
 ## Bleson
 
 Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
