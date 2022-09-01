@@ -16,15 +16,15 @@ def get_decoder(data_type):
         object: Data decoder
     """
     if data_type == 2:
-        log.warning("DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG")
+        log.warning('DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 4:
-        log.warning("DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG")
+        log.warning('DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 3:
-        log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
+        log.warning('DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
     return Df5Decoder()

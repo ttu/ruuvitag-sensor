@@ -77,7 +77,7 @@ def run_get_data_background(queue):
     RuuviTagSensor.get_data(handle_new_data)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     m = Manager()
     q = m.Queue()
 

@@ -75,5 +75,5 @@ def write_to_influxdb(received_data):
     client.write_points(json_body)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     RuuviTagSensor.get_data(write_to_influxdb)
