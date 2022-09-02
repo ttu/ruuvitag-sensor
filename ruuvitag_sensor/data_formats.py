@@ -1,4 +1,5 @@
 import logging
+from typing import Optional, Tuple
 
 log = logging.getLogger(__name__)
 
@@ -7,7 +8,7 @@ class ShortDataError(Exception):
     pass
 
 
-def _dechunk(raw):
+def _dechunk(raw: str) -> Tuple[str,str]:
     """
     Given a BLE advertisement in hex format, interpret the first
     byte as a length byte, return the data indicated by the length
@@ -24,7 +25,7 @@ def _dechunk(raw):
     if (dlen + 1) * 2 > len(raw):
         raise ShortDataError(f'Cannot read {dlen} bytes, data too short: {raw}')
 
-    return raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:]
+    return (raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:])
 
 
 class DataFormats(object):
@@ -34,7 +35,7 @@ class DataFormats(object):
 
     # pylint: disable=too-many-return-statements
     @staticmethod
-    def convert_data(raw):
+    def convert_data(raw: str) -> Tuple[Optional[int],Optional[str]]:
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -115,11 +116,11 @@ class DataFormats(object):
         return (None, None)
 
     @staticmethod
-    def _parse_raw(raw, data_format):  # pylint: disable=unused-argument
+    def _parse_raw(raw: str, data_format: int) -> str:  # pylint: disable=unused-argument
         return raw
 
     @staticmethod
-    def _get_data_format_2and4(raw):
+    def _get_data_format_2and4(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 2 or 4.
         Convert hexadcimal data to string.
@@ -144,7 +145,7 @@ class DataFormats(object):
             return None
 
     @staticmethod
-    def _get_data_format_3(raw):
+    def _get_data_format_3(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 3
 
@@ -163,7 +164,7 @@ class DataFormats(object):
             return None
 
     @staticmethod
-    def _get_data_format_5(raw):
+    def _get_data_format_5(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 5
 
