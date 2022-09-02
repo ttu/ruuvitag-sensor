@@ -4,7 +4,7 @@ import os
 import time
 import logging
 from multiprocessing import Manager
-from typing import Callable, Dict, Generator, List, Optional, Tuple, TypedDict
+from typing import Callable, Dict, Generator, List, Optional, Tuple
 from warnings import warn
 
 from ruuvitag_sensor.data_formats import DataFormats
@@ -82,7 +82,7 @@ class RuuviTagSensor(object):
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = '') -> dict[str, Tuple[Optional[str], SensorData]]:
+    def find_ruuvitags(bt_device: str = '') -> Dict[str, Tuple[Optional[str], SensorData]]:
         """
         CLI helper function.
 
@@ -106,7 +106,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def find_ruuvitags_async(bt_device: str = '') -> dict[str, Tuple[Optional[str], SensorData]]:
+    async def find_ruuvitags_async(bt_device: str = '') -> Dict[str, Tuple[Optional[str], SensorData]]:
         """
         CLI helper function.
 
@@ -136,7 +136,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') -> dict[str, Tuple[Optional[str], SensorData]]:
+    def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') -> Dict[str, Tuple[Optional[str], SensorData]]:
         """
         Get latest data for sensors in the MAC address list.
 
