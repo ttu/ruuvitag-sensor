@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Dict, Optional, Union
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.decoder import get_decoder
@@ -19,7 +19,7 @@ class RuuviTag(object):
             raise ValueError(f'{mac} is not a valid MAC address')
 
         self._mac: str = mac
-        self._state: Optional[SensorData] = None
+        self._state: Union[Dict, SensorData] = {}
         self._data: Optional[str] = None
         self._bt_device: str = bt_device
 
@@ -47,7 +47,7 @@ class RuuviTag(object):
         self._data = data
 
         if self._data is None:
-            self._state = None
+            self._state = {}
         else:
             self._state = get_decoder(data_format).decode_data(self._data)
 
