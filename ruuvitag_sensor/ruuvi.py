@@ -249,30 +249,34 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def _parse_data(ble_data: Tuple[str, str], mac_blacklist: List[str], macs: List[str] = []) -> Optional[Tuple[Optional[str], SensorData]]:
-        (data_format, data) = DataFormats.convert_data(ble_data[1])
+        (mac, payload) = ble_data
+        (data_format, data) = DataFormats.convert_data(payload)
+        
         # Check that encoded data is valid RuuviTag data and it is sensor data
         # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
-        if data is not None:
-            if data_format is None:
-                # Whatever we heard was from a Ruuvitag, but did not contain
-                # any measurements. Ignore this.
-                return None
+        if data is None:
+            if mac:
+                log.debug('Blacklisting MAC %s', mac)
+                mac_blacklist.append(mac)
+            return None
 
-            decoded = get_decoder(data_format).decode_data(data)
-            if decoded is not None:
-                # If advertised MAC is missing, try to parse it from the payload
-                mac = ble_data[0] if ble_data[0] else \
-                    parse_mac(data_format, decoded['mac']) if decoded['mac'] else None
-                # Check whitelist using MAC from decoded data if advertised MAC is not available
-                if mac and macs and mac not in macs:
-                    log.debug('MAC not whitelisted: %s', ble_data[0])
-                    return None
-                return (mac, decoded)
-            else:
-                log.error('Decoded data is null. MAC: %s - Raw: %s', ble_data[0], ble_data[1])
-        else:
-            if ble_data[0]:
-                log.debug('Blacklisting MAC %s', ble_data[0])
-                mac_blacklist.append(ble_data[0])
+        if data_format is None:
+            # Whatever we heard was from a Ruuvitag, but did not contain
+            # any measurements. Ignore this.
+            return None
 
-        return None
+        decoded = get_decoder(data_format).decode_data(data)
+        if decoded is None:
+            log.error('Decoded data is null. MAC: %s - Raw: %s', mac, payload)
+            return None
+
+        # If advertised MAC is missing, try to parse it from the payload
+        mac_to_send = mac if mac else \
+            parse_mac(data_format, decoded['mac']) if 'mac' in decoded and decoded['mac'] is not None else None
+
+        # Check whitelist using MAC from decoded data if advertised MAC is not available
+        if mac_to_send and macs and mac_to_send not in macs:
+            log.debug('MAC not whitelisted: %s', mac_to_send)
+            return None
+    
+        return (mac_to_send, decoded)
