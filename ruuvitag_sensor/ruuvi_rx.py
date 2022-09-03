@@ -2,12 +2,15 @@ import time
 from threading import Thread
 from datetime import datetime
 from multiprocessing import Manager
+from multiprocessing.managers import DictProxy
+from multiprocessing.queues import Queue
 from concurrent.futures import ProcessPoolExecutor
+from typing import List
 from reactivex import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
-def _run_get_data_background(macs, queue, shared_data, bt_device):
+def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
     """
     Background process function for RuuviTag Sensors
     """
@@ -31,7 +34,7 @@ class RuuviTagReactive(object):
     """
 
     @staticmethod
-    def _data_update(subjects, queue, run_flag):
+    def _data_update(subjects: List[Subject], queue: Queue, run_flag: RunFlag):
         """
         Get data from background process and notify all subscribed observers
         with the new data
@@ -43,7 +46,7 @@ class RuuviTagReactive(object):
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs=[], bt_device=''):
+    def __init__(self, macs: List[str] = [], bt_device: str = ''):
         """
         Start background process for get_data and async task for notifying
         all subscribed observers
@@ -75,7 +78,7 @@ class RuuviTagReactive(object):
             _run_get_data_background,
             macs, q, self._shared_data, bt_device)
 
-    def get_subject(self):
+    def get_subject(self) -> Subject:
         """
         Returns:
             subject : Reactive Extension Subject

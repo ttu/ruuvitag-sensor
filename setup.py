@@ -30,7 +30,8 @@ setup(name='ruuvitag_sensor',
       setup_requires=['wheel'],
       install_requires=[
           'reactivex',
-          'ptyprocess;platform_system=="Linux"'
+          'ptyprocess;platform_system=="Linux"',
+          'mypy-extensions;python_version<"3.8"'
       ],
       license='MIT',
       packages=['ruuvitag_sensor', 'ruuvitag_sensor.adapters'],
