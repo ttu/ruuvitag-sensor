@@ -1,15 +1,16 @@
+dist: focal
 sudo: false
 language: python
 os:
   - linux
 python:
-    - "2.7"
-    - "3.5"
-    - "3.6"
-    - "3.7"
-    - "3.8"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+  - "3.10"
 install: pip install tox-travis
 script: tox
-jobs:
-  allow_failures:
-    - python: "3.8"
+env:
+  - CI=true
+before_install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pip install -U importlib_metadata; fi

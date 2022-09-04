@@ -5,11 +5,11 @@ Bluetooth 4.0 support is required from the Bluetooth adapter. Raspberry Pi 3 as 
 
 Tested with Raspbian Jessie 2017-01-11 and '4.9.35-v7+ #1014 SMP Fri Jun 30 14:47:43 BST 2017', and '4.14.79-v7+ #1159 SMP Sun Nov 4 17:50:20 GMT 2018 armv7l GNU/Linux'
 
-Offical startup  https://www.raspberrypi.org/documentation/configuration/raspi-config.md
+Official startup guide: https://www.raspberrypi.org/documentation/configuration/raspi-config.md
 
-Summerized here:
+Summarised here:
 
-### Start the pi
+### Start the Pi
 
 Plug display and keyboard
 
@@ -98,7 +98,7 @@ $ reboot
 
 ### Install ruuvitag-sensor package
 
-<!-- seems extraenous, but that's up to you
+<!-- seems extraneous, but that's up to you
 leave in as a comment may be of interest later
 In this example we use default installed version of Python 3, which is 3.4.2. 
 Raspbian has also Python 2.7 installed, but it is already 2017, so we will use Python 3. You can check current version with version option. If you want to use Python 2, install also `sudo apt-get install python-dev`. Python developer package is already installed for Python 3
@@ -121,28 +121,31 @@ $ sudo pip3 install --upgrade setuptools
 
 Install ruuvitag-sensor package from the Python Package Index (PyPI) with pip (Python package management system). Because we are using Python 3, install ruuvitag-sensor package with pip3. Add --user to install for current user
 ```sh
-$ sudo pip3 install --user ruuvitag-sensor
+$ python3 -m pip install --user ruuvitag_sensor
 ```
 This library includes a command line utility.
 
 Try displaying the help. 
 ```sh
-$ python3 ~/.local/lib/python3.4/site-packages/ruuvitag_sensor --help
+$ python3 -m ruuvitag_sensor --help
 ```
 Expect
 ```sh
-usage: ruuvitag_sensor [-h] [-g MAC_ADDRESS] [-f] [-l] [-s] [--version]
+usage: __main__.py [-h] [-g MAC_ADDRESS] [-d BT_DEVICE] [-f] [-l] [-s] [--version] [--debug]
 
 optional arguments:
   -h, --help            show this help message and exit
   -g MAC_ADDRESS, --get MAC_ADDRESS
                         Get data
+  -d BT_DEVICE, --device BT_DEVICE
+                        Set Bluetooth device id (default hci0)
   -f, --find            Find broadcasting RuuviTags
   -l, --latest          Get latest data for found RuuviTags
   -s, --stream          Stream broadcasts from all RuuviTags
   --version             show program's version number and exit
+  --debug               Enable debug logging
 ```
- If this fails with a Traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6. then path is ~/.local/lib/python3.6/...
+ If this fails with a traceback, change the path to match Python's minor version, i.e. if you updated Python to version 3.6 then path is `~/.local/lib/python3.6/...`.
 
 Make an alias if you choose
 ```sh

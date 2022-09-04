@@ -9,26 +9,33 @@
 2. Create virtualenv and activate it
 
 ```sh
-$ python3 -m venv venv
-$ source venv/bin/activate
+$ python -m venv .venv
+$ source .venv/bin/activate
 ```
 
 3. Install required dependencies
 ```sh
-$ sudo python3 -m pip install -e .
+$ sudo python -m pip install -e .
 ```
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
 
 4. Test that application works 
 ```sh
-$ sudo python3 ruuvitag_sensor --help
+$ sudo python ruuvitag_sensor --help
 ```
 
 ## Project files
 
-* ble_communication.py
-  * Bluetooth LE communication
+* adapters
+  * nix_hci.py
+    * Bluetooth LE communication (BlueZ)
+  * bleson.py
+    * Bluetooth LE communication (Bleson)
+  * nix_hci_file.py
+    * Emulate Bluetooth LE communication (file)
+  * dummy.py
+    * Emulate Bluetooth LE communication (hard coded values)
 * data_formats.py
   * Data format decision logic and raw data encoding 
 * decoder.py
@@ -37,14 +44,14 @@ $ sudo python3 ruuvitag_sensor --help
   * Module level logging
 * ruuvi_rx.py
   * RuuviTagReactive-class
-    * Reactive wrapper and background process for RuuviTagSensor get_datas
+    * Reactive wrapper and background process for RuuviTagSensor get_data
 * ruuvi.py
   * RuuviTagSensor-class
-    * Main communicaton logic
+    * Main communication logic
     * This is the class mainly used
 * ruuvitag.py
   * RuuviTag Sensors object
-     * Helper class to be used to handle singe RuuviTag and it's state.
+     * Helper class to be used to handle a single RuuviTag and its state.
 
 
 ## Testing
@@ -60,6 +67,8 @@ you have in your system. Travis, however, will pick up all the combinations and 
 1. Select DFU icon and choose firmware's zip package
 1. Choose mode by pressing `B`
 
+Nowadays the firmware can also be updated with the Ruuvi Station app which is available
+for Android and iOS.
 
 ## Bluez commands used by RuuviTag package
 
@@ -70,7 +79,7 @@ $ sudo hciconfig hci0 reset
 
 Scan bluetooth devices:
 ```sh
-$ sudo hcitool lescan --duplicates
+$ sudo hcitool lescan2 --duplicates --passive
 ```
 
 Get broadcasted data:
@@ -92,7 +101,7 @@ List processes containing hci in order to find BLE scanning subprocesses
 $ ps aux | grep hci
 ```
 
-## Example datas from different firmwares and data formats
+## Example data from different firmwares and data formats
 
 Kickstarter FW
 ```python
@@ -126,7 +135,7 @@ Kickstarter FW
 
 2.4.2 RAW v2-mode
 ```python
-{'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5'}
+{'data_format': 5, 'humidity': 44.88, 'temperature': 25.2, 'pressure': 1008.69, 'acceleration': 1034.3616388865164, 'acceleration_x': -64, 'acceleration_y': 28, 'acceleration_z': 1032, 'tx_power': 4, 'battery': 3199, 'movement_counter': 209, 'measurement_sequence_number': 30638, 'mac': 'e62eb92e73e5', 'rssi': -55}
 ```
 
 ## BLE Broadcast data from RuuviTags
@@ -208,12 +217,12 @@ Bytes is converted to a hex string before data format specific handling.
 
 ## Application flow
 
-Get data from Bluetooth device ([BleCommunicationNix.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ble_communication.py#L93))
+Get data from Bluetooth device ([BleCommunicationNix.get_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ble_communication.py#L93))
 ```
-BleCommunicationNix.get_datas
+BleCommunicationNix.get_data
  Start BLE processes
    Reset BLE device (hciconfig hci0 reset)
-   Start scanning (hcitool lescan --duplicates)
+   Start scanning (hcitool lescan2 --duplicates --passive)
    Start hcidump (hcidump --raw)
  While new data from hcidump
    Get data from hcidump
@@ -231,10 +240,10 @@ BleCommunicationNix.get_datas
 
 TODO: Application flow for Bleson
 
-[RuuviTagSensor._get_ruuvitag_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L117)
+[RuuviTagSensor._get_ruuvitag_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L117)
 ```
-RuuviTagSensor._get_ruuvitag_datas
- While data from BleCommunicationNix.get_datas
+RuuviTagSensor._get_ruuvitag_data
+ While data from BleCommunicationNix.get_data
    If timeout
      Break
    If runflag set to stopped
@@ -252,45 +261,40 @@ RuuviTagSensor._get_ruuvitag_datas
      Blacklist Mac   
 ```
 
-[RuuviTagSensor.get_datas](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
+[RuuviTagSensor.get_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
 
 ```
-RuuviTagSensor._get_ruuvitag_datas
- While data from RuuviTagSensor._get_ruuvitag_datas
+RuuviTagSensor._get_ruuvitag_data
+ While data from RuuviTagSensor._get_ruuvitag_data
    Execute callback with data
 ```
 
 ## Executing Unit Tests
 
-Run with nosetests
+Run with pytest:
 
 ```sh
-$ pip install nose
-$ nosetests
+$ python -m pip install pytest
+$ pytest
 ```
 
-Run with setup
+
+Execute single test:
 
 ```sh
-$ python setup.py test
-```
-
-Execute single test: `nosetests <file>:<Test_Case>.<test_method>`
-
-```sh
-$ nosetests test_ruuvitag_sensor:TestRuuviTagSensor.test_convert_data_valid_df3
+$ pytest tests/test_ruuvitag_sensor.py -k 'test_tag_update_is_valid'
 ```
 
 Show print statements on console:
 ```sh
-$ nosetest --nocapture
+$ pytest --show-capture
 ```
 
 Or use e.g. VS Code to execute and debug tests.
 
 ## Exeuting Verification Test
 
-Verification test sciprt executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
+Verification test script executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
 
 ```sh
 $ chmod +x verification.sh
@@ -318,9 +322,9 @@ ruuvitag_sensor.log.enable_console()
 macs = []
 
 while True:
-   datas = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
+   data = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
    print(datetime.utcnow().isoformat())
-   print(datas)
+   print(data)
 ```
 
 Create new connections with 1 minute interval
@@ -328,13 +332,13 @@ Create new connections with 1 minute interval
 ```python
 # Use sleep from time to pause the execution
 import time
-# Add after print(datas)
+# Add after print(data)
 time.sleep(60)
 ```
 
 Normal scanning function is good for running normal long duration tests without abusing BLE scanning process as it will just initialize the connection once in the beginning
 ```sh
-$ sudo python3 ruuvitag_sensor -s
+$ sudo python ruuvitag_sensor -s
 ```
 
 ## Randomly create bad BLE broadcast data
@@ -344,7 +348,7 @@ Add to `ble_communication.py`:
 import random
 ```
 
-Replace from `BleCommunicationNix get_datas`-method
+Replace from `BleCommunicationNix get_data`-method
 ```python
 data = line[26:]
 # with this line
@@ -371,4 +375,38 @@ Set scan parameters failed: Input/output error
 Fix:
 ```sh
 $ hciconfig hci0 reset
+```
+
+## Release a new version
+
+### Build release
+
+https://packaging.python.org/en/latest/tutorials/packaging-projects/#generating-distribution-archives
+
+```sh
+$ python -m build
+```
+
+### Test in testpypi
+
+Upload to test pypi to verify that descriptions etc. are correct
+
+https://test.pypi.org/project/ruuvitag-sensor/
+
+https://twine.readthedocs.io/en/stable/#using-twine
+```sh
+$ twine upload -r testpypi dist/*
+```
+
+### Release a new version
+
+1. Update version and push to master ([example](https://github.com/ttu/ruuvitag-sensor/commit/a141e73952949a37bdcfd5e2902968135ed48146)). 
+2. Update Tags
+```sh
+$ git tag x.x.x
+$ git push origin --tags
+```
+3. Upload new version to pypi
+```
+$ twine upload dist/*
 ```

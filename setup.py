@@ -24,21 +24,16 @@ setup(name='ruuvitag_sensor',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3'
       ],
       keywords='RuuviTag BLE',
+      setup_requires=['wheel'],
       install_requires=[
-          'rx<3',
-          'futures;python_version<"3.3"',
-          'ptyprocess;platform_system=="Linux"'
+          'reactivex',
+          'ptyprocess;platform_system=="Linux"',
+          'mypy-extensions;python_version<"3.8"'
       ],
       license='MIT',
       packages=['ruuvitag_sensor', 'ruuvitag_sensor.adapters'],
       include_package_data=True,
-      tests_require=[
-          'nose',
-          'mock'
-      ],
-      test_suite='nose.collector',
       zip_safe=True)

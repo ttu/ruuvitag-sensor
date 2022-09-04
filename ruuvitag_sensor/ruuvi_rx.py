@@ -2,12 +2,15 @@ import time
 from threading import Thread
 from datetime import datetime
 from multiprocessing import Manager
+from multiprocessing.managers import DictProxy
+from multiprocessing.queues import Queue
 from concurrent.futures import ProcessPoolExecutor
-from rx.subjects import Subject
+from typing import List
+from reactivex import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
 
 
-def _run_get_data_background(macs, queue, shared_data, bt_device):
+def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
     """
     Background process function for RuuviTag Sensors
     """
@@ -21,19 +24,19 @@ def _run_get_data_background(macs, queue, shared_data, bt_device):
         data[1]['time'] = datetime.utcnow().isoformat()
         queue.put(data)
 
-    RuuviTagSensor.get_datas(add_data, macs, run_flag, bt_device)
+    RuuviTagSensor.get_data(add_data, macs, run_flag, bt_device)
 
 
 class RuuviTagReactive(object):
     """
     Reactive wrapper and background process for RuuviTagSensor
-    get_datas
+    get_data
     """
 
     @staticmethod
-    def _data_update(subjects, queue, run_flag):
+    def _data_update(subjects: List[Subject], queue: Queue, run_flag: RunFlag):
         """
-        Get data from backgound process and notify all subscribed observers
+        Get data from background process and notify all subscribed observers
         with the new data
         """
         while run_flag.running:
@@ -43,9 +46,9 @@ class RuuviTagReactive(object):
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs=[], bt_device=''):
+    def __init__(self, macs: List[str] = [], bt_device: str = ''):
         """
-        Start background process for get_datas and async task for notifying
+        Start background process for get_data and async task for notifying
         all subscribed observers
 
         Args:
@@ -75,7 +78,7 @@ class RuuviTagReactive(object):
             _run_get_data_background,
             macs, q, self._shared_data, bt_device)
 
-    def get_subject(self):
+    def get_subject(self) -> Subject:
         """
         Returns:
             subject : Reactive Extension Subject
@@ -90,7 +93,7 @@ class RuuviTagReactive(object):
 
     def stop(self):
         """
-        Stop get_datas
+        Stop get_data
         """
 
         self._run_flag.running = False

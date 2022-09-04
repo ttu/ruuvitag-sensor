@@ -3,10 +3,13 @@ import os
 import subprocess
 import sys
 import time
+from typing import Iterator, List, Tuple
 
 from ruuvitag_sensor.adapters import BleCommunication
 
 log = logging.getLogger(__name__)
+
+# pylint: disable=duplicate-code
 
 
 class BleCommunicationNix(BleCommunication):
@@ -20,20 +23,23 @@ class BleCommunicationNix(BleCommunication):
         """
         # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
-        import ptyprocess
+        import ptyprocess  # pylint: disable=import-outside-toplevel
 
         if not bt_device:
             bt_device = 'hci0'
 
+        is_root = os.getuid() == 0
+
         log.info('Start receiving broadcasts (device %s)', bt_device)
-        DEVNULL = subprocess.DEVNULL if sys.version_info >= (3, 3) else open(os.devnull, 'wb')
+        DEVNULL = subprocess.DEVNULL
 
         def reset_ble_adapter():
-            log.info("FYI: Calling a process with sudo: hciconfig %s reset", bt_device)
-            return subprocess.call(
-                'sudo hciconfig %s reset' % bt_device,
-                shell=True,
-                stdout=DEVNULL)
+            cmd = f'hciconfig {bt_device} reset'
+            log.info('FYI: Calling a process%s: %s',
+                     '' if is_root else ' with sudo', cmd)
+
+            cmd = f'sudo {cmd}' if not is_root else cmd
+            return subprocess.call(cmd, shell=True, stdout=DEVNULL)
 
         def start_with_retry(func, try_count, interval, msg):
             retcode = func()
@@ -51,14 +57,24 @@ class BleCommunicationNix(BleCommunication):
 
         if retcode != 0:
             log.info('Problem with hciconfig reset. Exit.')
-            exit(1)
+            sys.exit(1)
 
-        log.info("FYI: Spawning process with sudo: hcitool -i %s lescan2 --duplicates", bt_device)
-        hcitool = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcitool', '-i', bt_device, 'lescan2', '--duplicates'])
-        log.info("FYI: Spawning process with sudo: hcidump -i %s --raw", bt_device)
-        hcidump = ptyprocess.PtyProcess.spawn(
-            ['sudo', '-n', 'hcidump', '-i', bt_device, '--raw'])
+        cmd = ['hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive']
+        log.info('FYI: Spawning process%s: %s',
+                 '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
+
+        if not is_root:
+            cmd.insert(0, "sudo")
+        hcitool = ptyprocess.PtyProcess.spawn(cmd)
+
+        cmd = ['hcidump', '-i', bt_device, '--raw']
+        log.info('FYI: Spawning process%s: %s',
+                 '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
+
+        if not is_root:
+            cmd.insert(0, 'sudo')
+        hcidump = ptyprocess.PtyProcess.spawn(cmd)
+
         return (hcitool, hcidump)
 
     @staticmethod
@@ -75,12 +91,12 @@ class BleCommunicationNix(BleCommunication):
                 line = hcidump.readline().decode()
                 if line == '':
                     # EOF reached
-                    raise Exception("EOF received from hcidump")
+                    raise Exception('EOF received from hcidump')
 
                 line = line.strip()
-                log.debug("Read line from hcidump: %s", line)
+                log.debug('Read line from hcidump: %s', line)
                 if line.startswith('> '):
-                    log.debug("Yielding %s", data)
+                    log.debug('Yielding %s', data)
                     yield data
                     data = line[2:].replace(' ', '')
                 elif line.startswith('< '):
@@ -94,37 +110,37 @@ class BleCommunicationNix(BleCommunication):
             log.info(ex)
             return
 
-    def get_datas(self, blacklist=[], bt_device=''):
-        procs = self.start(bt_device)
-
+    @staticmethod
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
+        procs = BleCommunicationNix.start(bt_device)
         data = None
-        for line in self.get_lines(procs[1]):
-            log.debug("Parsing line %s", line)
+        for line in BleCommunicationNix.get_lines(procs[1]):
+            log.debug('Parsing line %s', line)
             try:
                 # Make sure we're in upper case
                 line = line.upper()
                 # We're interested in LE meta events, sent by Ruuvitags.
                 # Those start with "043E", followed by a length byte.
 
-                if not line.startswith("043E"):
-                    log.debug("Not a LE meta packet")
+                if not line.startswith('043E'):
+                    log.debug('Not a LE meta packet')
                     continue
 
                 # The third byte is the parameter length, this should cover
-                # the lenght of the entire packet, minus the first three bytes.
-                # Note that the data is in hex format, so uses two chars per
+                # the length of the entire packet, minus the first three bytes.
+                # Note that the data is in hex format, so use two chars per
                 # byte
                 plen = int(line[4:6], 16)
                 if plen != (len(line) / 2) - 3:
-                    log.debug("Invalid parameter length")
+                    log.debug('Invalid parameter length')
                     continue
 
                 # The following two bytes should be "0201", indicating
                 # 02  LE Advertising report
                 # 01  1 report
 
-                if line[6:10] != "0201":
-                    log.debug("Not a Ruuvi advertisement")
+                if line[6:10] != '0201':
+                    log.debug('Not a Ruuvi advertisement')
                     continue
 
                 # The next four bytes indicate whether the endpoint is
@@ -143,23 +159,24 @@ class BleCommunicationNix(BleCommunication):
                     log.debug('MAC blacklisted: %s', mac)
                     continue
                 data = line[26:]
-                log.debug("MAC: %s, data: %s", mac, data)
+                log.debug('MAC: %s, data: %s', mac, data)
                 yield (mac, data)
             except GeneratorExit:
                 break
-            except:
+            except Exception:
                 continue
 
-        self.stop(procs[0], procs[1])
+        BleCommunicationNix.stop(procs[0], procs[1])
 
-    def get_data(self, mac, bt_device=''):
+    @staticmethod
+    def get_first_data(mac: str, bt_device: str = '') -> str:
         data = None
-        data_iter = self.get_datas([], bt_device)
-        for data in data_iter:
-            if mac == data[0]:
+        data_iter = BleCommunicationNix.get_data([], bt_device)
+        for d in data_iter:
+            if mac == d[0]:
                 log.info('Data found')
                 data_iter.send(StopIteration)
-                data = data[1]
+                data = d[1]
                 break
 
         return data

@@ -4,13 +4,14 @@ import base64
 import math
 import logging
 import struct
+from typing import Optional, Tuple, Union
+
+from ruuvitag_sensor.ruuvi_types import SensorData3, SensorData5, SensorDataUrl
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=no-self-use
 
-
-def get_decoder(data_type):
+def get_decoder(data_type: int):
     """
     Get correct decoder for Data Type.
 
@@ -18,21 +19,21 @@ def get_decoder(data_type):
         object: Data decoder
     """
     if data_type == 2:
-        log.warning("DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG")
+        log.warning('DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 4:
-        log.warning("DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG")
+        log.warning('DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 3:
-        log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
+        log.warning('DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG')
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
     return Df5Decoder()
 
 
-def parse_mac(data_format, payload_mac):
+def parse_mac(data_format : int, payload_mac: str) -> str:
     """
     Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
 
@@ -59,10 +60,10 @@ class UrlDecoder(object):
     4-5: uint16_t    pressure;        // (-50kPa)
     6-7: uint16_t    time;            // seconds (now from reset)
 
-    The bytes for temperature, pressure and time are swaped during the encoding
+    The bytes for temperature, pressure and time are swapped during the encoding
     """
 
-    def _get_temperature(self, decoded):
+    def _get_temperature(self, decoded: bytearray) -> float:
         """Return temperature in celsius"""
         temp = (decoded[2] & 127) + decoded[3] / 100
         sign = (decoded[2] >> 7) & 1
@@ -70,16 +71,16 @@ class UrlDecoder(object):
             return round(temp, 2)
         return round(-1 * temp, 2)
 
-    def _get_humidity(self, decoded):
+    def _get_humidity(self, decoded: bytearray) -> float:
         """Return humidity %"""
         return decoded[1] * 0.5
 
-    def _get_pressure(self, decoded):
+    def _get_pressure(self, decoded: bytearray) -> float:
         """Return air pressure hPa"""
-        pres = ((decoded[4] << 8) + decoded[5]) + 50000
-        return pres / 100
+        pressure = ((decoded[4] << 8) + decoded[5]) + 50000
+        return pressure / 100
 
-    def decode_data(self, encoded):
+    def decode_data(self, encoded) -> Optional[SensorDataUrl]:
         """
         Decode sensor data.
 
@@ -101,7 +102,7 @@ class UrlDecoder(object):
                 'pressure': self._get_pressure(decoded),
                 'identifier': identifier
             }
-        except:
+        except Exception:
             log.exception('Encoded value: %s not valid', encoded)
             return None
 
@@ -113,7 +114,7 @@ class Df3Decoder(object):
     https://github.com/ruuvi/ruuvi-sensor-protocols
     """
 
-    def _get_temperature(self, data):
+    def _get_temperature(self, data: Tuple[int,...]) -> float:
         """Return temperature in celsius"""
 
         # The temperature is in two fields, one for the integer part,
@@ -128,26 +129,26 @@ class Df3Decoder(object):
         frac = data[3] / 100
         if data[2] < 0:
             return -(data[2] + 128 + frac)
-        else:
-            return data[2] + frac
 
-    def _get_humidity(self, data):
+        return data[2] + frac
+
+    def _get_humidity(self, data: Tuple[int,...]) -> float:
         """Return humidity %"""
         return data[1] * 0.5
 
-    def _get_pressure(self, data):
+    def _get_pressure(self, data: Tuple[int,...]) -> float:
         """Return air pressure hPa"""
         return (data[4] + 50000) / 100
 
-    def _get_acceleration(self, data):
+    def _get_acceleration(self, data: Tuple[int,...]) -> Tuple[int, int, int]:
         """Return acceleration mG"""
         return data[5:8]
 
-    def _get_battery(self, data):
+    def _get_battery(self, data: Tuple[int,...]) -> int:
         """Return battery mV"""
         return data[8]
 
-    def decode_data(self, data):
+    def decode_data(self, data: str) -> Optional[SensorData3]:
         """
         Decode sensor data.
 
@@ -155,7 +156,7 @@ class Df3Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
+            byte_data: Tuple[int,...] = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 3,
@@ -181,42 +182,42 @@ class Df5Decoder(object):
     https://github.com/ruuvi/ruuvi-sensor-protocols
     """
 
-    def _get_temperature(self, data):
+    def _get_temperature(self, data: Tuple[int, ...]) -> Optional[float]:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
 
         return round(data[1] / 200, 2)
 
-    def _get_humidity(self, data):
+    def _get_humidity(self, data: Tuple[int, ...]) -> Optional[float]:
         """Return humidity %"""
         if data[2] == 65535:
             return None
 
         return round(data[2] / 400, 2)
 
-    def _get_pressure(self, data):
+    def _get_pressure(self, data: Tuple[int, ...]) -> Optional[float]:
         """Return air pressure hPa"""
         if data[3] == 0xFFFF:
             return None
 
         return round((data[3] + 50000) / 100, 2)
 
-    def _get_acceleration(self, data):
+    def _get_acceleration(self, data: Tuple[int, ...]) -> Union[Tuple[None,None,None], Tuple[int,int,int]]:
         """Return acceleration mG"""
         if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
             return (None, None, None)
 
         return data[4:7]
 
-    def _get_powerinfo(self, data):
+    def _get_powerinfo(self, data: Tuple[int, ...]) -> int:
         """Return battery voltage and tx power"""
         battery_voltage = data[7] >> 5
         tx_power = data[7] & 0x001F
 
         return (battery_voltage, tx_power)
 
-    def _get_battery(self, data):
+    def _get_battery(self, data: Tuple[int, ...]) -> int:
         """Return battery mV"""
         battery_voltage = self._get_powerinfo(data)[0]
         if battery_voltage == 0b11111111111:
@@ -224,7 +225,7 @@ class Df5Decoder(object):
 
         return battery_voltage + 1600
 
-    def _get_txpower(self, data):
+    def _get_txpower(self, data: Tuple[int, ...]) -> int:
         """Return transmit power"""
         tx_power = self._get_powerinfo(data)[1]
         if tx_power == 0b11111:
@@ -232,16 +233,23 @@ class Df5Decoder(object):
 
         return -40 + (tx_power * 2)
 
-    def _get_movementcounter(self, data):
+    def _get_movementcounter(self, data: Tuple[int, ...]) -> int:
         return data[8]
 
-    def _get_measurementsequencenumber(self, data):
+    def _get_measurementsequencenumber(self, data: Tuple[int, ...]) -> int:
         return data[9]
 
-    def _get_mac(self, data):
-        return ''.join('{:02x}'.format(x) for x in data[10:])
+    def _get_mac(self, data: Tuple[int, ...]):
+        return ''.join(f'{x:02x}' for x in data[10:])
 
-    def decode_data(self, data):
+    def _get_rssi(self, rssi_byte: str) -> int:
+        """Return RSSI value in dBm."""
+        rssi = int(rssi_byte, 16)
+        if rssi > 127:
+            rssi = (256 - rssi) * -1
+        return rssi
+
+    def decode_data(self, data: str) -> Optional[SensorData5]:
         """
         Decode sensor data.
 
@@ -249,7 +257,8 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+            byte_data: Tuple[int, ...] = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+            rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
@@ -265,7 +274,8 @@ class Df5Decoder(object):
                 'battery': self._get_battery(byte_data),
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data)
+                'mac': self._get_mac(byte_data),
+                'rssi': self._get_rssi(rssi) if rssi else None
             }
         except Exception:
             log.exception('Value: %s not valid', data)

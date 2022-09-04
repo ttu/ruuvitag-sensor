@@ -1,21 +1,43 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Add RSSI reporting
+* ADD: (Beta) Bleak cross-platform BLE adapter with async get_data_async and find_ruuvitags_async methods
+
+## [2.0.0] - 2022-08-03
+* CHANGE: Support only Python 3.7 and above
+* CHANGE: RuuviTagSensor get_datas-method renamed to get_data
+* CHANGE: RuuviTagSensor get_data-method renamed to get_first_raw_data
+* CHANGE: Updated RxPy to v4
+* CHANGE: Switch unit test framework from nose to pytest
+
+## [1.2.1] - 2022-05-23
+* FIX: Handle too shot BLE data from RuuviTag as valida data
+* CHANGE: Add wheel to setup requirements
+* FIX: BlueZ - Do not use sudo if sudo not available or if already superuser
+* CHANGE: BlueZ - Use passive mode when scanning for Bluetooth devices
+
+## [1.2.0] - 2021-04-29
+* FIX: Bleson return correct data if get_data returns before desired mac is seen
+* ADD: Enable debug logging from CLI
+* CHANGE: Use struct to decode data instead of manual bitshift and rework parsing
+* FIX: RuuviTag 3.x support
+* ADD: Test adapter for emulating HCI communication from a file
 
 ## [1.1.0] - 2020-04-25
-* Add Bleson BLE adapter
-* Use MAC from payload for white/blacklist if MAC not in advertised data
-* Fix DEVNULL initialization when using Python 2
+* ADD: Bleson BLE adapter
+* CHANGE: Use MAC from payload for white/blacklist if MAC not in advertised data
+* FIX: DEVNULL initialization when using Python 2
 
 ## [1.0.1] - 2020-03-21
-* Fix missing module from released package
+* FIX: Missing module from released package
 
 ## [1.0.0] - 2020-03-21
-* Fix usage of bt_device parameter when opening the BLE connection
-* Refactor adapters into own modules
-* Fix blacklisting of non Ruuvitag devices
-* Pin rx version to 1.x for Python 2 support
-* Fix RuuviTag-object
+* FIX: Usage of bt_device parameter when opening the BLE connection
+* CHANGE: Refactor adapters into own modules
+* FIX: Blacklisting of non Ruuvitag devices
+* FIX: Pin rx version to 1.x for Python 2 support
+* FIX: RuuviTag-object
 
 ## [0.13.0] - 2019-07-01
 * Fix hcitool subprocess closing

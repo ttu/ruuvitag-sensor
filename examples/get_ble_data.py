@@ -9,5 +9,5 @@ ruuvitag_sensor.log.enable_console()
 
 ble = BleCommunicationNix()
 
-for ble_data in ble.get_datas():
+for ble_data in ble.get_data():
     print(ble_data)

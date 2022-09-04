@@ -1,7 +1,5 @@
 """
-Verification script for RuuviTags
-
-Run the script with Python 3.x and 2.7. Requires at least one active RuuviTag.
+Verification script for RuuviTags. Requires at least one active RuuviTag.
 """
 
 import time
@@ -33,7 +31,7 @@ def wait_for_finish(run_flag, name):
         time.sleep(0.1)
         max_time -= 0.1
         if max_time < 0:
-            raise Exception('%s not finished' % name)
+            raise Exception(f'{name} not finished')
 
 
 #
@@ -47,8 +45,8 @@ print(data)
 
 if not data['temperature']:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -62,8 +60,8 @@ print(data)
 
 if not data['temperature']:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -71,13 +69,13 @@ else:
 #
 print_header('RuuviTagSensor.get_data_for_sensors')
 
-datas = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
-print(datas)
+data = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
+print(data)
 
-if not datas:
+if not data:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -85,13 +83,13 @@ else:
 #
 print_header('RuuviTagSensor.get_data_for_sensors with macs')
 
-datas = RuuviTagSensor.get_data_for_sensors(list(datas.keys())[0], search_duratio_sec=15)
-print(datas)
+data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duratio_sec=15)
+print(data)
 
-if not datas:
+if not data:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
@@ -99,20 +97,20 @@ else:
 #
 print_header('RuuviTag.update')
 
-tag = RuuviTag(list(datas.keys())[0])
+tag = RuuviTag(list(data.keys())[0])
 tag.update()
 print(tag.state)
 
 if not tag.state:
     raise Exception('FAILED')
-else:
-    print('OK')
+
+print('OK')
 
 
 #
-# RuuviTagSensor.get_datas
+# RuuviTagSensor.get_data
 #
-print_header('RuuviTagSensor.get_datas')
+print_header('RuuviTagSensor.get_data')
 
 flag = RunFlag()
 
@@ -121,12 +119,13 @@ def handle_data(found_data):
     flag.running = False
     if not found_data:
         raise Exception('FAILED')
-    else:
-        print('OK')
 
-RuuviTagSensor.get_datas(handle_data, run_flag=flag)
+    print('OK')
 
-wait_for_finish(flag, 'RuuviTagSensor.get_datas')
+
+RuuviTagSensor.get_data(handle_data, run_flag=flag)
+
+wait_for_finish(flag, 'RuuviTagSensor.get_data')
 
 
 #
@@ -142,12 +141,14 @@ def hadle_rx(found_data):
     ruuvi_rx.stop()
     if not found_data:
         raise Exception('FAILED')
-    else:
-        print('OK')
+
+    print('OK')
+
 
 ruuvi_rx.get_subject().\
     subscribe(hadle_rx)
 
+# pylint: disable=protected-access
 wait_for_finish(ruuvi_rx._run_flag, 'ruuvi_rx.subscribe')
 
 

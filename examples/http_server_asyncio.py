@@ -11,14 +11,18 @@ Requires:
     aiohttp - pip install aiohttp
 """
 
-from datetime import datetime
+# pylint: disable=duplicate-code
+
 import asyncio
-from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime
+from multiprocessing import Manager
+
 from aiohttp import web
+
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-allData = {}
+all_data = {}
 
 
 def run_get_data_background(macs, queue):
@@ -30,35 +34,36 @@ def run_get_data_background(macs, queue):
         data[1]['time'] = str(datetime.now())
         queue.put(data)
 
-    RuuviTagSensor.get_datas(callback, macs)
+    RuuviTagSensor.get_data(callback, macs)
 
 
 async def data_update(queue):
     """
-    Update data sent by the background process to global allData variable
+    Update data sent by the background process to global all_data variable
     """
-    global allData
+    global all_data  # pylint: disable=global-variable-not-assigned
     while True:
         while not queue.empty():
             data = queue.get()
-            allData[data[0]] = data[1]
+            all_data[data[0]] = data[1]
         for key, value in tags.items():
-            if key in allData:
-                allData[key]['name'] = value
+            if key in all_data:
+                all_data[key]['name'] = value
         await asyncio.sleep(0.5)
 
 
-async def get_all_data(request):
-    return web.json_response(allData)
+async def get_all_data(_):
+    return web.json_response(all_data)
 
 
 async def get_data(request):
     mac = request.match_info.get('mac')
-    if mac not in allData:
+    if mac not in all_data:
         return web.json_response(status=404)
-    return web.json_response(allData[mac])
+    return web.json_response(all_data[mac])
 
 
+# pylint: disable=redefined-outer-name
 def setup_routes(app):
     app.router.add_get('/data', get_all_data)
     app.router.add_get('/data/{mac}', get_data)

@@ -1,26 +1,31 @@
 import logging
+from typing import Optional, Tuple
 
 log = logging.getLogger(__name__)
 
 
-def _dechunk(raw):
+class ShortDataError(Exception):
+    pass
+
+
+def _dechunk(raw: str) -> Tuple[str,str]:
     """
     Given a BLE advertisement in hex format, interpret the first
     byte as a length byte, return the data indicated by the length
     byte, and the remainder of the data in a tuple.
 
-    The lenght byte itself is not included in the length.
+    The length byte itself is not included in the length.
 
     If the length indicated is longer than the data, raise a ValueError
     """
     if len(raw) < 2:
-        raise ValueError("Data too short")
+        raise ShortDataError('Data too short')
 
     dlen = int(raw[:2], 16)
     if (dlen + 1) * 2 > len(raw):
-        raise ValueError("Cannot read %d bytes, data too short: %s" % (dlen, raw))
+        raise ShortDataError(f'Cannot read {dlen} bytes, data too short: {raw}')
 
-    return raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:]
+    return (raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:])
 
 
 class DataFormats(object):
@@ -28,8 +33,9 @@ class DataFormats(object):
     RuuviTag broadcasted raw data handling for each data format
     """
 
+    # pylint: disable=too-many-return-statements
     @staticmethod
-    def convert_data(raw):
+    def convert_data(raw: str) -> Tuple[Optional[int],Optional[str]]:
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -42,13 +48,13 @@ class DataFormats(object):
         Returns:
             tuple (int, string): Data Format type and Sensor data
         """
-        log.debug("Parsing advertisement data: %s", raw)
+        log.debug('Parsing advertisement data: %s', raw)
 
         try:
             # The data starts with a length byte, covering the data
             # length, minus the length byte itself. There might be additional
-            # data at the end (an RSSI value) which we're ignoring
-            data, _ = _dechunk(raw)
+            # data at the end: the RSSI value
+            data, rssi = _dechunk(raw)
 
             # The remaining data is a list of length:type:data chunks.
             # We look for a chunk with vendor specific data (type 0xff),
@@ -62,32 +68,38 @@ class DataFormats(object):
                 cdata, data = _dechunk(data)
 
                 ctype = cdata[:2]
-                log.debug("Found chunk of type %s: %s", ctype, cdata)
+                log.debug('Found chunk of type %s: %s', ctype, cdata)
 
-                # See if we found a potential candidate. Break
-                # the loop
+                # See if we found a potential candidate. Break the loop
                 if ctype in ('FF', '16', '09'):
                     candidate = cdata
                     break
+        except ShortDataError as ex:
+            # Data might be from RuuviTag, but received data was invalid
+            # e.g. it's possile that bluetooth stack received only partial data
+            # Set the format to None, and data to '', this allows the
+            # caller to determine that we did indeed see a Ruuvitag.
+            log.debug('Error parsing advertisement data: %s', ex)
+            return (None, '')
         except Exception:
-            log.exception("Invalid advertisement data: %s", raw)
+            log.exception('Invalid advertisement data: %s', raw)
             return (None, None)
 
         if candidate is None:
-            log.debug("No candidate found")
+            log.debug('No candidate found')
             return (None, None)
 
-        log.debug("Found candidate %s", candidate)
+        log.debug('Found candidate %s', candidate)
 
         # Ruuvi advertisements start with FF9904 (for format 3 and 5),
         # or 16AAFE (for format 2 and 4).
-        if candidate.startswith("FF990403"):
+        if candidate.startswith('FF990403'):
             return (3, candidate[6:])
 
-        elif candidate.startswith("FF990405"):
-            return (5, candidate[6:])
+        if candidate.startswith('FF990405'):
+            return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
 
-        elif candidate.startswith("16AAFE"):
+        if candidate.startswith('16AAFE'):
             # TODO: Check from raw data correct data format
             # Now this returns 2 also for Data Format 4
             data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
@@ -95,10 +107,8 @@ class DataFormats(object):
             if data is not None:
                 return (2, data)
 
-        elif candidate.startswith("095275757669"):
-            # This is a Ruuvitag, but this advertisement does not
-            # contain any data.
-            #
+        elif candidate.startswith('095275757669'):
+            # This is a Ruuvitag, but this advertisement does not contain any data.
             # Set the format to None, and data to '', this allows the
             # caller to determine that we did indeed see a Ruuvitag.
             return (None, '')
@@ -106,11 +116,11 @@ class DataFormats(object):
         return (None, None)
 
     @staticmethod
-    def _parse_raw(raw, data_format):  # pylint: disable=unused-argument
+    def _parse_raw(raw: str, data_format: int) -> str:  # pylint: disable=unused-argument
         return raw
 
     @staticmethod
-    def _get_data_format_2and4(raw):
+    def _get_data_format_2and4(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 2 or 4.
         Convert hexadcimal data to string.
@@ -131,11 +141,11 @@ class DataFormats(object):
                 return data[(index + 8):]
 
             return None
-        except:
+        except Exception:
             return None
 
     @staticmethod
-    def _get_data_format_3(raw):
+    def _get_data_format_3(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 3
 
@@ -150,11 +160,11 @@ class DataFormats(object):
 
             payload_start = raw.index('FF990403') + 6
             return raw[payload_start:]
-        except:
+        except Exception:
             return None
 
     @staticmethod
-    def _get_data_format_5(raw):
+    def _get_data_format_5(raw: str) -> Optional[str]:
         """
         Validate that data is from RuuviTag and is Data Format 5
 
@@ -169,5 +179,5 @@ class DataFormats(object):
 
             payload_start = raw.index('FF990405') + 6
             return raw[payload_start:]
-        except:
+        except Exception:
             return None

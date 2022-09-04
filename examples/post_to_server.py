@@ -20,11 +20,13 @@ timeout_in_sec = 4
 
 url = 'http://localhost:8000/data/'
 
-datas = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+if __name__ == "__main__":
 
-# Use Requests to POST datas in json-format
-# Encode mac as it contains semicolon, which is reserved character
-for key, value in datas.items():
-    # url e.g.: http://localhost:8000/data/F4%3AA5%3A74%3A89%3A16%3A57
-    # json e.g.: {"temperature": 24.0, "humidity": 38.0, "pressure": 1018.0}
-    requests.post(url + quote(key), json=value)
+    data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+
+    # Use Requests to POST data in json-format
+    # Encode mac as it contains semicolon, which is reserved character
+    for key, value in data.items():
+        # url e.g.: http://localhost:8000/data/F4%3AA5%3A74%3A89%3A16%3A57
+        # json e.g.: {"temperature": 24.0, "humidity": 38.0, "pressure": 1018.0}
+        requests.post(url + quote(key), json=value)
