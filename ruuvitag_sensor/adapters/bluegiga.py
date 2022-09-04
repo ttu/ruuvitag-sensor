@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 import time
 from typing import Iterator, List, Tuple
 import pygatt
@@ -9,7 +8,6 @@ import threading
 import os
 
 from multiprocessing import Manager
-from queue import Queue
 
 from ruuvitag_sensor.adapters import BleCommunication
 
@@ -40,8 +38,9 @@ class BleCommunicationBluegiga(BleCommunication):
                     log.debug('Result found for device %s', mac )
                     rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
                     hexa = binascii.hexlify(rawdata).decode("ascii").upper()
-                    log.debug('Data found: %s', hexa)
-                    return hexa
+                    hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
+                    log.debug('Data found: %s', hexa_formatted)
+                    return hexa_formatted
         finally:
             adapter.stop()
 
@@ -114,7 +113,8 @@ class BleCommunicationBluegiga(BleCommunication):
                             rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
                             log.debug('Received manufacturer data from %s: %s', mac, rawdata)
                             hexa = binascii.hexlify(rawdata).decode("ascii").upper()
-                            queue.put((mac, hexa))
+                            hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
+                            queue.put((mac, hexa_formatted))
                         except KeyError:
                             pass
 
@@ -128,3 +128,24 @@ class BleCommunicationBluegiga(BleCommunication):
         finally:
             log.debug('Stop scan')
             adapter.stop()
+
+    @staticmethod
+    def _fix_payload(data: str) -> str:
+        # Adapter returns data in a different format than the nix_hci
+        # adapter. Since the rest of the processing pipeline is
+        # somewhat reliant on the additional data, add to the
+        # beginning of the actual data:
+        #
+        # - An FF type marker
+        # - A length marker, covering the vendor specific data
+        # - Another length marker, covering the length-marked
+        #   vendor data.
+        #
+        # Thus extended, the result can be parsed by the rest of
+        # the pipeline.
+        #
+        # TODO: This is kinda awkward, and should be handled better.
+        data = f'FF{data.hex()}'
+        data = f'{(len(data) >> 1):02x}{data}'
+        data = f'{(len(data) >> 1):02x}{data}'
+        return data
