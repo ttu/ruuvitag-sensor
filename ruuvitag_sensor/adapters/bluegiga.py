@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import time
+from typing import Iterator, List, Tuple
 import pygatt
 import binascii
 import threading
@@ -18,7 +19,7 @@ class BleCommunicationBluegiga(BleCommunication):
     """Bluetooth LE communication for Bluegiga"""
 
     @staticmethod
-    def get_data(mac, bt_device=''):
+    def get_first_data(mac: str, bt_device: str = '') -> str:
         if not bt_device:
             adapter = pygatt.BGAPIBackend()
         else:
@@ -45,7 +46,7 @@ class BleCommunicationBluegiga(BleCommunication):
             adapter.stop()
 
     @staticmethod
-    def get_datas(blacklist=[], bt_device=''):
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
         m = Manager()
         q = m.Queue()
 
