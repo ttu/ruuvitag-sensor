@@ -1,4 +1,7 @@
 import logging
+from multiprocessing import Manager
+from multiprocessing.managers import DictProxy
+from multiprocessing.queues import Queue
 import os
 import time
 from typing import Iterator, List, Tuple
@@ -7,7 +10,7 @@ import binascii
 import threading
 import os
 
-from multiprocessing import Manager
+
 
 from ruuvitag_sensor.adapters import BleCommunication
 
@@ -37,7 +40,7 @@ class BleCommunicationBluegiga(BleCommunication):
                 if mac and mac ==  dev['address']:
                     log.debug('Result found for device %s', mac )
                     rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
-                    hexa = binascii.hexlify(rawdata).decode("ascii").upper()
+                    hexa = binascii.hexlify(rawdata).decode('ascii').upper()
                     hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
                     log.debug('Data found: %s', hexa_formatted)
                     return hexa_formatted
@@ -84,7 +87,7 @@ class BleCommunicationBluegiga(BleCommunication):
         return
 
     @staticmethod
-    def _run_get_data_background(queue, shared_data, bt_device):
+    def _run_get_data_background(queue: Queue, shared_data: DictProxy, bt_device: str):
         """
         Attributes:
            device (string): BLE device (default auto)
@@ -112,7 +115,7 @@ class BleCommunicationBluegiga(BleCommunication):
                         try:
                             rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
                             log.debug('Received manufacturer data from %s: %s', mac, rawdata)
-                            hexa = binascii.hexlify(rawdata).decode("ascii").upper()
+                            hexa = binascii.hexlify(rawdata).decode('ascii').upper()
                             hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
                             queue.put((mac, hexa_formatted))
                         except KeyError:
