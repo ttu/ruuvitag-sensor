@@ -45,4 +45,4 @@ testpaths = "tests/"
 [tool.flake8]
 exclude = ".venv, .git, .eggs, __pycache__, build, dist"
 max-line-length = 100
-ignore = "E501"
+ignore = "E402, E501"
