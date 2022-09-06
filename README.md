@@ -105,13 +105,14 @@ __NOTE:__ Asynchronous functionality is currently in beta-state and works only w
 import asyncio
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
+
 async def main():
     async for found_data in RuuviTagSensor.get_data_async():
         print(f'MAC: {found_data[0]}')
         print(f'Data: {found_data[1]}')
 
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 The optional list of MACs and run flag can be passed to the `get_data_async` function.
@@ -377,12 +378,16 @@ $ export RUUVI_BLE_ADAPTER="Bleak"
 Bleak supports only async methods.
 
 ```py
+import asyncio
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+
 async def main():
     async for data in RuuviTagSensor.get_data_async():
         print(data)
 
 if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.

@@ -129,9 +129,12 @@ class RuuviTagSensor(object):
         async for new_data in data_iter:
             if new_data[0] in data:
                 continue
-            data[new_data[0]] = new_data[1]
-            log.info(new_data[0])
-            log.info(new_data[1])
+
+            parsed_data = RuuviTagSensor._parse_data(new_data, mac_blacklist)
+            if parsed_data:
+                data[new_data[0]] = parsed_data
+                log.info(new_data[0])
+                log.info(parsed_data)
 
         return data
 
