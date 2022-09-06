@@ -21,7 +21,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # pylint: disable=line-too-long,no-self-use,unused-argument
 
-@pytest.mark.skip(reason="Doesn't work with CI")
+# @pytest.mark.skip(reason="Doesn't work with CI")
 class TestRuuviTagSensorAsync:
 
     async def _get_data(self, blacklist=[], bt_device='') -> Tuple[str, str]:

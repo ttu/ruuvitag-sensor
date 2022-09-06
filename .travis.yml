@@ -13,4 +13,6 @@ script: tox
 env:
   - CI=true
 before_install:
+  - sudo apt-get -y install bluez
+  - pip install -U bleak
   - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pip install -U importlib_metadata; fi
