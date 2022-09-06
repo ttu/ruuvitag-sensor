@@ -11,7 +11,8 @@ Setting env variables for CI or READTHEDOCS didn't work with Travis
 
 .tox/py37-basic_linux/lib/python3.7/site-packages/bleak/__init__.py:41: in <module>
     if not _on_ci and not check_bluez_version(5, 43):
-.tox/py37-basic_linux/lib/python3.7/site-packages/bleak/backends/bluezdbus/__init__.py:17: in check_bluez_version
+.tox/py37-basic_linux/lib/python3.7/site-packages/bleak/backends/bluezdbus/__init__.py:17: \
+ in check_bluez_version
     p = subprocess.Popen(["bluetoothctl", "--version"], stdout=subprocess.PIPE)
 
 FileNotFoundError: [Errno 2] No such file or directory: 'bluetoothctl': 'bluetoothctl'
@@ -19,7 +20,8 @@ FileNotFoundError: [Errno 2] No such file or directory: 'bluetoothctl': 'bluetoo
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-# pylint: disable=line-too-long,no-self-use,unused-argument
+# pylint: disable=line-too-long,unused-argument
+
 
 @pytest.mark.skip(reason="Doesn't work with CI")
 class TestRuuviTagSensorAsync:

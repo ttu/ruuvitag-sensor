@@ -104,7 +104,7 @@ while True:
             'location': state['location'],
             'temperature': round(state['temperature'], 1),
             'humidity': round(state['humidity'], 1)
-            }
+        }
         mqtt_msg = json.dumps(for_json)
 
     publish.single(mqtt_topic, mqtt_msg, hostname=mqtt_broker)

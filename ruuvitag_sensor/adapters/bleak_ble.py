@@ -61,7 +61,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
             if mac and mac in blacklist:
-                log.debug(f'MAC blacklised: {mac}')
+                log.debug('MAC blacklised: %s', mac)
                 return
 
             # TODO: Do all RuuviTags have data in 1177?

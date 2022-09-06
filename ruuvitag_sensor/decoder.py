@@ -33,7 +33,7 @@ def get_decoder(data_type: int):
     return Df5Decoder()
 
 
-def parse_mac(data_format : int, payload_mac: str) -> str:
+def parse_mac(data_format: int, payload_mac: str) -> str:
     """
     Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
 
@@ -41,7 +41,7 @@ def parse_mac(data_format : int, payload_mac: str) -> str:
         string: MAC separated and in upper case e.g. E6:2E:B9:2E:73:E5
     """
     if data_format == 5:
-        return ':'.join(payload_mac[i:i+2] for i in range(0, 12, 2)).upper()
+        return ':'.join(payload_mac[i:i + 2] for i in range(0, 12, 2)).upper()
     return payload_mac
 
 
@@ -114,7 +114,7 @@ class Df3Decoder(object):
     https://github.com/ruuvi/ruuvi-sensor-protocols
     """
 
-    def _get_temperature(self, data: Tuple[int,...]) -> float:
+    def _get_temperature(self, data: Tuple[int, ...]) -> float:
         """Return temperature in celsius"""
 
         # The temperature is in two fields, one for the integer part,
@@ -132,19 +132,19 @@ class Df3Decoder(object):
 
         return data[2] + frac
 
-    def _get_humidity(self, data: Tuple[int,...]) -> float:
+    def _get_humidity(self, data: Tuple[int, ...]) -> float:
         """Return humidity %"""
         return data[1] * 0.5
 
-    def _get_pressure(self, data: Tuple[int,...]) -> float:
+    def _get_pressure(self, data: Tuple[int, ...]) -> float:
         """Return air pressure hPa"""
         return (data[4] + 50000) / 100
 
-    def _get_acceleration(self, data: Tuple[int,...]) -> Tuple[int, int, int]:
+    def _get_acceleration(self, data: Tuple[int, ...]) -> Tuple[int, int, int]:
         """Return acceleration mG"""
         return data[5:8]
 
-    def _get_battery(self, data: Tuple[int,...]) -> int:
+    def _get_battery(self, data: Tuple[int, ...]) -> int:
         """Return battery mV"""
         return data[8]
 
@@ -156,7 +156,7 @@ class Df3Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data: Tuple[int,...] = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
+            byte_data: Tuple[int, ...] = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 'data_format': 3,
@@ -203,7 +203,8 @@ class Df5Decoder(object):
 
         return round((data[3] + 50000) / 100, 2)
 
-    def _get_acceleration(self, data: Tuple[int, ...]) -> Union[Tuple[None,None,None], Tuple[int,int,int]]:
+    def _get_acceleration(self, data: Tuple[int, ...]) -> Union[Tuple[None, None, None],
+                                                                Tuple[int, int, int]]:
         """Return acceleration mG"""
         if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
             return (None, None, None)
@@ -257,7 +258,8 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data: Tuple[int, ...] = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+            byte_data: Tuple[int, ...] = struct.unpack('>BhHHhhhHBH6B',
+                                                       bytearray.fromhex(data[:48]))
             rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)

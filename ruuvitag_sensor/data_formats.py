@@ -8,7 +8,7 @@ class ShortDataError(Exception):
     pass
 
 
-def _dechunk(raw: str) -> Tuple[str,str]:
+def _dechunk(raw: str) -> Tuple[str, str]:
     """
     Given a BLE advertisement in hex format, interpret the first
     byte as a length byte, return the data indicated by the length
@@ -35,7 +35,7 @@ class DataFormats(object):
 
     # pylint: disable=too-many-return-statements
     @staticmethod
-    def convert_data(raw: str) -> Tuple[Optional[int],Optional[str]]:
+    def convert_data(raw: str) -> Tuple[Optional[int], Optional[str]]:
         """
         Validate that data is from RuuviTag and get correct data part.
 
