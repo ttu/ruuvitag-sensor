@@ -1,5 +1,4 @@
 dist: jammy
-sudo: false
 language: python
 os:
   - linux
