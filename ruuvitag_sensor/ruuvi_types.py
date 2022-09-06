@@ -4,7 +4,6 @@ try:
     from typing import TypedDict  # >=3.8
 except ImportError:
     from mypy_extensions import TypedDict  # <=3.7
-    
 
 
 class SensorDataBase(TypedDict):
@@ -45,4 +44,4 @@ class SensorData5(SensorDataBase):
     rssi: Optional[int]
 
 
-SensorData = Union[SensorDataUrl, SensorData3, SensorData5] 
+SensorData = Union[SensorDataUrl, SensorData3, SensorData5]

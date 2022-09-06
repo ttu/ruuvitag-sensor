@@ -54,7 +54,7 @@ def write_to_influxdb(received_data):
     fields['accelerationX'] = payload['acceleration_x'] if ('acceleration_x' in payload) else None
     fields['accelerationY'] = payload['acceleration_y'] if ('acceleration_y' in payload) else None
     fields['accelerationZ'] = payload['acceleration_z'] if ('acceleration_z' in payload) else None
-    fields['batteryVoltage'] = payload['battery']/1000.0 if ('battery' in payload) else None
+    fields['batteryVoltage'] = payload['battery'] / 1000.0 if ('battery' in payload) else None
     fields['txPower'] = payload['tx_power'] if ('tx_power' in payload) else None
     fields['movementCounter'] = payload['movement_counter'] if ('movement_counter' in payload) \
         else None
