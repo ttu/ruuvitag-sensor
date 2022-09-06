@@ -274,7 +274,7 @@ RuuviTagSensor._get_ruuvitag_data
 Run with pytest:
 
 ```sh
-$ python -m pip install pytest
+$ python -m pip install -e .[dev]
 $ pytest
 ```
 
