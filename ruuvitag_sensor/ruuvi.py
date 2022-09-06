@@ -3,12 +3,12 @@ import os
 import time
 import logging
 from multiprocessing import Manager
-from typing import Callable, Dict, Generator, List, Optional, Tuple
+from typing import Callable, Dict, Generator, List, Optional
 from warnings import warn
 
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
-from ruuvitag_sensor.ruuvi_types import SensorData
+from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, MacAndRawData, MacAndSensorData
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class RuuviTagSensor(object):
     """
 
     @staticmethod
-    def get_first_raw_data(mac: str, bt_device: str = '') -> Tuple[Optional[int], Optional[str]]:
+    def get_first_raw_data(mac: str, bt_device: str = '') -> DataFormatAndRawSensorData:
         """
         Get raw data for selected RuuviTag. This method is intended to be used only by
         RuuviTag-class.
@@ -67,8 +67,7 @@ class RuuviTagSensor(object):
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    async def get_first_raw_data_async(mac: str, bt_device: str = '') -> Tuple[Optional[int],
-                                                                               Optional[str]]:
+    async def get_first_raw_data_async(mac: str, bt_device: str = '') -> DataFormatAndRawSensorData:
         """
         Get raw data for selected RuuviTag. This method is intended to be used only by
         RuuviTag-class.
@@ -84,7 +83,7 @@ class RuuviTagSensor(object):
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = '') -> Dict[str, Tuple[Optional[str], SensorData]]:
+    def find_ruuvitags(bt_device: str = '') -> Dict[str, MacAndSensorData]:
         """
         CLI helper function.
 
@@ -108,8 +107,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def find_ruuvitags_async(bt_device: str = '') -> Dict[str, Tuple[Optional[str],
-                                                                           SensorData]]:
+    async def find_ruuvitags_async(bt_device: str = '') -> Dict[str, MacAndSensorData]:
         """
         CLI helper function.
 
@@ -143,7 +141,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5,
-                             bt_device: str = '') -> Dict[str, Tuple[Optional[str], SensorData]]:
+                             bt_device: str = '') -> Dict[str, MacAndSensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -171,7 +169,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     async def get_data_async(macs: List[str] = [], bt_device: str = '') \
-            -> Generator[Tuple[Optional[str], SensorData], None, None]:
+            -> Generator[MacAndSensorData, None, None]:
         if 'bleak' not in RUUVI_BLE_ADAPTER_ENV:
             raise Exception('Only Bleak BLE communication is supported')
 
@@ -190,7 +188,7 @@ class RuuviTagSensor(object):
                 yield data
 
     @staticmethod
-    def get_data(callback: Callable[[Tuple[Optional[str], SensorData]], None], macs: List[str] = [],
+    def get_data(callback: Callable[[MacAndSensorData], None], macs: List[str] = [],
                  run_flag: RunFlag = RunFlag(), bt_device: str = ''):
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
@@ -209,7 +207,7 @@ class RuuviTagSensor(object):
             callback(new_data)
 
     @staticmethod
-    def get_datas(callback: Callable[[Tuple[Optional[str], SensorData]], None],
+    def get_datas(callback: Callable[[MacAndSensorData], None],
                   macs: List[str] = [],
                   run_flag: RunFlag = RunFlag(), bt_device: str = ''):
         """
@@ -224,7 +222,7 @@ class RuuviTagSensor(object):
     @staticmethod
     def _get_ruuvitag_data(macs: List[str] = [], search_duratio_sec: Optional[int] = None,
                            run_flag: RunFlag = RunFlag(), bt_device: str = '') \
-            -> Generator[Tuple[Optional[str], SensorData], None, None]:
+            -> Generator[MacAndSensorData, None, None]:
         """
         Get data from BluetoothCommunication and handle data encoding.
 
@@ -261,8 +259,8 @@ class RuuviTagSensor(object):
                 yield data
 
     @staticmethod
-    def _parse_data(ble_data: Tuple[str, str], mac_blacklist: List[str], macs: List[str] = []) \
-            -> Optional[Tuple[Optional[str], SensorData]]:
+    def _parse_data(ble_data: MacAndRawData, mac_blacklist: List[str], macs: List[str] = []) \
+            -> Optional[MacAndSensorData]:
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
 
