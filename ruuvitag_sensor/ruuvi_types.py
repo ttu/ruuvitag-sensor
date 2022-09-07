@@ -53,4 +53,5 @@ DataFormatAndRawSensorData = Tuple[DataFormat, RawSensorData]
 Mac = Optional[str]
 MacAndSensorData = Tuple[Mac, SensorData]
 
+RawData = str
 MacAndRawData = Tuple[str, str]
