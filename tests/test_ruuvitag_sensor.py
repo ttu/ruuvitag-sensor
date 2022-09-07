@@ -1,15 +1,14 @@
 from unittest.mock import patch
 from pytest import raises
 
-import os
-os.environ['RUUVI_BLE_ADAPTER'] = ''
-
+from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # pylint: disable=line-too-long,unused-argument
 
 
+@patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationDummy())
 class TestRuuviTagSensor():
 
     def get_first_data(self, mac, bt_device):

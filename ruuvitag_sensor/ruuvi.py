@@ -1,37 +1,16 @@
-import sys
-import os
 import time
 import logging
 from multiprocessing import Manager
 from typing import Callable, Dict, Generator, List, Optional, Tuple
 from warnings import warn
 
+from ruuvitag_sensor.adapters import get_ble_adapter, is_async_adapter
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
 from ruuvitag_sensor.ruuvi_types import SensorData
 
 log = logging.getLogger(__name__)
-
-RUUVI_BLE_ADAPTER_ENV = os.environ.get('RUUVI_BLE_ADAPTER', '').lower()
-
-
-if 'bleak' in RUUVI_BLE_ADAPTER_ENV:
-    from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
-    ble = BleCommunicationBleak()
-elif 'bleson' in RUUVI_BLE_ADAPTER_ENV:
-    from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
-    ble = BleCommunicationBleson()
-elif 'RUUVI_NIX_FROMFILE' in os.environ:
-    # Emulate BleCommunicationNix by reading hcidump data from a file
-    from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
-    ble = BleCommunicationNixFile()
-elif not sys.platform.startswith('linux') or 'CI' in os.environ:
-    # Use BleCommunicationDummy also for CI as it can't use bluez
-    from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
-    ble = BleCommunicationDummy()
-else:
-    from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
-    ble = BleCommunicationNix()
+ble = get_ble_adapter()
 
 
 class RunFlag(object):
@@ -120,7 +99,7 @@ class RuuviTagSensor(object):
             dict: MAC and state of found sensors
         """
 
-        if 'bleak' not in RUUVI_BLE_ADAPTER_ENV:
+        if not is_async_adapter(ble):
             raise Exception('Only Bleak BLE communication is supported')
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
@@ -172,7 +151,7 @@ class RuuviTagSensor(object):
     @staticmethod
     async def get_data_async(macs: List[str] = [], bt_device: str = '') \
             -> Generator[Tuple[Optional[str], SensorData], None, None]:
-        if 'bleak' not in RUUVI_BLE_ADAPTER_ENV:
+        if not is_async_adapter(ble):
             raise Exception('Only Bleak BLE communication is supported')
 
         mac_blacklist = Manager().list()

@@ -1,8 +1,7 @@
 from typing import Tuple
 from unittest.mock import patch
 import pytest
-import os
-os.environ['RUUVI_BLE_ADAPTER'] = 'bleak'
+
 """
 NOTE: Execute tests manually. These are not part of CI
 Setting env variables for CI or READTHEDOCS didn't work with Travis
@@ -19,11 +18,13 @@ FileNotFoundError: [Errno 2] No such file or directory: 'bluetoothctl': 'bluetoo
 """
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
 
 # pylint: disable=line-too-long,unused-argument
 
 
 @pytest.mark.skip(reason="Doesn't work with CI")
+@patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationBleak())
 class TestRuuviTagSensorAsync:
 
     async def _get_data(self, blacklist=[], bt_device='') -> Tuple[str, str]:
