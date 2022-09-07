@@ -1,3 +1,4 @@
+import sys
 from typing import Tuple
 from unittest.mock import patch
 import pytest
@@ -8,6 +9,7 @@ from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy
 # pylint: disable=line-too-long,unused-argument
 
 
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="patch doesn't work correctly on 3.7")
 @patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationAsyncDummy())
 class TestRuuviTagSensorAsync:
 
