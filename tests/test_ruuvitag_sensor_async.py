@@ -2,29 +2,13 @@ from typing import Tuple
 from unittest.mock import patch
 import pytest
 
-"""
-NOTE: Execute tests manually. These are not part of CI
-Setting env variables for CI or READTHEDOCS didn't work with Travis
-
-# https://github.com/hbldh/bleak/discussions/475
-
-.tox/py37-basic_linux/lib/python3.7/site-packages/bleak/__init__.py:41: in <module>
-    if not _on_ci and not check_bluez_version(5, 43):
-.tox/py37-basic_linux/lib/python3.7/site-packages/bleak/backends/bluezdbus/__init__.py:17: \
- in check_bluez_version
-    p = subprocess.Popen(["bluetoothctl", "--version"], stdout=subprocess.PIPE)
-
-FileNotFoundError: [Errno 2] No such file or directory: 'bluetoothctl': 'bluetoothctl'
-"""
-
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
+from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy
 
 # pylint: disable=line-too-long,unused-argument
 
 
-@pytest.mark.skip(reason="Doesn't work with CI")
-@patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationBleak())
+@patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationAsyncDummy())
 class TestRuuviTagSensorAsync:
 
     async def _get_data(self, blacklist=[], bt_device='') -> Tuple[str, str]:
@@ -37,7 +21,7 @@ class TestRuuviTagSensorAsync:
         for data in tag_data:
             yield data
 
-    @patch('ruuvitag_sensor.adapters.bleak_ble.BleCommunicationBleak.get_data', _get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
     @pytest.mark.asyncio
     async def test_get_data_async(self):
         data = []
@@ -47,7 +31,7 @@ class TestRuuviTagSensorAsync:
 
         assert len(data) == 3
 
-    @patch('ruuvitag_sensor.adapters.bleak_ble.BleCommunicationBleak.get_data', _get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
     @pytest.mark.asyncio
     async def test_get_data_async_with_macs(self):
         data = []
