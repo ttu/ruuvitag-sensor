@@ -43,3 +43,10 @@ class TestRuuviTagSensorAsync:
             data.append(received)
 
         assert len(data) == 2
+
+    @pytest.mark.asyncio
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
+    async def test_find_ruuvitags_async_with_bleak(self):
+        tags = await RuuviTagSensor.find_ruuvitags_async()
+
+        assert len(tags) == 3
