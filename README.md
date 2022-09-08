@@ -112,7 +112,7 @@ async def main():
         print(f'Data: {found_data[1]}')
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
 ```
 
 The optional list of MACs and run flag can be passed to the `get_data_async` function.
@@ -387,7 +387,7 @@ async def main():
         print(data)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.get_event_loop().run_until_complete(main())
 ```
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.
