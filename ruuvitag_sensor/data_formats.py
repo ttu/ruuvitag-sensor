@@ -1,5 +1,7 @@
 import logging
-from typing import Optional, Tuple
+from typing import Tuple
+
+from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, RawSensorData
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +37,7 @@ class DataFormats(object):
 
     # pylint: disable=too-many-return-statements
     @staticmethod
-    def convert_data(raw: str) -> Tuple[Optional[int], Optional[str]]:
+    def convert_data(raw: str) -> DataFormatAndRawSensorData:
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -120,7 +122,7 @@ class DataFormats(object):
         return raw
 
     @staticmethod
-    def _get_data_format_2and4(raw: str) -> Optional[str]:
+    def _get_data_format_2and4(raw: str) -> RawSensorData:
         """
         Validate that data is from RuuviTag and is Data Format 2 or 4.
         Convert hexadcimal data to string.
@@ -145,7 +147,7 @@ class DataFormats(object):
             return None
 
     @staticmethod
-    def _get_data_format_3(raw: str) -> Optional[str]:
+    def _get_data_format_3(raw: str) -> RawSensorData:
         """
         Validate that data is from RuuviTag and is Data Format 3
 
@@ -164,7 +166,7 @@ class DataFormats(object):
             return None
 
     @staticmethod
-    def _get_data_format_5(raw: str) -> Optional[str]:
+    def _get_data_format_5(raw: str) -> RawSensorData:
         """
         Validate that data is from RuuviTag and is Data Format 5
 

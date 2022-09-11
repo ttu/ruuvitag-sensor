@@ -7,6 +7,7 @@ from bleak import BleakScanner
 from bleak.backends.scanner import BLEDevice, AdvertisementData
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
+from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 
 def _get_scanner():
@@ -57,7 +58,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await scanner.stop()
 
     @staticmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
             if mac and mac in blacklist:
@@ -91,7 +92,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await BleCommunicationBleak._stop()
 
     @staticmethod
-    async def get_first_data(mac: str, bt_device: str = '') -> str:
+    async def get_first_data(mac: str, bt_device: str = '') -> RawData:
         data = None
         data_iter = BleCommunicationBleak.get_data([], bt_device)
         async for d in data_iter:

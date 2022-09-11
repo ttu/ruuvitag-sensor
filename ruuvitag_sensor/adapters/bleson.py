@@ -3,11 +3,12 @@ import logging
 from multiprocessing import Manager, Process
 from queue import Queue
 import time
-from typing import Iterator, List, Tuple
+from typing import Iterator, List
 
 from bleson import get_provider, Observer
 
 from ruuvitag_sensor.adapters import BleCommunication
+from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 log = logging.getLogger(__name__)
 
@@ -104,7 +105,7 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[Tuple[str, str]]:
+    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[MacAndRawData]:
         m = Manager()
         q = m.Queue()
 
@@ -132,7 +133,7 @@ class BleCommunicationBleson(BleCommunication):
         proc.join()
 
     @staticmethod
-    def get_first_data(mac: str, bt_device: str = '') -> str:
+    def get_first_data(mac: str, bt_device: str = '') -> RawData:
         data = None
         data_iter = BleCommunicationBleson.get_data([], bt_device)
         for d in data_iter:

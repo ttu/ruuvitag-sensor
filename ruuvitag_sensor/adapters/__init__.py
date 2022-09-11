@@ -1,7 +1,9 @@
 import abc
 import os
 import sys
-from typing import Iterator, List, Tuple
+from typing import Iterator, List
+
+from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 
 def get_ble_adapter():
@@ -34,12 +36,12 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_first_data(mac: str, bt_device: str = '') -> str:
+    def get_first_data(mac: str, bt_device: str = '') -> RawData:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
         pass
 
 
@@ -49,10 +51,10 @@ class BleCommunicationAsync(object):
 
     @staticmethod
     @abc.abstractmethod
-    async def get_first_data(mac: str, bt_device: str = '') -> str:
+    async def get_first_data(mac: str, bt_device: str = '') -> RawData:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
         pass
