@@ -55,3 +55,5 @@ MacAndSensorData = Tuple[Mac, SensorData]
 
 RawData = str
 MacAndRawData = Tuple[str, str]
+
+ByteData = Tuple[int, ...]
