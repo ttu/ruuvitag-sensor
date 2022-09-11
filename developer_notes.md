@@ -25,6 +25,12 @@ If virtualenv and/or pip are not installed, follow installation instructions sho
 $ sudo python ruuvitag_sensor --help
 ```
 
+If there is an error:
+```sh
+ERROR: File "setup.py" not found. Directory cannot be installed in editable mode
+```
+Upgrade pip as recommended.
+
 ## Project files
 
 * adapters
