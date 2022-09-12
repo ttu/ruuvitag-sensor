@@ -10,6 +10,7 @@ from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="patch doesn't work correctly on 3.7")
+@pytest.mark.asyncio
 @patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationAsyncDummy())
 class TestRuuviTagSensorAsync:
 
@@ -24,7 +25,6 @@ class TestRuuviTagSensorAsync:
             yield data
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
-    @pytest.mark.asyncio
     async def test_get_data_async(self):
         data = []
         gener = RuuviTagSensor.get_data_async()
@@ -34,7 +34,6 @@ class TestRuuviTagSensorAsync:
         assert len(data) == 3
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
-    @pytest.mark.asyncio
     async def test_get_data_async_with_macs(self):
         data = []
         macs = ['EB:A5:D1:02:CE:68', 'EC:4D:A7:95:08:6B']
@@ -44,7 +43,6 @@ class TestRuuviTagSensorAsync:
 
         assert len(data) == 2
 
-    @pytest.mark.asyncio
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
     async def test_find_ruuvitags_async_with_bleak(self):
         tags = await RuuviTagSensor.find_ruuvitags_async()
