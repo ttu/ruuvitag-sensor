@@ -1,10 +1,9 @@
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 try:
     from typing import TypedDict  # >=3.8
 except ImportError:
     from mypy_extensions import TypedDict  # <=3.7
-    
 
 
 class SensorDataBase(TypedDict):
@@ -45,4 +44,16 @@ class SensorData5(SensorDataBase):
     rssi: Optional[int]
 
 
-SensorData = Union[SensorDataUrl, SensorData3, SensorData5] 
+SensorData = Union[SensorDataUrl, SensorData3, SensorData5]
+
+DataFormat = Optional[int]
+RawSensorData = Optional[str]
+DataFormatAndRawSensorData = Tuple[DataFormat, RawSensorData]
+
+Mac = Optional[str]
+MacAndSensorData = Tuple[Mac, SensorData]
+
+RawData = str
+MacAndRawData = Tuple[str, str]
+
+ByteData = Tuple[int, ...]

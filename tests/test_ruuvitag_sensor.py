@@ -1,14 +1,14 @@
 from unittest.mock import patch
 from pytest import raises
-import os
-os.environ['RUUVI_BLE_ADAPTER'] = ''
 
+from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # pylint: disable=line-too-long,unused-argument
 
 
+@patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationDummy())
 class TestRuuviTagSensor():
 
     def get_first_data(self, mac, bt_device):
@@ -16,7 +16,6 @@ class TestRuuviTagSensor():
         data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'  # noqa: E501
         return data[26:]
 
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_first_data', get_first_data)
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_first_data', get_first_data)
     def test_tag_update_is_valid(self):
         tag = RuuviTag('48:2C:6A:1E:59:3D')
@@ -68,18 +67,12 @@ class TestRuuviTagSensor():
         for data in tag_data:
             yield data
 
-    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
-           get_data)
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data',
-           get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_find_tags(self):
         tags = RuuviTagSensor.find_ruuvitags()
         assert len(tags) == 9
 
-    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
-           get_data)
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data',
-           get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_get_data_for_sensors(self):
         macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D',
                 'D5:57:97:65:88:14']
@@ -93,19 +86,13 @@ class TestRuuviTagSensor():
         assert data['EE:2C:6A:1E:59:3D']['identifier'] == '0'
         assert data['D5:57:97:65:88:14']['rssi'] == -72
 
-    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
-           get_data)
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data',
-           get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_get_data(self):
         data = []
         RuuviTagSensor.get_data(data.append)
         assert len(data) == 9
 
-    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data',
-           get_data)
-    @patch('ruuvitag_sensor.adapters.nix_hci.BleCommunicationNix.get_data',
-           get_data)
+    @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_get_data_with_macs(self):
         data = []
         macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D']
