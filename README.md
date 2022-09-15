@@ -36,7 +36,7 @@ $ python -m venv .venv
 $ source .venv/bin/activate
 $ python -m pip install git+https://github.com/ttu/ruuvitag-sensor
 
-# For development, clone this repository and install for development
+# For development, clone this repository and install for development in editable mode
 $ python -m pip install -e .[dev]
 ```
 
