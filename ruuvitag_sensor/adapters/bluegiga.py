@@ -4,13 +4,14 @@ from multiprocessing.managers import DictProxy
 from multiprocessing.queues import Queue
 import os
 import time
-from typing import Iterator, List, Tuple
+from typing import Iterator, List
 import pygatt
 import binascii
 import threading
 
 
 from ruuvitag_sensor.adapters import BleCommunication
+from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class BleCommunicationBluegiga(BleCommunication):
     """Bluetooth LE communication for Bluegiga"""
 
     @staticmethod
-    def get_first_data(mac: str, bt_device: str = '') -> str:
+    def get_first_data(mac: str, bt_device: str = '') -> RawData:
         if not bt_device:
             adapter = pygatt.BGAPIBackend()
         else:
@@ -47,7 +48,7 @@ class BleCommunicationBluegiga(BleCommunication):
             adapter.stop()
 
     @staticmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[Tuple[str, str]]:
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
         m = Manager()
         q = m.Queue()
 
