@@ -8,13 +8,12 @@ from typing import Iterator, List, Tuple
 import pygatt
 import binascii
 import threading
-import os
-
 
 
 from ruuvitag_sensor.adapters import BleCommunication
 
 log = logging.getLogger(__name__)
+
 
 class BleCommunicationBluegiga(BleCommunication):
     """Bluetooth LE communication for Bluegiga"""
@@ -29,7 +28,7 @@ class BleCommunicationBluegiga(BleCommunication):
         def scan_received(devices, addr, packet_type):
             if mac and mac == addr:
                 log.debug('Received data from device: %s %s', addr, packet_type)
-                return True # stop scan
+                return True  # stop scan
 
         reset = False if os.environ.get('BLUEGIGA_RESET', '').upper() == 'FALSE' else True
         adapter.start(reset=reset)
@@ -37,9 +36,9 @@ class BleCommunicationBluegiga(BleCommunication):
         try:
             devices = adapter.scan(timeout=60, active=False, scan_cb=scan_received)
             for dev in devices:
-                if mac and mac ==  dev['address']:
-                    log.debug('Result found for device %s', mac )
-                    rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
+                if mac and mac == dev['address']:
+                    log.debug('Result found for device %s', mac)
+                    rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']  # noqa: E501
                     hexa = binascii.hexlify(rawdata).decode('ascii').upper()
                     hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
                     log.debug('Data found: %s', hexa_formatted)
@@ -75,7 +74,7 @@ class BleCommunicationBluegiga(BleCommunication):
                     raise Exception('Bluegiga scanner is not alive')
         except GeneratorExit:
             pass
-        except KeyboardInterrupt as ex:
+        except KeyboardInterrupt:
             pass
         except Exception as ex:
             log.info(ex)
@@ -113,7 +112,7 @@ class BleCommunicationBluegiga(BleCommunication):
                             log.debug('MAC blacklisted: %s', mac)
                             continue
                         try:
-                            rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']
+                            rawdata = dev['packet_data']['non-connectable_advertisement_packet']['manufacturer_specific_data']  # noqa: E501
                             log.debug('Received manufacturer data from %s: %s', mac, rawdata)
                             hexa = binascii.hexlify(rawdata).decode('ascii').upper()
                             hexa_formatted = BleCommunicationBluegiga._fix_payload(hexa)
@@ -126,7 +125,7 @@ class BleCommunicationBluegiga(BleCommunication):
                     queue.put(('', ''))
                 except GeneratorExit:
                     return
-                except KeyboardInterrupt as ex:
+                except KeyboardInterrupt:
                     return
         finally:
             log.debug('Stop scan')
