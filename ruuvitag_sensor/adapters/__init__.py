@@ -13,6 +13,9 @@ def get_ble_adapter():
     elif 'bleson' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
         from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
         return BleCommunicationBleson()
+    elif 'bluegiga' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+        from ruuvitag_sensor.adapters.bluegiga import BleCommunicationBluegiga
+        return BleCommunicationBluegiga()
     elif 'RUUVI_NIX_FROMFILE' in os.environ:
         # Emulate BleCommunicationNix by reading hcidump data from a file
         from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile

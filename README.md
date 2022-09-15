@@ -434,6 +434,35 @@ Install from pypi
 $ python -m pip install ruuvitag-sensor==1.2.1
 ```
 
+## Bluegiga
+
+Use Bluegiga's BGAPI, which is compatible with USB adapters like the BLED112. Bluegiga should work with Linux, macOS and Windows.
+
+Requires pygatt and pexpect, which are not installed automatically with `ruuvitag_sensor` package. You can install those manually e.g. via pip.
+
+```sh
+$ pip install pygatt pexpect
+```
+
+Add environment variable `RUUVI_BLE_ADAPTER` with value `Bluegiga`. E.g.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="Bluegiga"
+```
+By default, pygatt will automatically detect USB adapters serial port, but if you have multiple Bluegiga adapters installed or pygatt can not find correct serial port automatically, serial port can be passed with `bt_device` parameter.
+
+```sh
+bt_device='/dev/ttyACM0'
+```
+
+Pygatt reset Bluegiga USB adapter during start, which might cause issues e.g. in VM environment. Reset can be disabled by environment variable `BLUEGIGA_RESET` with value `False`. E.g.
+
+```sh
+$ export BLUEGIGA_RESET="False"
+```
+
+Any other value is interpreted as a True.
+
 ## Examples
 
 Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory, e.g.
