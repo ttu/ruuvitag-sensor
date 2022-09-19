@@ -34,7 +34,8 @@ dev = [
     "pytest",
     "pytest-asyncio",
     "flake8-pyproject",
-    "pylint"
+    "pylint",
+    "mypy"
 ]
 
 [project.urls]
@@ -64,3 +65,7 @@ disable = [
     "too-few-public-methods",
     "useless-object-inheritance"
 ]
+
+[tool.mypy]
+python_version = 3.8
+ignore_missing_imports = true
