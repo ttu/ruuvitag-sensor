@@ -119,8 +119,8 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5,
-                             bt_device: str = '') -> Dict[str, MacAndSensorData]:
+    def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') \
+            -> Dict[str, MacAndSensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -147,8 +147,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def get_data_async(macs: List[str] = [], bt_device: str = '') \
-            -> Generator[MacAndSensorData, None, None]:
+    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> Generator[MacAndSensorData, None, None]:
         if not is_async_adapter(ble):
             raise Exception('Only Bleak BLE communication is supported')
 
@@ -167,8 +166,8 @@ class RuuviTagSensor(object):
                 yield data
 
     @staticmethod
-    def get_data(callback: Callable[[MacAndSensorData], None], macs: List[str] = [],
-                 run_flag: RunFlag = RunFlag(), bt_device: str = ''):
+    def get_data(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
+                 bt_device: str = ''):
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -186,9 +185,8 @@ class RuuviTagSensor(object):
             callback(new_data)
 
     @staticmethod
-    def get_datas(callback: Callable[[MacAndSensorData], None],
-                  macs: List[str] = [],
-                  run_flag: RunFlag = RunFlag(), bt_device: str = ''):
+    def get_datas(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
+                  bt_device: str = ''):
         """
         DEPRECATED
         This method will be removed in a future version.

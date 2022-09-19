@@ -35,8 +35,7 @@ class DevBleakScanner():
         self.callback: Union[Callable[[BLEDevice, AdvertisementData], Awaitable[None]], None] = None
         self.running: bool = False
 
-    def register_detection_callback(self, callback: Callable[[BLEDevice, AdvertisementData],
-                                                             Awaitable[None]]):
+    def register_detection_callback(self, callback: Callable[[BLEDevice, AdvertisementData], Awaitable[None]]):
         self.callback = callback
 
     async def start(self):

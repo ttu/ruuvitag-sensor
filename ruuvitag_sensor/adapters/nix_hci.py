@@ -36,8 +36,7 @@ class BleCommunicationNix(BleCommunication):
 
         def reset_ble_adapter():
             cmd = f'hciconfig {bt_device} reset'
-            log.info('FYI: Calling a process%s: %s',
-                     '' if is_root else ' with sudo', cmd)
+            log.info('FYI: Calling a process%s: %s', '' if is_root else ' with sudo', cmd)
 
             cmd = f'sudo {cmd}' if not is_root else cmd
             return subprocess.call(cmd, shell=True, stdout=DEVNULL)
@@ -47,8 +46,7 @@ class BleCommunicationNix(BleCommunication):
             if retcode != 0 and try_count > 0:
                 log.info(msg)
                 time.sleep(interval)
-                return start_with_retry(
-                    func, try_count - 1, interval + interval, msg)
+                return start_with_retry(func, try_count - 1, interval + interval, msg)
             return retcode
 
         retcode = start_with_retry(
@@ -61,16 +59,14 @@ class BleCommunicationNix(BleCommunication):
             sys.exit(1)
 
         cmd = ['hcitool', '-i', bt_device, 'lescan2', '--duplicates', '--passive']
-        log.info('FYI: Spawning process%s: %s',
-                 '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
+        log.info('FYI: Spawning process%s: %s', '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
 
         if not is_root:
             cmd.insert(0, "sudo")
         hcitool = ptyprocess.PtyProcess.spawn(cmd)
 
         cmd = ['hcidump', '-i', bt_device, '--raw']
-        log.info('FYI: Spawning process%s: %s',
-                 '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
+        log.info('FYI: Spawning process%s: %s', '' if is_root else ' with sudo', ' '.join(str(i) for i in cmd))
 
         if not is_root:
             cmd.insert(0, 'sudo')
@@ -153,8 +149,7 @@ class BleCommunicationNix(BleCommunication):
                 # in reverse order
 
                 found_mac = line[14:26]
-                reversed_mac = ''.join(
-                    reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
+                reversed_mac = ''.join(reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
                 mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
                 if mac in blacklist:
                     log.debug('MAC blacklisted: %s', mac)

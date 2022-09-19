@@ -6,7 +6,7 @@ import pytest
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy, BleCommunicationDummy
 
-# pylint: disable=line-too-long,unused-argument
+# pylint: disable=unused-argument
 
 
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="patch doesn't work correctly on 3.7")
@@ -56,9 +56,9 @@ class TestRuuviTagSensorAsync:
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data', _get_data)
     async def test_find_ruuvitags_async_without_bleak(self):
         """Tests to see if exception is raised for non-Bleak enabled request.
-        
+
         Async communication is supported only for BLE devices of subclass `BleCommunicationAsync`. This
         test forces a non-compatible BLE device type (BleCommunicationDummy subclass) to raise Exception.
         """
         with pytest.raises(Exception):
-            tags = await RuuviTagSensor.find_ruuvitags_async()
+            _ = await RuuviTagSensor.find_ruuvitags_async()
