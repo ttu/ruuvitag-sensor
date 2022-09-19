@@ -1,7 +1,7 @@
 import abc
 import os
 import sys
-from typing import Iterator, List
+from typing import AsyncGenerator, Generator, List
 
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
@@ -43,7 +43,7 @@ class BleCommunication(object):
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
+    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Generator[MacAndRawData, None, None]:
         pass
 
 
@@ -58,5 +58,7 @@ class BleCommunicationAsync(object):
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
-        pass
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndRawData, None]:
+        raise NotImplementedError("must implement get_data()")
+        if False:
+            yield 0
