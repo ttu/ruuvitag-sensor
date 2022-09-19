@@ -2,8 +2,6 @@ from unittest import TestCase
 
 from ruuvitag_sensor.decoder import get_decoder, parse_mac, UrlDecoder, Df3Decoder, Df5Decoder
 
-# pylint: disable=line-too-long
-
 
 class TestDecoder(TestCase):
 

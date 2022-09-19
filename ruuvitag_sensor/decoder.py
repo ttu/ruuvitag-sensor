@@ -203,8 +203,7 @@ class Df5Decoder(object):
 
         return round((data[3] + 50000) / 100, 2)
 
-    def _get_acceleration(self, data: ByteData) -> Union[Tuple[None, None, None],
-                                                         Tuple[int, int, int]]:
+    def _get_acceleration(self, data: ByteData) -> Union[Tuple[None, None, None], Tuple[int, int, int]]:
         """Return acceleration mG"""
         if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
             return (None, None, None)
@@ -258,8 +257,7 @@ class Df5Decoder(object):
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack('>BhHHhhhHBH6B',
-                                                bytearray.fromhex(data[:48]))
+            byte_data: ByteData = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
             rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
