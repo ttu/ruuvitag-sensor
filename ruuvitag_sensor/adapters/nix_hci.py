@@ -29,7 +29,7 @@ class BleCommunicationNix(BleCommunication):
         if not bt_device:
             bt_device = 'hci0'
 
-        is_root = os.getuid() == 0
+        is_root = os.getuid() == 0  # pylint: disable=no-member
 
         log.info('Start receiving broadcasts (device %s)', bt_device)
         DEVNULL = subprocess.DEVNULL

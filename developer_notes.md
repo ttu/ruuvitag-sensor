@@ -15,7 +15,7 @@ $ source .venv/bin/activate
 
 3. Install required dependencies
 ```sh
-$ sudo python -m pip install -e .
+$ sudo python -m pip install -e .[dev]
 ```
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
@@ -30,6 +30,23 @@ If there is an error:
 ERROR: File "setup.py" not found. Directory cannot be installed in editable mode
 ```
 Upgrade pip as recommended.
+
+## Lint
+
+Install required dependencies
+```sh
+$ python -m pip install -e .[dev]
+```
+
+Flake8
+```sh
+$ flake8
+```
+
+Pylint
+```sh
+$ pylint ./ruuvitag_sensor/
+```
 
 ## Project files
 
@@ -283,7 +300,6 @@ Run with pytest:
 $ python -m pip install -e .[dev]
 $ pytest
 ```
-
 
 Execute single test:
 
