@@ -1,7 +1,7 @@
 import time
 import logging
 from multiprocessing import Manager
-from typing import Callable, Dict, Generator, List, Optional
+from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
 from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, is_async_adapter
@@ -147,7 +147,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> Generator[MacAndSensorData, None, None]:
+    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndSensorData, None]:
         if not is_async_adapter(ble):
             raise Exception('Only Bleak BLE communication is supported')
 
