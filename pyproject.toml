@@ -33,7 +33,8 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-asyncio",
-    "flake8-pyproject"
+    "flake8-pyproject",
+    "pylint"
 ]
 
 [project.urls]
@@ -49,3 +50,17 @@ testpaths = "tests/"
 exclude = ".venv, .git, .eggs, __pycache__, build, dist"
 max-line-length = 120
 ignore = "E402"
+
+[tool.pylint.messages_control]
+max-line-length = 120
+disable = [
+    "import-error",
+    "missing-docstring",
+    "invalid-name",
+    "bare-except",
+    "broad-except",
+    "fixme",
+    "dangerous-default-value",
+    "too-few-public-methods",
+    "useless-object-inheritance"
+]

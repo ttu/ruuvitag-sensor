@@ -15,6 +15,7 @@ def _get_scanner():
     scanning_mode = 'active' if sys.platform.startswith('linux') else 'passive'
 
     if 'bleak_dev' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+        # pylint: disable=import-outside-toplevel
         from ruuvitag_sensor.adapters.development.dev_bleak_scanner import DevBleakScanner
         return DevBleakScanner(scanning_mode)
 
@@ -48,9 +49,9 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # the pipeline.
         #
         # TODO: This is kinda awkward, and should be handled better.
-        formatted = 'FF9904' + data.hex()
-        formatted = '%02x%s' % (len(formatted) >> 1, formatted)
-        formatted = '%02x%s' % (len(formatted) >> 1, formatted)
+        formatted = f'FF9904{data.hex()}'
+        formatted = f'{(len(formatted) >> 1):02x}{formatted}'
+        formatted = f'{(len(formatted) >> 1):02x}{formatted}'
         return formatted
 
     @staticmethod
