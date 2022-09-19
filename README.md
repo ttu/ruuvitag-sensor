@@ -35,8 +35,9 @@ Install the latest development version
 $ python -m venv .venv
 $ source .venv/bin/activate
 $ python -m pip install git+https://github.com/ttu/ruuvitag-sensor
-# Or clone this repository and install locally
-$ python -m pip install -e .
+
+# For development, clone this repository and install for development in editable mode
+$ python -m pip install -e .[dev]
 ```
 
 Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruuvitag-sensor/blob/master/install_guide_pi.md)

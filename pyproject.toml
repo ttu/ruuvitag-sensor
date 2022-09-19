@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ruuvitag_sensor"
+version = "2.0.0"
+authors = [
+  { name="Tomi Tuhkanen", email="tomi.tuhkanen@iki.fi" },
+]
+description = "Find RuuviTag sensors and get decoded data from selected sensors"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: AsyncIO",
+    "Framework :: Pytest",
+    "Framework :: tox"
+]
+keywords = [ "RuuviTag BLE" ]
+dependencies = [
+    "reactivex",
+    "ptyprocess;platform_system=='Linux'",
+    "mypy-extensions;python_version<'3.8'"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "flake8-pyproject"
+]
+
+[project.urls]
+homepage = "https://github.com/ttu/ruuvitag-sensor"
+source = "https://github.com/ttu/ruuvitag-sensor"
+changelog = "https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/ttu/ruuvitag-sensor/issues"
+
+[tool.pytest.ini_options]
+testpaths = "tests/"
+
+[tool.flake8]
+exclude = ".venv, .git, .eggs, __pycache__, build, dist"
+max-line-length = 100
+ignore = "E402, E501"
