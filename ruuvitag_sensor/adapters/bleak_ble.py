@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 import sys
-from typing import Iterator, List, Tuple
+from typing import AsyncGenerator, List, Tuple
 from bleak import BleakScanner
 from bleak.backends.scanner import BLEDevice, AdvertisementData
 
@@ -26,7 +26,7 @@ scanner = _get_scanner()
 
 # TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
 # queue = asyncio.Queue[Tuple[str, str]]()
-queue = asyncio.Queue()
+queue = asyncio.Queue()  # type: ignore
 
 log = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         await scanner.stop()
 
     @staticmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> Iterator[MacAndRawData]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndRawData, None]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
             if mac and mac in blacklist:
@@ -102,4 +102,4 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 data = d[1]
                 await data_iter.aclose()
 
-        return data
+        return data or ''

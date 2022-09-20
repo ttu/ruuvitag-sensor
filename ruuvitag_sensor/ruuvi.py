@@ -1,13 +1,13 @@
 import time
 import logging
 from multiprocessing import Manager
-from typing import Callable, Dict, Generator, List, Optional
+from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
 from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, is_async_adapter
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
-from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, MacAndRawData, MacAndSensorData
+from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, MacAndRawData, MacAndSensorData, SensorData
 
 log = logging.getLogger(__name__)
 ble = get_ble_adapter()
@@ -62,7 +62,7 @@ class RuuviTagSensor(object):
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = '') -> Dict[str, MacAndSensorData]:
+    def find_ruuvitags(bt_device: str = '') -> Dict[str, SensorData]:
         """
         CLI helper function.
 
@@ -75,13 +75,14 @@ class RuuviTagSensor(object):
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
-        data = {}
+        data: Dict[str, SensorData] = {}
         for new_data in RuuviTagSensor._get_ruuvitag_data(bt_device=bt_device):
-            if new_data[0] in data:
+            mac, sensor_data = new_data
+            if not mac or mac in data:
                 continue
-            data[new_data[0]] = new_data[1]
-            log.info(new_data[0])
-            log.info(new_data[1])
+            data[mac] = sensor_data
+            log.info(mac)
+            log.info(sensor_data)
 
         return data
 
@@ -102,7 +103,7 @@ class RuuviTagSensor(object):
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
-        data = {}
+        data: Dict[str, MacAndSensorData] = {}
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
@@ -120,7 +121,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') \
-            -> Dict[str, MacAndSensorData]:
+            -> Dict[str, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -142,12 +143,13 @@ class RuuviTagSensor(object):
                 macs,
                 search_duratio_sec,
                 bt_device=bt_device):
-            data[new_data[0]] = new_data[1]
+            mac, sensor_data = new_data
+            data[mac] = sensor_data
 
         return data
 
     @staticmethod
-    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> Generator[MacAndSensorData, None, None]:
+    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndSensorData, None]:
         if not is_async_adapter(ble):
             raise Exception('Only Bleak BLE communication is supported')
 
@@ -220,11 +222,11 @@ class RuuviTagSensor(object):
         for ble_data in data_iter:
             # Check duration
             if search_duratio_sec and time.time() - start_time > search_duratio_sec:
-                data_iter.send(StopIteration)
+                data_iter.close()
                 break
             # Check running flag
             if not run_flag.running:
-                data_iter.send(StopIteration)
+                data_iter.close()
                 break
             # Check MAC whitelist if advertised MAC available
             if ble_data[0] and macs and not ble_data[0] in macs:

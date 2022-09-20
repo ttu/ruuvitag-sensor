@@ -104,10 +104,10 @@ class DataFormats(object):
         if candidate.startswith('16AAFE'):
             # TODO: Check from raw data correct data format
             # Now this returns 2 also for Data Format 4
-            data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
+            url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
 
-            if data is not None:
-                return (2, data)
+            if url_data is not None:
+                return (2, url_data)
 
         elif candidate.startswith('095275757669'):
             # This is a Ruuvitag, but this advertisement does not contain any data.

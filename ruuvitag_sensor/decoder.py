@@ -94,7 +94,7 @@ class UrlDecoder(object):
                 data_format = 4
                 identifier = encoded[8:]
                 encoded = encoded[:8]
-            decoded = bytearray(base64.b64decode(encoded, '-_'))
+            decoded = bytearray(base64.b64decode(encoded, '-_'))  # type: ignore
             return {
                 'data_format': data_format,
                 'temperature': self._get_temperature(decoded),
@@ -142,7 +142,7 @@ class Df3Decoder(object):
 
     def _get_acceleration(self, data: ByteData) -> Tuple[int, int, int]:
         """Return acceleration mG"""
-        return data[5:8]
+        return data[5:8]  # type: ignore
 
     def _get_battery(self, data: ByteData) -> int:
         """Return battery mV"""
@@ -208,16 +208,16 @@ class Df5Decoder(object):
         if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
             return (None, None, None)
 
-        return data[4:7]
+        return data[4:7]  # type: ignore
 
-    def _get_powerinfo(self, data: ByteData) -> int:
+    def _get_powerinfo(self, data: ByteData) -> Tuple[int, int]:
         """Return battery voltage and tx power"""
         battery_voltage = data[7] >> 5
         tx_power = data[7] & 0x001F
 
         return (battery_voltage, tx_power)
 
-    def _get_battery(self, data: ByteData) -> int:
+    def _get_battery(self, data: ByteData) -> Optional[int]:
         """Return battery mV"""
         battery_voltage = self._get_powerinfo(data)[0]
         if battery_voltage == 0b11111111111:
@@ -225,7 +225,7 @@ class Df5Decoder(object):
 
         return battery_voltage + 1600
 
-    def _get_txpower(self, data: ByteData) -> int:
+    def _get_txpower(self, data: ByteData) -> Optional[int]:
         """Return transmit power"""
         tx_power = self._get_powerinfo(data)[1]
         if tx_power == 0b11111:
@@ -261,17 +261,22 @@ class Df5Decoder(object):
             rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
+            acc = math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z) if acc_x and acc_y and acc_z else None
+
+            # NOTE: Value parsing methods can return None, but it shouldn't happen with the
+            # production firmaware. Therefore properties are not optional on SensorData-type
+
             return {
                 'data_format': 5,
-                'humidity': self._get_humidity(byte_data),
-                'temperature': self._get_temperature(byte_data),
-                'pressure': self._get_pressure(byte_data),
-                'acceleration': math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
-                'acceleration_x': acc_x,
-                'acceleration_y': acc_y,
-                'acceleration_z': acc_z,
-                'tx_power': self._get_txpower(byte_data),
-                'battery': self._get_battery(byte_data),
+                'humidity': self._get_humidity(byte_data),  # type: ignore
+                'temperature': self._get_temperature(byte_data),  # type: ignore
+                'pressure': self._get_pressure(byte_data),  # type: ignore
+                'acceleration': acc,  # type: ignore
+                'acceleration_x': acc_x,  # type: ignore
+                'acceleration_y': acc_y,  # type: ignore
+                'acceleration_z': acc_z,  # type: ignore
+                'tx_power': self._get_txpower(byte_data),  # type: ignore
+                'battery': self._get_battery(byte_data),  # type: ignore
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
                 'mac': self._get_mac(byte_data),

@@ -3,7 +3,7 @@ import logging
 from multiprocessing import Manager, Process
 from queue import Queue
 import time
-from typing import Iterator, List
+from typing import Generator, List
 
 from bleson import get_provider, Observer
 
@@ -105,7 +105,7 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Iterator[MacAndRawData]:
+    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         m = Manager()
         q = m.Queue()
 
@@ -139,8 +139,8 @@ class BleCommunicationBleson(BleCommunication):
         for d in data_iter:
             if mac == d[0]:
                 log.info('Data found')
-                data_iter.send(StopIteration)
+                data_iter.close()
                 data = d[1]
                 break
 
-        return data
+        return data or ''

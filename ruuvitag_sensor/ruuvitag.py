@@ -28,10 +28,10 @@ class RuuviTag(object):
         return self._mac
 
     @property
-    def state(self) -> Optional[SensorData]:
+    def state(self) -> Union[Dict, SensorData]:
         return self._state
 
-    def update(self) -> Optional[SensorData]:
+    def update(self) -> Union[Dict, SensorData]:
         """
         Get latest data from the sensor and update own state.
 
@@ -48,7 +48,7 @@ class RuuviTag(object):
 
         if self._data is None:
             self._state = {}
-        else:
+        elif data_format is not None:
             self._state = get_decoder(data_format).decode_data(self._data)
 
         return self._state
