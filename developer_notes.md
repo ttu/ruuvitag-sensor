@@ -48,6 +48,11 @@ Pylint
 $ pylint ./ruuvitag_sensor/
 ```
 
+mypy
+```
+$ mypy ./ruuvitag_sensor/
+```
+
 ## Project files
 
 * adapters
