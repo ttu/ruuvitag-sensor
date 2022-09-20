@@ -263,9 +263,8 @@ class Df5Decoder(object):
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             acc = math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z) if acc_x and acc_y and acc_z else None
 
-            # NOTE: value parsing might return None for values, but is shouldn't happen with
-            # the production firmaware. Therefore properties are not optional on SensorData-type
-            # type: ignore [incompatible-types]
+            # NOTE: Value parsing methods can return None, but it shouldn't happen with the
+            # production firmaware. Therefore properties are not optional on SensorData-type
 
             return {
                 'data_format': 5,
