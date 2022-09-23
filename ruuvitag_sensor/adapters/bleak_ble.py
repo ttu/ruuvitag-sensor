@@ -10,19 +10,17 @@ from ruuvitag_sensor.adapters import BleCommunicationAsync
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 
-def _get_scanner():
+def _get_scanner(detection_callback):
     # NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
     scanning_mode = 'active' if sys.platform.startswith('linux') else 'passive'
 
     if 'bleak_dev' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
         # pylint: disable=import-outside-toplevel
         from ruuvitag_sensor.adapters.development.dev_bleak_scanner import DevBleakScanner
-        return DevBleakScanner(scanning_mode)
+        return DevBleakScanner(detection_callback, scanning_mode)
 
-    return BleakScanner(scanning_mode=scanning_mode)
+    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)
 
-
-scanner = _get_scanner()
 
 # TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
 # queue = asyncio.Queue[Tuple[str, str]]()
@@ -55,10 +53,6 @@ class BleCommunicationBleak(BleCommunicationAsync):
         return formatted
 
     @staticmethod
-    async def _stop():
-        await scanner.stop()
-
-    @staticmethod
     async def get_data(blacklist: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndRawData, None]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             mac: str = device.address
@@ -76,7 +70,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data += hex((device.rssi + (1 << 8)) % (1 << 8)).replace('0x', '')
             await queue.put((mac, data))
 
-        scanner.register_detection_callback(detection_callback)
+        scanner = _get_scanner(detection_callback)
         await scanner.start()
 
         try:
@@ -90,7 +84,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         except Exception as ex:
             log.info(ex)
 
-        await BleCommunicationBleak._stop()
+        await scanner.stop()
 
     @staticmethod
     async def get_first_data(mac: str, bt_device: str = '') -> RawData:
