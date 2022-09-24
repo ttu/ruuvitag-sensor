@@ -20,7 +20,7 @@ $ sudo python -m pip install -e .[dev]
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
 
-4. Test that application works 
+4. Test that application works
 ```sh
 $ sudo python ruuvitag_sensor --help
 ```
@@ -31,7 +31,7 @@ ERROR: File "setup.py" not found. Directory cannot be installed in editable mode
 ```
 Upgrade pip as recommended.
 
-## Lint
+## Linting
 
 Install required dependencies
 ```sh
@@ -55,17 +55,25 @@ $ mypy ./ruuvitag_sensor/
 
 ## Project files
 
-* adapters
-  * nix_hci.py
-    * Bluetooth LE communication (BlueZ)
+* adapters/
+  * bleak_ble.py
+    * Bluetooth LE communication (Bleak)
   * bleson.py
     * Bluetooth LE communication (Bleson)
-  * nix_hci_file.py
-    * Emulate Bluetooth LE communication (file)
+  * development/
+    * dev_bleak_scanner.py
+      * Bleak Bluetooth LE scanner for development use
   * dummy.py
     * Emulate Bluetooth LE communication (hard coded values)
+  * \_\_init\_\_.py
+    * Bluetooth LE communication abstract base classes
+  * nix_hci.py
+    * Bluetooth LE communication (BlueZ)
+  * nix_hci_file.py
+    * Emulate Bluetooth LE communication (file)
+
 * data_formats.py
-  * Data format decision logic and raw data encoding 
+  * Data format decision logic and raw data encoding
 * decoder.py
   * Decode encoded data to readable dictionary
 * log.py
@@ -83,8 +91,9 @@ $ mypy ./ruuvitag_sensor/
 
 
 ## Testing
-To check that your changes work across multiple python versions and platforms, we have tox. 
-You can run tox locally, but tox will only run your current platform and the python versions 
+
+To check that your changes work across multiple python versions and platforms, we have tox.
+You can run tox locally, but tox will only run your current platform and the python versions
 you have in your system. Travis, however, will pick up all the combinations and test the all.
 
 ## Update RuuviTag firmware and change modes
@@ -98,7 +107,7 @@ you have in your system. Travis, however, will pick up all the combinations and 
 Nowadays the firmware can also be updated with the Ruuvi Station app which is available
 for Android and iOS.
 
-## Bluez commands used by RuuviTag package
+## BlueZ commands used by RuuviTag package
 
 Reset bluetooth device:
 ```sh
@@ -168,7 +177,7 @@ Kickstarter FW
 
 ## BLE Broadcast data from RuuviTags
 
-### Bluez
+### BlueZ
 
 Example data from hcidump:
 
@@ -237,9 +246,9 @@ __TODO: Add examples__
 
 Bleson send data in [bytes object](https://docs.python.org/3/library/stdtypes.html#bytes-objects).
 
-Bleson processes internally mac to an own property, so byte data contains only the payload part of RuuviTag data.
+Bleson processes internally MAC to an own property, so byte data contains only the payload part of RuuviTag data.
 
-NOTE: Manufacturer Specific Data (FF) is missing from the payload. It is added in the code before deciding the correct data format. This way most of the functions from Bluez version work with the Bleson version.
+NOTE: Manufacturer Specific Data (FF) is missing from the payload. It is added in the code before deciding the correct data format. This way most of the functions from BlueZ version work with the Bleson version.
 
 Bytes is converted to a hex string before data format specific handling.
 
@@ -286,7 +295,7 @@ RuuviTagSensor._get_ruuvitag_data
      Else
         Log error
    Else
-     Blacklist Mac   
+     Blacklist Mac
 ```
 
 [RuuviTagSensor.get_data](https://github.com/ttu/ruuvitag-sensor/blob/f6e62125e9021d0977e8f0d6032f4e74a5a9fed8/ruuvitag_sensor/ruuvi.py#L99)
@@ -328,7 +337,7 @@ $ chmod +x verification.sh
 $ sudo ./verification.sh
 ```
 
-Run verification for the package from pypi
+Run verification for the package from PyPI
 
 ```sh
 $ sudo ./verification.sh pypi
@@ -336,7 +345,7 @@ $ sudo ./verification.sh pypi
 
 ## Run long duration tests
 
-Test will create new BLE scanning subprocesses on each get_data_for_sensors-method call (approx every 5sec)
+Test will create new BLE scanning subprocesses on each get_data_for_sensors-method call (approximately every 5 seconds)
 
 ```python
 from datetime import datetime
@@ -416,7 +425,7 @@ $ python -m build
 
 ### Test in testpypi
 
-Upload to test pypi to verify that descriptions etc. are correct
+Upload to test PyPI to verify that descriptions etc. are correct
 
 https://test.pypi.org/project/ruuvitag-sensor/
 
@@ -427,13 +436,13 @@ $ twine upload -r testpypi dist/*
 
 ### Release a new version
 
-1. Update version and push to master ([example](https://github.com/ttu/ruuvitag-sensor/commit/a141e73952949a37bdcfd5e2902968135ed48146)). 
+1. Update version and push to master ([example](https://github.com/ttu/ruuvitag-sensor/commit/a141e73952949a37bdcfd5e2902968135ed48146)).
 2. Update Tags
 ```sh
 $ git tag x.x.x
 $ git push origin --tags
 ```
-3. Upload new version to pypi
+3. Upload new version to PyPI
 ```
 $ twine upload dist/*
 ```
