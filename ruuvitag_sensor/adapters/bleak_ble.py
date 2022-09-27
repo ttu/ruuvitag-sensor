@@ -40,7 +40,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # somewhat reliant on the additional data, add to the
         # beginning of the actual data:
         #
-        # - An FF type marker with 9904 (Ruuvi manufacturer identifer)
+        # - An FF type marker with 9904 (Ruuvi manufacturer identifier)
         # - A length marker, covering the vendor specific data
         # - Another length marker, covering the length-marked
         #   vendor data.
