@@ -60,5 +60,9 @@ class BleCommunicationAsync(object):
     @abc.abstractmethod
     async def get_data(blacklist: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndRawData, None]:
         raise NotImplementedError("must implement get_data()")
+        # https://github.com/python/mypy/issues/5070
+        # if False: yield is a mypy fix for
+        # error: Return type "AsyncGenerator[Tuple[str, str], None]" of "get_data" incompatible with return type
+        # "Coroutine[Any, Any, AsyncGenerator[Tuple[str, str], None]]" in supertype "BleCommunicationAsync"
         if False:
             yield 0
