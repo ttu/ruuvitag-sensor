@@ -3,6 +3,8 @@
 ### [Unreleased]
 * CHANGE: Add RSSI reporting
 * ADD: (Beta) Bleak cross-platform BLE adapter with async get_data_async and find_ruuvitags_async methods
+* CHANGE: RuuviTagSensor methods return empty string instead of None if MAC is not found
+* ADD: Type hints to package
 
 ## [2.0.0] - 2022-08-03
 * CHANGE: Support only Python 3.7 and above
