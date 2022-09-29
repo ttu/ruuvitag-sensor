@@ -7,7 +7,7 @@ from warnings import warn
 from ruuvitag_sensor.adapters import get_ble_adapter, is_async_adapter
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
-from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, MacAndRawData, MacAndSensorData, SensorData
+from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, Mac, MacAndRawData, MacAndSensorData, SensorData
 
 log = logging.getLogger(__name__)
 ble = get_ble_adapter()
@@ -62,7 +62,7 @@ class RuuviTagSensor(object):
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = '') -> Dict[str, SensorData]:
+    def find_ruuvitags(bt_device: str = '') -> Dict[Mac, SensorData]:
         """
         CLI helper function.
 
@@ -87,7 +87,7 @@ class RuuviTagSensor(object):
         return data
 
     @staticmethod
-    async def find_ruuvitags_async(bt_device: str = '') -> Dict[str, MacAndSensorData]:
+    async def find_ruuvitags_async(bt_device: str = '') -> Dict[Mac, MacAndSensorData]:
         """
         CLI helper function.
 
@@ -103,7 +103,7 @@ class RuuviTagSensor(object):
 
         log.info('Finding RuuviTags. Stop with Ctrl+C.')
 
-        data: Dict[str, MacAndSensorData] = {}
+        data: Dict[Mac, MacAndSensorData] = {}
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
@@ -121,7 +121,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') \
-            -> Dict[str, SensorData]:
+            -> Dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -137,7 +137,7 @@ class RuuviTagSensor(object):
         log.info('Stops automatically in %ss', search_duratio_sec)
         log.info('MACs: %s', macs)
 
-        data = {}
+        data: Dict[Mac, SensorData] = {}
 
         for new_data in RuuviTagSensor._get_ruuvitag_data(
                 macs,
@@ -169,7 +169,7 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def get_data(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
-                 bt_device: str = ''):
+                 bt_device: str = '') -> None:
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -188,14 +188,13 @@ class RuuviTagSensor(object):
 
     @staticmethod
     def get_datas(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
-                  bt_device: str = ''):
+                  bt_device: str = '') -> None:
         """
         DEPRECATED
         This method will be removed in a future version.
         Use get_data-method instead.
         """
-        warn('This method will be removed in a future version, use get_data() instead',
-             FutureWarning)
+        warn('This method will be removed in a future version, use get_data() instead', FutureWarning)
         return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
 
     @staticmethod
@@ -238,7 +237,7 @@ class RuuviTagSensor(object):
                 yield data
 
     @staticmethod
-    def _parse_data(ble_data: MacAndRawData, mac_blacklist: List[str], macs: List[str] = []) \
+    def _parse_data(ble_data: MacAndRawData, mac_blacklist: List[str], allowed_macs: List[str] = []) \
             -> Optional[MacAndSensorData]:
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
@@ -264,10 +263,10 @@ class RuuviTagSensor(object):
         # If advertised MAC is missing, try to parse it from the payload
         mac_to_send = mac if mac else \
             parse_mac(data_format, decoded['mac']) if 'mac' in decoded and decoded['mac'] \
-            is not None else None
+            is not None else ''
 
         # Check whitelist using MAC from decoded data if advertised MAC is not available
-        if mac_to_send and macs and mac_to_send not in macs:
+        if allowed_macs and mac_to_send not in allowed_macs:
             log.debug('MAC not whitelisted: %s', mac_to_send)
             return None
 
