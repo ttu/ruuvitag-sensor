@@ -64,5 +64,5 @@ class BleCommunicationAsync(object):
         # if False: yield is a mypy fix for
         # error: Return type "AsyncGenerator[Tuple[str, str], None]" of "get_data" incompatible with return type
         # "Coroutine[Any, Any, AsyncGenerator[Tuple[str, str], None]]" in supertype "BleCommunicationAsync"
-        if False:
+        if False:  # pylint: disable=unreachable,using-constant-test
             yield 0

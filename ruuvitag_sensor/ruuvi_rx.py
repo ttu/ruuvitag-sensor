@@ -3,7 +3,7 @@ from threading import Thread
 from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.managers import DictProxy
-from multiprocessing.queues import Queue
+from queue import Queue
 from concurrent.futures import ProcessPoolExecutor
 from typing import List
 from reactivex import Subject
@@ -57,7 +57,7 @@ class RuuviTagReactive(object):
         """
 
         self._run_flag = RunFlag()
-        self._subjects = []
+        self._subjects: List[Subject] = []
 
         m = Manager()
         q = m.Queue()
@@ -87,7 +87,7 @@ class RuuviTagReactive(object):
         if not self._run_flag.running:
             raise Exception('RuuviTagReactive stopped')
 
-        subject = Subject()
+        subject: Subject = Subject()
         self._subjects.append(subject)
         return subject
 

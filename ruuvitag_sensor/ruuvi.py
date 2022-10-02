@@ -1,6 +1,7 @@
 import time
 import logging
 from multiprocessing import Manager
+from multiprocessing.managers import ListProxy
 from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
 from warnings import warn
 
@@ -237,7 +238,7 @@ class RuuviTagSensor(object):
                 yield data
 
     @staticmethod
-    def _parse_data(ble_data: MacAndRawData, mac_blacklist: List[str], allowed_macs: List[str] = []) \
+    def _parse_data(ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: List[str] = []) \
             -> Optional[MacAndSensorData]:
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
