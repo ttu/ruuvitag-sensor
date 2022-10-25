@@ -48,7 +48,7 @@ The package provides 3 ways to fetch data from sensors:
 
 1. Synchronously with callback
 2. Asynchronously with async/await (BETA)
-3. Observable streams with ReactiveX
+3. Observable streams with ReactiveX (with the `rx` extra)
 
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
 

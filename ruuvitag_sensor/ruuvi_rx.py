@@ -6,8 +6,12 @@ from multiprocessing.managers import DictProxy
 from queue import Queue
 from concurrent.futures import ProcessPoolExecutor
 from typing import List
-from reactivex import Subject
 from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+
+try:
+    from reactivex import Subject
+except ImportError as ie:
+    raise ImportError('ReactiveX could not be imported (required for ruuvi_rx)') from ie
 
 
 def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):

@@ -24,12 +24,14 @@ classifiers = [
 ]
 keywords = [ "RuuviTag BLE" ]
 dependencies = [
-    "reactivex",
     "ptyprocess;platform_system=='Linux'",
     "mypy-extensions;python_version<'3.8'"
 ]
 
 [project.optional-dependencies]
+rx = [
+    "reactivex"
+]
 dev = [
     "pytest",
     "pytest-asyncio",
