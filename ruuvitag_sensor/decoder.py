@@ -1,5 +1,3 @@
-from __future__ import division
-
 import base64
 import math
 import logging
@@ -45,7 +43,7 @@ def parse_mac(data_format: int, payload_mac: str) -> str:
     return payload_mac
 
 
-class UrlDecoder(object):
+class UrlDecoder:
     """
     Decodes data from RuuviTag url
     Protocol specification:
@@ -107,7 +105,7 @@ class UrlDecoder(object):
             return None
 
 
-class Df3Decoder(object):
+class Df3Decoder:
     """
     Decodes data from RuuviTag with Data Format 3
     Protocol specification:
@@ -175,7 +173,7 @@ class Df3Decoder(object):
             return None
 
 
-class Df5Decoder(object):
+class Df5Decoder:
     """
     Decodes data from RuuviTag with Data Format 5
     Protocol specification:

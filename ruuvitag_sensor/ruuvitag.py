@@ -8,7 +8,7 @@ from ruuvitag_sensor.ruuvi_types import SensorData
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
 
 
-class RuuviTag(object):
+class RuuviTag:
     """
     RuuviTag Sensors object
     """

@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 ble = get_ble_adapter()
 
 
-class RunFlag(object):
+class RunFlag:
     """
     Wrapper for boolean run flag
 
@@ -25,7 +25,7 @@ class RunFlag(object):
     running = True
 
 
-class RuuviTagSensor(object):
+class RuuviTagSensor:
     """
     RuuviTag communication functionality
     """

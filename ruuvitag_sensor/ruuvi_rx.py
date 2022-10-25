@@ -27,7 +27,7 @@ def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictPro
     RuuviTagSensor.get_data(add_data, macs, run_flag, bt_device)
 
 
-class RuuviTagReactive(object):
+class RuuviTagReactive:
     """
     Reactive wrapper and background process for RuuviTagSensor
     get_data

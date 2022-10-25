@@ -1,5 +1,4 @@
 #!/bin/python3
-# -*- coding: utf-8 -*-
 """
 Get data from sensors and post it to specified mqtt channel in json-format
 

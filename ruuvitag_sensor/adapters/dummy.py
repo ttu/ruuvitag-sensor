@@ -19,8 +19,7 @@ class BleCommunicationDummy(BleCommunication):
              '1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD')
         ]
 
-        for data in dummy_data:
-            yield data
+        yield from dummy_data
 
 
 class BleCommunicationAsyncDummy(BleCommunicationAsync):
