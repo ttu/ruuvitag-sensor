@@ -64,8 +64,7 @@ class TestRuuviTagSensor():
             ('D5:57:97:65:88:14', '1F0201061BFF99040517B24633FFFFFFFCFFD403E4AF56388D51D55797658814B8'),
         ]
 
-        for data in tag_data:
-            yield data
+        yield from tag_data
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_find_tags(self):

@@ -32,7 +32,7 @@ def is_async_adapter(ble: object):
     return issubclass(type(ble), BleCommunicationAsync)
 
 
-class BleCommunication(object):
+class BleCommunication:
     """Bluetooth LE communication"""
     __metaclass__ = abc.ABCMeta
 
@@ -47,7 +47,7 @@ class BleCommunication(object):
         pass
 
 
-class BleCommunicationAsync(object):
+class BleCommunicationAsync:
     """Asynchronous Bluetooth LE communication"""
     __metaclass__ = abc.ABCMeta
 

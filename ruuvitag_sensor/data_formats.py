@@ -30,7 +30,7 @@ def _dechunk(raw: str) -> Tuple[str, str]:
     return (raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:])
 
 
-class DataFormats(object):
+class DataFormats:
     """
     RuuviTag broadcasted raw data handling for each data format
     """
