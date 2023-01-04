@@ -12,5 +12,5 @@ script: tox
 env:
   - CI=true
 before_install:
+  - pip install -U setuptools
   - if [[ $TRAVIS_PYTHON_VERSION == 3.7 ]]; then pip install -U importlib_metadata; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.9 ]]; then pip install -U setuptools; fi
