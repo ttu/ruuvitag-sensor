@@ -323,7 +323,7 @@ $ pytest tests/test_ruuvitag_sensor.py -k 'test_tag_update_is_valid'
 
 Show print statements on console:
 ```sh
-$ pytest --show-capture
+$ pytest --show-capture all
 ```
 
 Or use e.g. VS Code to execute and debug tests.
