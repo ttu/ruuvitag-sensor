@@ -4,10 +4,10 @@ Verification script for RuuviTags. Requires at least one active RuuviTag.
 
 import time
 
-from ruuvitag_sensor.decoder import UrlDecoder, Df3Decoder
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
-from ruuvitag_sensor.ruuvitag import RuuviTag
+from ruuvitag_sensor.decoder import Df3Decoder, UrlDecoder
+from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # Uncomment to turn on console print
 # import ruuvitag_sensor

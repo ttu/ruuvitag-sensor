@@ -6,7 +6,9 @@ Requires:
 """
 
 from urllib.parse import quote
+
 import requests
+
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 macs = [

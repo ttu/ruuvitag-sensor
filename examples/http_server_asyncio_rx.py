@@ -14,6 +14,7 @@ Requires:
 # pylint: disable=duplicate-code
 
 from aiohttp import web
+
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 all_data = {}

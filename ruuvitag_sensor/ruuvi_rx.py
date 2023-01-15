@@ -1,13 +1,15 @@
 import time
-from threading import Thread
+from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.managers import DictProxy
 from queue import Queue
-from concurrent.futures import ProcessPoolExecutor
+from threading import Thread
 from typing import List
+
 from reactivex import Subject
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+
+from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor
 
 
 def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):

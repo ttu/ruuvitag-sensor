@@ -2,8 +2,8 @@
 Find RuuviTags
 """
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
 import ruuvitag_sensor.log
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 ruuvitag_sensor.log.enable_console()
 

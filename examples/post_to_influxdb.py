@@ -30,8 +30,8 @@ Add new graph to dashboard
 """
 
 from influxdb import InfluxDBClient
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 client = InfluxDBClient(host='localhost', port=8086, database='ruuvi')
 

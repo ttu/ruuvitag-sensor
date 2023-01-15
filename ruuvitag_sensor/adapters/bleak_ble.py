@@ -3,8 +3,9 @@ import logging
 import os
 import sys
 from typing import AsyncGenerator, List, Tuple
+
 from bleak import BleakScanner
-from bleak.backends.scanner import BLEDevice, AdvertisementData
+from bleak.backends.scanner import AdvertisementData, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData

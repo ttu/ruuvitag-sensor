@@ -1,8 +1,8 @@
 import re
 from typing import Dict, Optional, Union
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.decoder import get_decoder
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvi_types import SensorData
 
 mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'

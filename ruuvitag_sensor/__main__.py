@@ -1,6 +1,6 @@
-import sys
 import argparse
 import logging
+import sys
 
 import ruuvitag_sensor
 from ruuvitag_sensor.log import log

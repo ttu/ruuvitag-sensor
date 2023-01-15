@@ -10,11 +10,13 @@ Requires:
     Flask - pip install flask
 """
 
-from datetime import datetime
 import json
-from multiprocessing import Manager
 from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime
+from multiprocessing import Manager
+
 from flask import Flask, abort
+
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 app = Flask(__name__)

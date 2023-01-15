@@ -1,11 +1,11 @@
-import sys
 import logging
+import sys
+import time
 from multiprocessing import Manager, Process
 from queue import Queue
-import time
 from typing import Generator, List
 
-from bleson import get_provider, Observer
+from bleson import Observer, get_provider
 
 from ruuvitag_sensor.adapters import BleCommunication
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData

@@ -1,10 +1,11 @@
 import sys
 from typing import Tuple
 from unittest.mock import patch
+
 import pytest
 
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy, BleCommunicationDummy
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # pylint: disable=unused-argument
 
