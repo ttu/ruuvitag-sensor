@@ -34,7 +34,8 @@ dev = [
     "pytest-asyncio",
     "flake8-pyproject",
     "pylint",
-    "mypy"
+    "mypy",
+    "isort"
 ]
 
 [project.urls]
@@ -70,3 +71,7 @@ disable = [
 [tool.mypy]
 python_version = 3.8
 ignore_missing_imports = true
+
+[tool.isort]
+line_length = 120
+ensure_newline_before_comments = true

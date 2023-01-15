@@ -53,6 +53,13 @@ mypy
 $ mypy ./ruuvitag_sensor/
 ```
 
+## Formatting
+
+isort
+```sh
+$ isort .
+```
+
 ## Project files
 
 * adapters/
