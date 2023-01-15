@@ -19,8 +19,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
-    "Framework :: Pytest",
-    "Framework :: tox"
+    "Framework :: Pytest"
 ]
 keywords = [ "RuuviTag BLE" ]
 dependencies = [
