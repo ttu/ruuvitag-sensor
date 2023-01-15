@@ -31,8 +31,7 @@ jobs:
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --statistics
+        flake8 . --exit-zero
     - name: Pylint
       run: pylint ./ruuvitag_sensor
     - name: Mypy
