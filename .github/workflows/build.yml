@@ -36,5 +36,7 @@ jobs:
       run: pylint ./ruuvitag_sensor
     - name: Mypy
       run: mypy ./ruuvitag_sensor
+    - name: isort
+      run: isort . --diff --check-only
     - name: Tests
       run: pytest -v -s --show-capture all
