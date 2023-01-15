@@ -19,9 +19,9 @@ from ruuvitag_sensor.ruuvitag import RuuviTag
 # Helper Functions
 #
 def print_header(name):
-    print('############################################')
+    print("############################################")
     print(name)
-    print('############################################')
+    print("############################################")
 
 
 def wait_for_finish(run_flag, name):
@@ -31,86 +31,86 @@ def wait_for_finish(run_flag, name):
         time.sleep(0.1)
         max_time -= 0.1
         if max_time < 0:
-            raise Exception(f'{name} not finished')
+            raise Exception(f"{name} not finished")
 
 
 #
 # UrlDecoder.decode_data
 #
-print_header('UrlDecoder.decode_data')
+print_header("UrlDecoder.decode_data")
 
 decoder = UrlDecoder()
-data = decoder.decode_data('AjwYAMFc')
+data = decoder.decode_data("AjwYAMFc")
 print(data)
 
-if not data['temperature']:
-    raise Exception('FAILED')
+if not data["temperature"]:
+    raise Exception("FAILED")
 
-print('OK')
+print("OK")
 
 
 #
 # UrlDecoder.decode_data
 #
-print_header('UrlDecoder.decode_data')
+print_header("UrlDecoder.decode_data")
 
 decoder = Df3Decoder()
-data = decoder.decode_data('03291A1ECE1EFC18F94202CA0B5300000000BB')
+data = decoder.decode_data("03291A1ECE1EFC18F94202CA0B5300000000BB")
 print(data)
 
-if not data['temperature']:
-    raise Exception('FAILED')
+if not data["temperature"]:
+    raise Exception("FAILED")
 
-print('OK')
+print("OK")
 
 
 #
 # RuuviTagSensor.get_data_for_sensors
 #
-print_header('RuuviTagSensor.get_data_for_sensors')
+print_header("RuuviTagSensor.get_data_for_sensors")
 
 data = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
 print(data)
 
 if not data:
-    raise Exception('FAILED')
+    raise Exception("FAILED")
 
-print('OK')
+print("OK")
 
 
 #
 # RuuviTagSensor.get_data_for_sensors with macs
 #
-print_header('RuuviTagSensor.get_data_for_sensors with macs')
+print_header("RuuviTagSensor.get_data_for_sensors with macs")
 
 data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duratio_sec=15)
 print(data)
 
 if not data:
-    raise Exception('FAILED')
+    raise Exception("FAILED")
 
-print('OK')
+print("OK")
 
 
 #
 # RuuviTag.update
 #
-print_header('RuuviTag.update')
+print_header("RuuviTag.update")
 
 tag = RuuviTag(list(data.keys())[0])
 tag.update()
 print(tag.state)
 
 if not tag.state:
-    raise Exception('FAILED')
+    raise Exception("FAILED")
 
-print('OK')
+print("OK")
 
 
 #
 # RuuviTagSensor.get_data
 #
-print_header('RuuviTagSensor.get_data')
+print_header("RuuviTagSensor.get_data")
 
 flag = RunFlag()
 
@@ -118,20 +118,20 @@ flag = RunFlag()
 def handle_data(found_data):
     flag.running = False
     if not found_data:
-        raise Exception('FAILED')
+        raise Exception("FAILED")
 
-    print('OK')
+    print("OK")
 
 
 RuuviTagSensor.get_data(handle_data, run_flag=flag)
 
-wait_for_finish(flag, 'RuuviTagSensor.get_data')
+wait_for_finish(flag, "RuuviTagSensor.get_data")
 
 
 #
 # ruuvi_rx.subscribe
 #
-print_header('ruuvi_rx.subscribe')
+print_header("ruuvi_rx.subscribe")
 
 ruuvi_rx = RuuviTagReactive()
 
@@ -140,15 +140,15 @@ def hadle_rx(found_data):
     print(found_data)
     ruuvi_rx.stop()
     if not found_data:
-        raise Exception('FAILED')
+        raise Exception("FAILED")
 
-    print('OK')
+    print("OK")
 
 
 ruuvi_rx.get_subject().subscribe(hadle_rx)
 
 # pylint: disable=protected-access
-wait_for_finish(ruuvi_rx._run_flag, 'ruuvi_rx.subscribe')
+wait_for_finish(ruuvi_rx._run_flag, "ruuvi_rx.subscribe")
 
 
-print('Verification OK')
+print("Verification OK")

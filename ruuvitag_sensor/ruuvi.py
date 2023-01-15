@@ -31,7 +31,7 @@ class RuuviTagSensor:
     """
 
     @staticmethod
-    def get_first_raw_data(mac: str, bt_device: str = '') -> DataFormatAndRawSensorData:
+    def get_first_raw_data(mac: str, bt_device: str = "") -> DataFormatAndRawSensorData:
         """
         Get raw data for selected RuuviTag. This method is intended to be used only by
         RuuviTag-class.
@@ -47,7 +47,7 @@ class RuuviTagSensor:
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    async def get_first_raw_data_async(mac: str, bt_device: str = '') -> DataFormatAndRawSensorData:
+    async def get_first_raw_data_async(mac: str, bt_device: str = "") -> DataFormatAndRawSensorData:
         """
         Get raw data for selected RuuviTag. This method is intended to be used only by
         RuuviTag-class.
@@ -63,7 +63,7 @@ class RuuviTagSensor:
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = '') -> Dict[Mac, SensorData]:
+    def find_ruuvitags(bt_device: str = "") -> Dict[Mac, SensorData]:
         """
         CLI helper function.
 
@@ -74,7 +74,7 @@ class RuuviTagSensor:
             dict: MAC and state of found sensors
         """
 
-        log.info('Finding RuuviTags. Stop with Ctrl+C.')
+        log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
         data: Dict[str, SensorData] = {}
         for new_data in RuuviTagSensor._get_ruuvitag_data(bt_device=bt_device):
@@ -88,7 +88,7 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    async def find_ruuvitags_async(bt_device: str = '') -> Dict[Mac, MacAndSensorData]:
+    async def find_ruuvitags_async(bt_device: str = "") -> Dict[Mac, MacAndSensorData]:
         """
         CLI helper function.
 
@@ -100,9 +100,9 @@ class RuuviTagSensor:
         """
 
         if not is_async_adapter(ble):
-            raise Exception('Only Bleak BLE communication is supported')
+            raise Exception("Only Bleak BLE communication is supported")
 
-        log.info('Finding RuuviTags. Stop with Ctrl+C.')
+        log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
         data: Dict[Mac, MacAndSensorData] = {}
         mac_blacklist = Manager().list()
@@ -122,7 +122,7 @@ class RuuviTagSensor:
 
     @staticmethod
     def get_data_for_sensors(
-        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ''
+        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ""
     ) -> Dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
@@ -135,9 +135,9 @@ class RuuviTagSensor:
             dict: MAC and state of found sensors
         """
 
-        log.info('Get latest data for sensors. Stop with Ctrl+C.')
-        log.info('Stops automatically in %ss', search_duratio_sec)
-        log.info('MACs: %s', macs)
+        log.info("Get latest data for sensors. Stop with Ctrl+C.")
+        log.info("Stops automatically in %ss", search_duratio_sec)
+        log.info("MACs: %s", macs)
 
         data: Dict[Mac, SensorData] = {}
 
@@ -148,9 +148,9 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    async def get_data_async(macs: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndSensorData, None]:
+    async def get_data_async(macs: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
         if not is_async_adapter(ble):
-            raise Exception('Only Bleak BLE communication is supported')
+            raise Exception("Only Bleak BLE communication is supported")
 
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
@@ -160,7 +160,7 @@ class RuuviTagSensor:
 
             # Check MAC whitelist if advertised MAC available
             if ble_data[0] and macs and not ble_data[0] in macs:
-                log.debug('MAC not whitelisted: %s', ble_data[0])
+                log.debug("MAC not whitelisted: %s", ble_data[0])
                 continue
 
             if data:
@@ -171,7 +171,7 @@ class RuuviTagSensor:
         callback: Callable[[MacAndSensorData], None],
         macs: List[str] = [],
         run_flag: RunFlag = RunFlag(),
-        bt_device: str = '',
+        bt_device: str = "",
     ) -> None:
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
@@ -183,8 +183,8 @@ class RuuviTagSensor:
             bt_device (string): Bluetooth device id
         """
 
-        log.info('Get latest data for sensors. Stop with Ctrl+C.')
-        log.info('MACs: %s', macs)
+        log.info("Get latest data for sensors. Stop with Ctrl+C.")
+        log.info("MACs: %s", macs)
 
         for new_data in RuuviTagSensor._get_ruuvitag_data(macs, None, run_flag, bt_device):
             callback(new_data)
@@ -194,14 +194,14 @@ class RuuviTagSensor:
         callback: Callable[[MacAndSensorData], None],
         macs: List[str] = [],
         run_flag: RunFlag = RunFlag(),
-        bt_device: str = '',
+        bt_device: str = "",
     ) -> None:
         """
         DEPRECATED
         This method will be removed in a future version.
         Use get_data-method instead.
         """
-        warn('This method will be removed in a future version, use get_data() instead', FutureWarning)
+        warn("This method will be removed in a future version, use get_data() instead", FutureWarning)
         return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
 
     @staticmethod
@@ -209,7 +209,7 @@ class RuuviTagSensor:
         macs: List[str] = [],
         search_duratio_sec: Optional[int] = None,
         run_flag: RunFlag = RunFlag(),
-        bt_device: str = '',
+        bt_device: str = "",
     ) -> Generator[MacAndSensorData, None, None]:
         """
         Get data from BluetoothCommunication and handle data encoding.
@@ -239,7 +239,7 @@ class RuuviTagSensor:
                 break
             # Check MAC whitelist if advertised MAC available
             if ble_data[0] and macs and not ble_data[0] in macs:
-                log.debug('MAC not whitelisted: %s', ble_data[0])
+                log.debug("MAC not whitelisted: %s", ble_data[0])
                 continue
 
             data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
@@ -257,7 +257,7 @@ class RuuviTagSensor:
         # If data is not valid RuuviTag data add MAC to blacklist if MAC is available
         if data is None:
             if mac:
-                log.debug('Blacklisting MAC %s', mac)
+                log.debug("Blacklisting MAC %s", mac)
                 mac_blacklist.append(mac)
             return None
 
@@ -268,21 +268,21 @@ class RuuviTagSensor:
 
         decoded = get_decoder(data_format).decode_data(data)
         if decoded is None:
-            log.error('Decoded data is null. MAC: %s - Raw: %s', mac, payload)
+            log.error("Decoded data is null. MAC: %s - Raw: %s", mac, payload)
             return None
 
         # If advertised MAC is missing, try to parse it from the payload
         mac_to_send = (
             mac
             if mac
-            else parse_mac(data_format, decoded['mac'])
-            if 'mac' in decoded and decoded['mac'] is not None
-            else ''
+            else parse_mac(data_format, decoded["mac"])
+            if "mac" in decoded and decoded["mac"] is not None
+            else ""
         )
 
         # Check whitelist using MAC from decoded data if advertised MAC is not available
         if allowed_macs and mac_to_send not in allowed_macs:
-            log.debug('MAC not whitelisted: %s', mac_to_send)
+            log.debug("MAC not whitelisted: %s", mac_to_send)
             return None
 
         return (mac_to_send, decoded)

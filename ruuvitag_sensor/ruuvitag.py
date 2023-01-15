@@ -5,7 +5,7 @@ from ruuvitag_sensor.decoder import get_decoder
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvi_types import SensorData
 
-mac_regex = '[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$'
+mac_regex = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
 
 
 class RuuviTag:
@@ -13,10 +13,10 @@ class RuuviTag:
     RuuviTag Sensors object
     """
 
-    def __init__(self, mac: str, bt_device: str = ''):
+    def __init__(self, mac: str, bt_device: str = ""):
 
         if not re.match(mac_regex, mac.lower()):
-            raise ValueError(f'{mac} is not a valid MAC address')
+            raise ValueError(f"{mac} is not a valid MAC address")
 
         self._mac: str = mac
         self._state: Union[Dict, SensorData] = {}

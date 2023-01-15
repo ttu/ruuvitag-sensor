@@ -23,21 +23,21 @@ class BleCommunicationBleson(BleCommunication):
         (observer, q) = BleCommunicationBleson.start(bt_device)
 
         for advertisement in BleCommunicationBleson.get_lines(q):
-            log.debug('Data: %s', advertisement)
-            if shared_data['stop']:
+            log.debug("Data: %s", advertisement)
+            if shared_data["stop"]:
                 break
             try:
                 # macOS doesn't return address on advertised package
                 mac = advertisement.address.address if advertisement.address is not None else None
-                if mac and mac in shared_data['blacklist']:
-                    log.debug('MAC blacklised: %s', mac)
+                if mac and mac in shared_data["blacklist"]:
+                    log.debug("MAC blacklised: %s", mac)
                     continue
                 if advertisement.mfg_data is None:
                     continue
                 # Linux returns bytearray for mfg_data, but macOS returns _NSInlineData
                 # which casts to byte array. We need to explicitly cast it to use hex
                 data = (
-                    bytearray(advertisement.mfg_data) if sys.platform.startswith('darwin') else advertisement.mfg_data
+                    bytearray(advertisement.mfg_data) if sys.platform.startswith("darwin") else advertisement.mfg_data
                 )
                 # Bleson returns data in a different format than the nix_hci
                 # adapter. Since the rest of the processing pipeline is
@@ -53,20 +53,20 @@ class BleCommunicationBleson(BleCommunication):
                 # the pipeline.
                 #
                 # TODO: This is kinda awkward, and should be handled better.
-                data = f'FF{data.hex()}'
-                data = f'{(len(data) >> 1):02x}{data}'
-                data = f'{(len(data) >> 1):02x}{data}'
+                data = f"FF{data.hex()}"
+                data = f"{(len(data) >> 1):02x}{data}"
+                data = f"{(len(data) >> 1):02x}{data}"
                 queue.put((mac, data.upper()))
             except GeneratorExit:
                 break
             except Exception:
-                log.exception('Error in advertisement handling')
+                log.exception("Error in advertisement handling")
                 continue
 
         BleCommunicationBleson.stop(observer)
 
     @staticmethod
-    def start(bt_device=''):
+    def start(bt_device=""):
         """
         Attributes:
            device (string): BLE device (default 0)
@@ -76,9 +76,9 @@ class BleCommunicationBleson(BleCommunication):
             bt_device = 0
         else:
             # Old communication used hci0 etc.
-            bt_device = bt_device.replace('hci', '')
+            bt_device = bt_device.replace("hci", "")
 
-        log.info('Start receiving broadcasts (device %s)', bt_device)
+        log.info("Start receiving broadcasts (device %s)", bt_device)
 
         q = Queue()
 
@@ -112,8 +112,8 @@ class BleCommunicationBleson(BleCommunication):
 
         # Use Manager dict to share data between processes
         shared_data = m.dict()
-        shared_data['blacklist'] = blacklist
-        shared_data['stop'] = False
+        shared_data["blacklist"] = blacklist
+        shared_data["stop"] = False
 
         # Start background process
         proc = Process(target=BleCommunicationBleson._run_get_data_background, args=[q, shared_data, bt_device])
@@ -128,18 +128,18 @@ class BleCommunicationBleson(BleCommunication):
         except GeneratorExit:
             pass
 
-        shared_data['stop'] = True
+        shared_data["stop"] = True
         proc.join()
 
     @staticmethod
-    def get_first_data(mac: str, bt_device: str = '') -> RawData:
+    def get_first_data(mac: str, bt_device: str = "") -> RawData:
         data = None
         data_iter = BleCommunicationBleson.get_data([], bt_device)
         for d in data_iter:
             if mac == d[0]:
-                log.info('Data found')
+                log.info("Data found")
                 data_iter.close()
                 data = d[1]
                 break
 
-        return data or ''
+        return data or ""

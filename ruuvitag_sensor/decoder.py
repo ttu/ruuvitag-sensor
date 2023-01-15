@@ -17,15 +17,15 @@ def get_decoder(data_type: int):
         object: Data decoder
     """
     if data_type == 2:
-        log.warning('DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG')
+        log.warning("DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 4:
-        log.warning('DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG')
+        log.warning("DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
     if data_type == 3:
-        log.warning('DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG')
+        log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
     return Df5Decoder()
@@ -39,7 +39,7 @@ def parse_mac(data_format: int, payload_mac: str) -> str:
         string: MAC separated and in upper case e.g. E6:2E:B9:2E:73:E5
     """
     if data_format == 5:
-        return ':'.join(payload_mac[i : i + 2] for i in range(0, 12, 2)).upper()
+        return ":".join(payload_mac[i : i + 2] for i in range(0, 12, 2)).upper()
     return payload_mac
 
 
@@ -92,16 +92,16 @@ class UrlDecoder:
                 data_format = 4
                 identifier = encoded[8:]
                 encoded = encoded[:8]
-            decoded = bytearray(base64.b64decode(encoded, '-_'))  # type: ignore
+            decoded = bytearray(base64.b64decode(encoded, "-_"))  # type: ignore
             return {
-                'data_format': data_format,
-                'temperature': self._get_temperature(decoded),
-                'humidity': self._get_humidity(decoded),
-                'pressure': self._get_pressure(decoded),
-                'identifier': identifier,
+                "data_format": data_format,
+                "temperature": self._get_temperature(decoded),
+                "humidity": self._get_humidity(decoded),
+                "pressure": self._get_pressure(decoded),
+                "identifier": identifier,
             }
         except Exception:
-            log.exception('Encoded value: %s not valid', encoded)
+            log.exception("Encoded value: %s not valid", encoded)
             return None
 
 
@@ -154,21 +154,21 @@ class Df3Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack('>BBbBHhhhH', bytearray.fromhex(data[:28]))
+            byte_data: ByteData = struct.unpack(">BBbBHhhhH", bytearray.fromhex(data[:28]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
-                'data_format': 3,
-                'humidity': self._get_humidity(byte_data),
-                'temperature': self._get_temperature(byte_data),
-                'pressure': self._get_pressure(byte_data),
-                'acceleration': math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
-                'acceleration_x': acc_x,
-                'acceleration_y': acc_y,
-                'acceleration_z': acc_z,
-                'battery': self._get_battery(byte_data),
+                "data_format": 3,
+                "humidity": self._get_humidity(byte_data),
+                "temperature": self._get_temperature(byte_data),
+                "pressure": self._get_pressure(byte_data),
+                "acceleration": math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
+                "acceleration_x": acc_x,
+                "acceleration_y": acc_y,
+                "acceleration_z": acc_z,
+                "battery": self._get_battery(byte_data),
             }
         except Exception:
-            log.exception('Value: %s not valid', data)
+            log.exception("Value: %s not valid", data)
             return None
 
 
@@ -237,7 +237,7 @@ class Df5Decoder:
         return data[9]
 
     def _get_mac(self, data: ByteData):
-        return ''.join(f'{x:02x}' for x in data[10:])
+        return "".join(f"{x:02x}" for x in data[10:])
 
     def _get_rssi(self, rssi_byte: str) -> int:
         """Return RSSI value in dBm."""
@@ -254,7 +254,7 @@ class Df5Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack('>BhHHhhhHBH6B', bytearray.fromhex(data[:48]))
+            byte_data: ByteData = struct.unpack(">BhHHhhhHBH6B", bytearray.fromhex(data[:48]))
             rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
@@ -264,21 +264,21 @@ class Df5Decoder:
             # production firmware. Therefore properties are not optional on SensorData-type.
 
             return {
-                'data_format': 5,
-                'humidity': self._get_humidity(byte_data),  # type: ignore
-                'temperature': self._get_temperature(byte_data),  # type: ignore
-                'pressure': self._get_pressure(byte_data),  # type: ignore
-                'acceleration': acc,  # type: ignore
-                'acceleration_x': acc_x,  # type: ignore
-                'acceleration_y': acc_y,  # type: ignore
-                'acceleration_z': acc_z,  # type: ignore
-                'tx_power': self._get_txpower(byte_data),  # type: ignore
-                'battery': self._get_battery(byte_data),  # type: ignore
-                'movement_counter': self._get_movementcounter(byte_data),
-                'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
-                'mac': self._get_mac(byte_data),
-                'rssi': self._get_rssi(rssi) if rssi else None,
+                "data_format": 5,
+                "humidity": self._get_humidity(byte_data),  # type: ignore
+                "temperature": self._get_temperature(byte_data),  # type: ignore
+                "pressure": self._get_pressure(byte_data),  # type: ignore
+                "acceleration": acc,  # type: ignore
+                "acceleration_x": acc_x,  # type: ignore
+                "acceleration_y": acc_y,  # type: ignore
+                "acceleration_z": acc_z,  # type: ignore
+                "tx_power": self._get_txpower(byte_data),  # type: ignore
+                "battery": self._get_battery(byte_data),  # type: ignore
+                "movement_counter": self._get_movementcounter(byte_data),
+                "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
+                "mac": self._get_mac(byte_data),
+                "rssi": self._get_rssi(rssi) if rssi else None,
             }
         except Exception:
-            log.exception('Value: %s not valid', data)
+            log.exception("Value: %s not valid", data)
             return None
