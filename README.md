@@ -53,7 +53,7 @@ The package provides 3 ways to fetch data from sensors:
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
 
 ```py
-('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
+("D2:A3:6E:C8:E0:25", {"data_format": 5, "humidity": 47.62, "temperature": 23.58, "pressure": 1023.68, "acceleration": 993.2331045630729, "acceleration_x": -48, "acceleration_y": -12, "acceleration_z": 992, "tx_power": 4, "battery": 2197, "movement_counter": 0, "measurement_sequence_number": 88, "mac": "d2a36ec8e025", "rssi": -80})
 ```
 
 #### 1. Get sensor data synchronously with callback
@@ -65,14 +65,14 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
 def handle_data(found_data):
-    print(f'MAC {found_data[0]}')
-    print(f'Data {found_data[1]}')
+    print(f"MAC {found_data[0]}")
+    print(f"Data {found_data[1]}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     RuuviTagSensor.get_data(handle_data)
 ```
 
-The line `if __name__ == '__main__':` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
+The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
 
 The optional list of MACs and run flag can be passed to the `get_data` function. The callback is called only for MACs in the list and setting the run flag to false will stop execution. If the run flag is not passed, the function will execute forever.
 
@@ -84,8 +84,8 @@ counter = 10
 run_flag = RunFlag()
 
 def handle_data(found_data):
-    print(f'MAC: {found_data[0]}')
-    print(f'Data: {found_data[1]}')
+    print(f"MAC: {found_data[0]}")
+    print(f"Data: {found_data[1]}")
 
     global counter
     counter = counter - 1
@@ -93,7 +93,7 @@ def handle_data(found_data):
         run_flag.running = False
 
 # List of MACs of sensors which will execute callback function
-macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
 
 RuuviTagSensor.get_data(handle_data, macs, run_flag)
 ```
@@ -109,10 +109,10 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 async def main():
     async for found_data in RuuviTagSensor.get_data_async():
-        print(f'MAC: {found_data[0]}')
-        print(f'Data: {found_data[1]}')
+        print(f"MAC: {found_data[0]}")
+        print(f"Data: {found_data[1]}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
@@ -134,16 +134,16 @@ ruuvi_rx.get_subject().\
 
 # Print only last data every 10 seconds for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(
-      ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
+      ops.filter(lambda x: x[0] == "F4:A5:74:89:16:57"),
       ops.buffer_with_time(10.0)
     ).subscribe(lambda data: print(data[len(data) - 1]))
 
 # Execute only every time when temperature changes for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(
-      ops.filter(lambda x: x[0] == 'F4:A5:74:89:16:57'),
-      ops.map(lambda x: x[1]['temperature']),
+      ops.filter(lambda x: x[0] == "F4:A5:74:89:16:57"),
+      ops.map(lambda x: x[1]["temperature"]),
       ops.distinct_until_changed()
-    ).subscribe(lambda x: print('Temperature changed: {}'.format(x)))
+    ).subscribe(lambda x: print(f"Temperature changed: {x}"))
 
 # Close all connections and stop bluetooth communication
 ruuvi_rx.stop()
@@ -164,15 +164,15 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # List of MACs of sensors which data will be collected
 # If list is empty, data will be collected for all found sensors
-macs = ['AA:2C:6A:1E:59:3D', 'CC:2C:6A:1E:59:3D']
+macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
 # get_data_for_sensors will look data for the duration of timeout_in_sec
 timeout_in_sec = 4
 
 data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
 
 # Dictionary will have latest data for each sensor
-print(data['AA:2C:6A:1E:59:3D'])
-print(data['CC:2C:6A:1E:59:3D'])
+print(data["AA:2C:6A:1E:59:3D"])
+print(data["CC:2C:6A:1E:59:3D"])
 ```
 
 __NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method.
@@ -184,7 +184,7 @@ __NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data`
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
-sensor = RuuviTag('AA:2C:6A:1E:59:3D')
+sensor = RuuviTag("AA:2C:6A:1E:59:3D")
 
 # update state from the device
 state = sensor.update()
@@ -216,13 +216,13 @@ If you have multiple Bluetooth devices installed, a device to be used might not 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
-sensor = RuuviTag('F4:A5:74:89:16:57', 'hci1')
+sensor = RuuviTag("F4:A5:74:89:16:57", "hci1")
 
-RuuviTagSensor.find_ruuvitags('hci1')
+RuuviTagSensor.find_ruuvitags("hci1")
 
-data = RuuviTagSensor.get_data_for_sensors(bt_device='hci1')
+data = RuuviTagSensor.get_data_for_sensors(bt_device="hci1")
 
-RuuviTagSensor.get_data(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=device))
+RuuviTagSensor.get_data(lambda x: print(f"{x[0]} - {x[1]}"), bt_device=device))
 ```
 
 #### Parse data
@@ -231,7 +231,7 @@ RuuviTagSensor.get_data(lambda x: print('%s - %s' % (x[0], x[1]), bt_device=devi
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder
 
-full_data = '043E2A0201030157168974A51F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3'
+full_data = "043E2A0201030157168974A51F0201060303AAFE1716AAFE10F9037275752E76692F23416A5558314D417730C3"
 data = full_data[26:]
 
 # convert_data returns tuple which has Data Format type and encoded data
@@ -240,7 +240,7 @@ data = full_data[26:]
 sensor_data = get_decoder(data_format).decode_data(encoded)
 
 print(sensor_data)
-# {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
+# {"temperature": 25.12, "identifier": "0", "humidity": 26.5, "pressure": 992.0}
 ```
 
 ### Data Formats
@@ -253,10 +253,10 @@ Example data has data from 4 sensors with different firmware.
 
 ```python
 {
-'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None, 'rssi': None },
-'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0', 'rssi': None },
-'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3, 'rssi': None },
-'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70, 'rssi': -65 }
+"CA:F7:44:DE:EB:E1": { "data_format": 2, "temperature": 22.0, "humidity": 28.0, "pressure": 991.0, "identifier": None, "rssi": None },
+"F4:A5:74:89:16:57": { "data_format": 4, "temperature": 23.24, "humidity": 29.0, "pressure": 991.0, "identifier": "0", "rssi": None },
+"A3:GE:2D:91:A4:1F": { "data_format": 3, "battery": 2899, "pressure": 1027.66, "humidity": 20.5, "acceleration": 63818.215675463696, "acceleration_x": 200.34, "acceleration_y": 0.512, "acceleration_z": -200.42, "temperature": 26.3, "rssi": None },
+"CB:B8:33:4C:88:4F": { "data_format": 5, "battery": 2.995, "pressure": 1000.43, "mac": "cbb8334c884f", "measurement_sequence_number": 2467, "acceleration_z": 1028, "acceleration": 1028.0389097694697, "temperature": 22.14, "acceleration_y": -8, "acceleration_x": 4, "humidity": 53.97, "tx_power": 4, "movement_counter": 70, "rssi": -65 }
 }
 ```
 
@@ -387,7 +387,7 @@ async def main():
     async for data in RuuviTagSensor.get_data_async():
         print(data)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
