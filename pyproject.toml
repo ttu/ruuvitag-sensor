@@ -51,6 +51,8 @@ testpaths = "tests/"
 exclude = ".venv, .git, .eggs, __pycache__, build, dist"
 max-line-length = 120
 ignore = "E402"
+show-source = true
+max-complexity = 12
 
 [tool.pylint.messages_control]
 max-line-length = 120
