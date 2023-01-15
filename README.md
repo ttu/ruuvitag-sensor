@@ -1,6 +1,6 @@
 # RuuviTag Sensor Python Package
 
-[![Build Status](https://app.travis-ci.com/ttu/ruuvitag-sensor.svg?branch=master)](https://app.travis-ci.com/github/ttu/ruuvitag-sensor) [![PyPI](https://img.shields.io/pypi/v/ruuvitag_sensor.svg)](https://pypi.python.org/pypi/ruuvitag_sensor)
+[![Build Status](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml) [![PyPI](https://img.shields.io/pypi/v/ruuvitag_sensor.svg)](https://pypi.python.org/pypi/ruuvitag_sensor)
 
 RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
