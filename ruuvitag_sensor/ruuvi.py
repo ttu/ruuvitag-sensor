@@ -68,7 +68,7 @@ class RuuviTagSensor:
         CLI helper function.
 
         Find all RuuviTags. Function will print the MAC and the state of the sensors when found.
-        Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
+        Function will execute as long as it is stopped. Stop execution with Ctrl+C.
 
         Returns:
             dict: MAC and state of found sensors
@@ -93,7 +93,7 @@ class RuuviTagSensor:
         CLI helper function.
 
         Find all RuuviTags. Function will print the MAC and the state of the sensors when found.
-        Function will execute as long as it is stopped. Stop ecexution with Ctrl+C.
+        Function will execute as long as it is stopped. Stop execution with Ctrl+C.
 
         Returns:
             dict: MAC and state of found sensors
