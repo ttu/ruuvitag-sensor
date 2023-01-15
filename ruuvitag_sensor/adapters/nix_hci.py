@@ -49,10 +49,7 @@ class BleCommunicationNix(BleCommunication):
                 return start_with_retry(func, try_count - 1, interval + interval, msg)
             return retcode
 
-        retcode = start_with_retry(
-            reset_ble_adapter,
-            3, 1,
-            'Problem with hciconfig reset. Retry reset.')
+        retcode = start_with_retry(reset_ble_adapter, 3, 1, 'Problem with hciconfig reset. Retry reset.')
 
         if retcode != 0:
             log.info('Problem with hciconfig reset. Exit.')
@@ -149,7 +146,7 @@ class BleCommunicationNix(BleCommunication):
                 # in reverse order
 
                 found_mac = line[14:26]
-                reversed_mac = ''.join(reversed([found_mac[i:i + 2] for i in range(0, len(found_mac), 2)]))
+                reversed_mac = ''.join(reversed([found_mac[i : i + 2] for i in range(0, len(found_mac), 2)]))
                 mac = ':'.join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
                 if mac in blacklist:
                     log.debug('MAC blacklisted: %s', mac)

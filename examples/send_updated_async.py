@@ -27,12 +27,9 @@ server_url = 'http://10.0.0.1:5000/api'
 
 
 async def handle_queue(queue):
-
     async def send_post(session, update_data):
         async with session.post(
-            f'{server_url}/sensordata',
-            data=json.dumps(update_data),
-            headers={'content-type': 'application/json'}
+            f'{server_url}/sensordata', data=json.dumps(update_data), headers={'content-type': 'application/json'}
         ) as response:
             response = await response.read()
 
@@ -40,7 +37,7 @@ async def handle_queue(queue):
         async with session.put(
             f'{server_url}/sensors/{quote(update_data["mac"])}',
             data=json.dumps(update_data),
-            headers={'content-type': 'application/json'}
+            headers={'content-type': 'application/json'},
         ) as response:
             response = await response.read()
 
@@ -61,16 +58,13 @@ async def handle_queue(queue):
 
 
 def run_get_data_background(queue):
-
     def handle_new_data(new_data):
         current_time = datetime.now()
         sensor_mac = new_data[0]
         sensor_data = new_data[1]
 
         if sensor_mac not in all_data or all_data[sensor_mac]['data'] != sensor_data:
-            update_data = {'mac': sensor_mac,
-                           'data': sensor_data,
-                           'timestamp': current_time.isoformat()}
+            update_data = {'mac': sensor_mac, 'data': sensor_data, 'timestamp': current_time.isoformat()}
             all_data[sensor_mac] = update_data
             queue.put(update_data)
 

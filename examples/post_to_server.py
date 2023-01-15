@@ -11,11 +11,7 @@ import requests
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-macs = [
-    'F4:A5:74:89:16:57',
-    'CC:2C:6A:1E:59:3D',
-    'BB:2C:6A:1E:59:3D'
-]
+macs = ['F4:A5:74:89:16:57', 'CC:2C:6A:1E:59:3D', 'BB:2C:6A:1E:59:3D']
 
 # This should be enough that we find at least one result for each
 timeout_in_sec = 4

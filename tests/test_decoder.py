@@ -4,7 +4,6 @@ from ruuvitag_sensor.decoder import Df3Decoder, Df5Decoder, UrlDecoder, get_deco
 
 
 class TestDecoder(TestCase):
-
     def test_getcorrectdecoder(self):
         dec = get_decoder(2)
         self.assertIsInstance(dec, UrlDecoder)
@@ -84,8 +83,7 @@ class TestDecoder(TestCase):
         accY = '03E8'
         accZ = '03E8'
         batt = 'FFFF'
-        data = decoder.decode_data(
-            f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
+        data = decoder.decode_data(f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
 
         assert data['temperature'] == 127.99
         assert data['pressure'] == 1155.35
@@ -105,8 +103,7 @@ class TestDecoder(TestCase):
         accY = 'FC18'
         accZ = 'FC18'
         batt = '0000'
-        data = decoder.decode_data(
-            f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
+        data = decoder.decode_data(f'03{humidity}{temp}{pressure}{accX}{accY}{accZ}{batt}00000000BB')
 
         assert data['temperature'] == -127.99
         assert data['pressure'] == 500.0
@@ -133,7 +130,8 @@ class TestDecoder(TestCase):
         rssi = 'C6'
         data = decoder.decode_data(
             f'{data_format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}'
-            f'{movement_counter}{measurement_sequence}{mac}{rssi}')
+            f'{movement_counter}{measurement_sequence}{mac}{rssi}'
+        )
 
         assert data['temperature'] == 24.30
         assert data['humidity'] == 53.49
@@ -151,7 +149,8 @@ class TestDecoder(TestCase):
         # No RSSI case
         data = decoder.decode_data(
             f'{data_format}{temp}{humidity}{pressure}{accX}{accY}{accZ}{power_info}'
-            f'{movement_counter}{measurement_sequence}{mac}')
+            f'{movement_counter}{measurement_sequence}{mac}'
+        )
 
         assert data['rssi'] is None
 

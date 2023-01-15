@@ -11,20 +11,25 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 def get_ble_adapter():
     if 'bleak' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
         from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
+
         return BleCommunicationBleak()
     if 'bleson' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
         from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
+
         return BleCommunicationBleson()
     if 'RUUVI_NIX_FROMFILE' in os.environ:
         # Emulate BleCommunicationNix by reading hcidump data from a file
         from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
+
         return BleCommunicationNixFile()
     if not sys.platform.startswith('linux') or 'CI' in os.environ:
         # Use BleCommunicationDummy also for CI as it can't use bluez
         from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
+
         return BleCommunicationDummy()
 
     from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
+
     return BleCommunicationNix()
 
 
@@ -34,6 +39,7 @@ def is_async_adapter(ble: object):
 
 class BleCommunication:
     """Bluetooth LE communication"""
+
     __metaclass__ = abc.ABCMeta
 
     @staticmethod
@@ -49,6 +55,7 @@ class BleCommunication:
 
 class BleCommunicationAsync:
     """Asynchronous Bluetooth LE communication"""
+
     __metaclass__ = abc.ABCMeta
 
     @staticmethod

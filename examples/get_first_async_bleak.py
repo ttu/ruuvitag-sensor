@@ -22,5 +22,6 @@ async def main():
     decoded = Df5Decoder().decode_data(data[1])
     print(f'Decoded: {decoded}')
 
+
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())

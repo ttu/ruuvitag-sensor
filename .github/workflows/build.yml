@@ -38,5 +38,7 @@ jobs:
       run: mypy ./ruuvitag_sensor
     - name: isort
       run: isort . --diff --check-only
+    - name: black
+      run: black . --check
     - name: Tests
       run: pytest -v -s --show-capture all

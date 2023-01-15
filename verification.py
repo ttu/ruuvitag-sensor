@@ -145,8 +145,7 @@ def hadle_rx(found_data):
     print('OK')
 
 
-ruuvi_rx.get_subject().\
-    subscribe(hadle_rx)
+ruuvi_rx.get_subject().subscribe(hadle_rx)
 
 # pylint: disable=protected-access
 wait_for_finish(ruuvi_rx._run_flag, 'ruuvi_rx.subscribe')

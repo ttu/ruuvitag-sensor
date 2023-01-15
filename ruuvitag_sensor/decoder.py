@@ -39,7 +39,7 @@ def parse_mac(data_format: int, payload_mac: str) -> str:
         string: MAC separated and in upper case e.g. E6:2E:B9:2E:73:E5
     """
     if data_format == 5:
-        return ':'.join(payload_mac[i:i + 2] for i in range(0, 12, 2)).upper()
+        return ':'.join(payload_mac[i : i + 2] for i in range(0, 12, 2)).upper()
     return payload_mac
 
 
@@ -98,7 +98,7 @@ class UrlDecoder:
                 'temperature': self._get_temperature(decoded),
                 'humidity': self._get_humidity(decoded),
                 'pressure': self._get_pressure(decoded),
-                'identifier': identifier
+                'identifier': identifier,
             }
         except Exception:
             log.exception('Encoded value: %s not valid', encoded)
@@ -161,12 +161,11 @@ class Df3Decoder:
                 'humidity': self._get_humidity(byte_data),
                 'temperature': self._get_temperature(byte_data),
                 'pressure': self._get_pressure(byte_data),
-                'acceleration': math.sqrt(
-                    acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
+                'acceleration': math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z),
                 'acceleration_x': acc_x,
                 'acceleration_y': acc_y,
                 'acceleration_z': acc_z,
-                'battery': self._get_battery(byte_data)
+                'battery': self._get_battery(byte_data),
             }
         except Exception:
             log.exception('Value: %s not valid', data)
@@ -203,7 +202,7 @@ class Df5Decoder:
 
     def _get_acceleration(self, data: ByteData) -> Union[Tuple[None, None, None], Tuple[int, int, int]]:
         """Return acceleration mG"""
-        if (data[4] == -32768 or data[5] == -32768 or data[6] == -32768):
+        if data[4] == -32768 or data[5] == -32768 or data[6] == -32768:
             return (None, None, None)
 
         return data[4:7]  # type: ignore
@@ -278,7 +277,7 @@ class Df5Decoder:
                 'movement_counter': self._get_movementcounter(byte_data),
                 'measurement_sequence_number': self._get_measurementsequencenumber(byte_data),
                 'mac': self._get_mac(byte_data),
-                'rssi': self._get_rssi(rssi) if rssi else None
+                'rssi': self._get_rssi(rssi) if rssi else None,
             }
         except Exception:
             log.exception('Value: %s not valid', data)

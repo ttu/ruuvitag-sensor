@@ -23,17 +23,14 @@ app = Flask(__name__)
 
 all_data = {}
 
-tags = {
-    'F4:A5:74:89:16:57': 'kitchen',
-    'CC:2C:6A:1E:59:3D': 'bedroom',
-    'BB:2C:6A:1E:59:3D': 'livingroom'
-}
+tags = {'F4:A5:74:89:16:57': 'kitchen', 'CC:2C:6A:1E:59:3D': 'bedroom', 'BB:2C:6A:1E:59:3D': 'livingroom'}
 
 
 def run_get_data_background(macs, queue):
     """
     Background process from RuuviTag Sensors
     """
+
     def callback(data):
         data[1]['time'] = str(datetime.now())
         queue.put(data)

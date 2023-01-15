@@ -26,27 +26,22 @@ from paho.mqtt import publish
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 parser = argparse.ArgumentParser(
-    description='Program relays Ruuvitag BLE temperature and humidity'
-    'advertisements to MQTT broker.')
+    description='Program relays Ruuvitag BLE temperature and humidity' 'advertisements to MQTT broker.'
+)
+parser.add_argument('-m', '--mac', dest='mac_address', required=True, help='Ruuvitag MAC address')
+parser.add_argument('-b', '--broker', dest='mqtt_broker', required=True, help='mqtt broker address, ip or fqdn')
+parser.add_argument('-t', '--topic', dest='mqtt_topic', required=True, help='mqtt topic, e.g. ruuvitag/sauna')
+parser.add_argument('-a', '--all', action='store_true', required=False, help='send all Ruuvitag values')
 parser.add_argument(
-    '-m', '--mac', dest='mac_address', required=True,
-    help='Ruuvitag MAC address')
-parser.add_argument(
-    '-b', '--broker', dest='mqtt_broker', required=True,
-    help='mqtt broker address, ip or fqdn')
-parser.add_argument(
-    '-t', '--topic', dest='mqtt_topic', required=True,
-    help='mqtt topic, e.g. ruuvitag/sauna')
-parser.add_argument(
-    '-a', '--all', action='store_true', required=False,
-    help='send all Ruuvitag values')
-parser.add_argument(
-    '-i', '--interval', dest='interval', default=60,
-    type=int, required=False,
-    help='seconds to wait between data queries')
-parser.add_argument(
-    '-l', '--location', dest='location', required=False,
-    help='additional location tag for json')
+    '-i',
+    '--interval',
+    dest='interval',
+    default=60,
+    type=int,
+    required=False,
+    help='seconds to wait between data queries',
+)
+parser.add_argument('-l', '--location', dest='location', required=False, help='additional location tag for json')
 args = parser.parse_args()
 
 mac_address = args.mac_address
@@ -103,7 +98,7 @@ while True:
         for_json = {
             'location': state['location'],
             'temperature': round(state['temperature'], 1),
-            'humidity': round(state['humidity'], 1)
+            'humidity': round(state['humidity'], 1),
         }
         mqtt_msg = json.dumps(for_json)
 

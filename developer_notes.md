@@ -60,6 +60,11 @@ isort
 $ isort .
 ```
 
+black
+```sh
+$ black
+```
+
 ## Project files
 
 * adapters/
