@@ -39,8 +39,7 @@ def handle_data(received_data):
     requests.put(f'{server_url}/sensors/{quote(mac)}')
     requests.post(f'{server_url}/sensordata')
 
-    not_found = [mac for mac, value in all_data.items()
-                 if value['timestamp'] < datetime.now() - timedelta(minutes=10)]
+    not_found = [mac for mac, value in all_data.items() if value['timestamp'] < datetime.now() - timedelta(minutes=10)]
     for mac in not_found:
         # TODO: Notify of lost sensors
         del all_data[mac]

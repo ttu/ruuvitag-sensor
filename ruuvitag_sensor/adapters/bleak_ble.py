@@ -18,6 +18,7 @@ def _get_scanner(detection_callback):
     if 'bleak_dev' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
         # pylint: disable=import-outside-toplevel
         from ruuvitag_sensor.adapters.development.dev_bleak_scanner import DevBleakScanner
+
         return DevBleakScanner(detection_callback, scanning_mode)
 
     return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)
@@ -31,7 +32,6 @@ log = logging.getLogger(__name__)
 
 
 class BleCommunicationBleak(BleCommunicationAsync):
-
     @staticmethod
     def _parse_data(data: bytes) -> str:
         # Bleak returns data in a different format than the nix_hci

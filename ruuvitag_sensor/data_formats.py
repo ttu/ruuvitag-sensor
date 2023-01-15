@@ -27,7 +27,7 @@ def _dechunk(raw: str) -> Tuple[str, str]:
     if (dlen + 1) * 2 > len(raw):
         raise ShortDataError(f'Cannot read {dlen} bytes, data too short: {raw}')
 
-    return (raw[2:(dlen * 2) + 2], raw[(dlen * 2) + 2:])
+    return (raw[2 : (dlen * 2) + 2], raw[(dlen * 2) + 2 :])
 
 
 class DataFormats:
@@ -132,7 +132,7 @@ class DataFormats:
             string: Encoded sensor data
         """
         try:
-            base16_split = [raw[i:i + 2] for i in range(0, len(raw), 2)]
+            base16_split = [raw[i : i + 2] for i in range(0, len(raw), 2)]
             selected_hexs = filter(lambda x: int(x, 16) < 128, base16_split)
             characters = [chr(int(c, 16)) for c in selected_hexs]
             data = ''.join(characters)
@@ -140,7 +140,7 @@ class DataFormats:
             # take only part after ruu.vi/#
             index = data.find('ruu.vi/#')
             if index > -1:
-                return data[(index + 8):]
+                return data[(index + 8) :]
 
             return None
         except Exception:

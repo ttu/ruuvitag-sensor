@@ -121,8 +121,9 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    def get_data_for_sensors(macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = '') \
-            -> Dict[Mac, SensorData]:
+    def get_data_for_sensors(
+        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ''
+    ) -> Dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -140,10 +141,7 @@ class RuuviTagSensor:
 
         data: Dict[Mac, SensorData] = {}
 
-        for new_data in RuuviTagSensor._get_ruuvitag_data(
-                macs,
-                search_duratio_sec,
-                bt_device=bt_device):
+        for new_data in RuuviTagSensor._get_ruuvitag_data(macs, search_duratio_sec, bt_device=bt_device):
             mac, sensor_data = new_data
             data[mac] = sensor_data
 
@@ -169,8 +167,12 @@ class RuuviTagSensor:
                 yield data
 
     @staticmethod
-    def get_data(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
-                 bt_device: str = '') -> None:
+    def get_data(
+        callback: Callable[[MacAndSensorData], None],
+        macs: List[str] = [],
+        run_flag: RunFlag = RunFlag(),
+        bt_device: str = '',
+    ) -> None:
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -188,8 +190,12 @@ class RuuviTagSensor:
             callback(new_data)
 
     @staticmethod
-    def get_datas(callback: Callable[[MacAndSensorData], None], macs: List[str] = [], run_flag: RunFlag = RunFlag(),
-                  bt_device: str = '') -> None:
+    def get_datas(
+        callback: Callable[[MacAndSensorData], None],
+        macs: List[str] = [],
+        run_flag: RunFlag = RunFlag(),
+        bt_device: str = '',
+    ) -> None:
         """
         DEPRECATED
         This method will be removed in a future version.
@@ -199,9 +205,12 @@ class RuuviTagSensor:
         return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
 
     @staticmethod
-    def _get_ruuvitag_data(macs: List[str] = [], search_duratio_sec: Optional[int] = None,
-                           run_flag: RunFlag = RunFlag(), bt_device: str = '') \
-            -> Generator[MacAndSensorData, None, None]:
+    def _get_ruuvitag_data(
+        macs: List[str] = [],
+        search_duratio_sec: Optional[int] = None,
+        run_flag: RunFlag = RunFlag(),
+        bt_device: str = '',
+    ) -> Generator[MacAndSensorData, None, None]:
         """
         Get data from BluetoothCommunication and handle data encoding.
 
@@ -238,8 +247,9 @@ class RuuviTagSensor:
                 yield data
 
     @staticmethod
-    def _parse_data(ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: List[str] = []) \
-            -> Optional[MacAndSensorData]:
+    def _parse_data(
+        ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: List[str] = []
+    ) -> Optional[MacAndSensorData]:
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
 
@@ -262,9 +272,13 @@ class RuuviTagSensor:
             return None
 
         # If advertised MAC is missing, try to parse it from the payload
-        mac_to_send = mac if mac else \
-            parse_mac(data_format, decoded['mac']) if 'mac' in decoded and decoded['mac'] \
-            is not None else ''
+        mac_to_send = (
+            mac
+            if mac
+            else parse_mac(data_format, decoded['mac'])
+            if 'mac' in decoded and decoded['mac'] is not None
+            else ''
+        )
 
         # Check whitelist using MAC from decoded data if advertised MAC is not available
         if allowed_macs and mac_to_send not in allowed_macs:

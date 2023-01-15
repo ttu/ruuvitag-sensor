@@ -36,8 +36,9 @@ class BleCommunicationBleson(BleCommunication):
                     continue
                 # Linux returns bytearray for mfg_data, but macOS returns _NSInlineData
                 # which casts to byte array. We need to explicitly cast it to use hex
-                data = bytearray(advertisement.mfg_data) if sys.platform.startswith('darwin') \
-                    else advertisement.mfg_data
+                data = (
+                    bytearray(advertisement.mfg_data) if sys.platform.startswith('darwin') else advertisement.mfg_data
+                )
                 # Bleson returns data in a different format than the nix_hci
                 # adapter. Since the rest of the processing pipeline is
                 # somewhat reliant on the additional data, add to the
@@ -115,9 +116,7 @@ class BleCommunicationBleson(BleCommunication):
         shared_data['stop'] = False
 
         # Start background process
-        proc = Process(
-            target=BleCommunicationBleson._run_get_data_background,
-            args=[q, shared_data, bt_device])
+        proc = Process(target=BleCommunicationBleson._run_get_data_background, args=[q, shared_data, bt_device])
         proc.start()
 
         try:

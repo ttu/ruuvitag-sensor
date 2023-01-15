@@ -69,16 +69,12 @@ class RuuviTagReactive:
         self._shared_data['run_flag'] = True
 
         # Start data updater
-        notify_thread = Thread(
-            target=RuuviTagReactive._data_update,
-            args=(self._subjects, q, self._run_flag))
+        notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self._subjects, q, self._run_flag))
         notify_thread.start()
 
         # Start background process
         executor = ProcessPoolExecutor(1)
-        executor.submit(
-            _run_get_data_background,
-            macs, q, self._shared_data, bt_device)
+        executor.submit(_run_get_data_background, macs, q, self._shared_data, bt_device)
 
     def get_subject(self) -> Subject:
         """

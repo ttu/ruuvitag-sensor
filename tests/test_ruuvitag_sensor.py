@@ -10,8 +10,7 @@ from ruuvitag_sensor.ruuvitag import RuuviTag
 
 
 @patch('ruuvitag_sensor.ruuvi.ble', BleCommunicationDummy())
-class TestRuuviTagSensor():
-
+class TestRuuviTagSensor:
     def get_first_data(self, mac, bt_device):
         # https://ruu.vi/#AjwYAMFc
         data = '043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD'
@@ -74,8 +73,7 @@ class TestRuuviTagSensor():
 
     @patch('ruuvitag_sensor.adapters.dummy.BleCommunicationDummy.get_data', get_data)
     def test_get_data_for_sensors(self):
-        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D',
-                'D5:57:97:65:88:14']
+        macs = ['CC:2C:6A:1E:59:3D', 'DD:2C:6A:1E:59:3D', 'EE:2C:6A:1E:59:3D', 'D5:57:97:65:88:14']
         data = RuuviTagSensor.get_data_for_sensors(macs, 4)
         assert len(data) == 4
         assert 'CC:2C:6A:1E:59:3D' in data

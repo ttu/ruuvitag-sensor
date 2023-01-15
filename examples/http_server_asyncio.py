@@ -70,11 +70,7 @@ def setup_routes(app):
 
 
 if __name__ == '__main__':
-    tags = {
-        'F4:A5:74:89:16:57': 'kitchen',
-        'CC:2C:6A:1E:59:3D': 'bedroom',
-        'BB:2C:6A:1E:59:3D': 'livingroom'
-    }
+    tags = {'F4:A5:74:89:16:57': 'kitchen', 'CC:2C:6A:1E:59:3D': 'bedroom', 'BB:2C:6A:1E:59:3D': 'livingroom'}
 
     m = Manager()
     q = m.Queue()
