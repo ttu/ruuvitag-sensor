@@ -16,8 +16,8 @@ process and eventually process creation may fail.
 
 # pylint: disable=duplicate-code
 
-import time
 import os
+import time
 from datetime import datetime
 
 from ruuvitag_sensor.ruuvitag import RuuviTag

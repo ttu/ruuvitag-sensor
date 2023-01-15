@@ -11,13 +11,13 @@ Requires:
     Requests - pip install requests
 """
 
-from urllib.parse import quote
-from datetime import datetime, timedelta
 import copy
+from datetime import datetime, timedelta
+from urllib.parse import quote
+
 import requests
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
 
 all_data = {}
 server_url = 'http://10.0.0.1:5000/api'

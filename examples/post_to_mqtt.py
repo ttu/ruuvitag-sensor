@@ -14,14 +14,15 @@ See here how to automate this using Ansible:
 https://github.com/RedHatNordicsSA/iot-hack/blob/master/run-ruuvi-to-mqtt.yml
 """
 
-import time
-import json
-import sys
-import signal
 import argparse
-import paho.mqtt.client as mqtt
+import json
+import signal
+import sys
+import time
 
+import paho.mqtt.client as mqtt
 from paho.mqtt import publish
+
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 parser = argparse.ArgumentParser(

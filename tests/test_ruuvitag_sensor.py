@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from pytest import raises
 
 from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy

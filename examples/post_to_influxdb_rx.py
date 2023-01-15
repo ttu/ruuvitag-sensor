@@ -8,6 +8,7 @@ import traceback
 
 from influxdb import InfluxDBClient
 from reactivex import operators as ops
+
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 client = InfluxDBClient(host='localhost', port=8086, database='ruuvi')

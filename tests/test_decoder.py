@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from ruuvitag_sensor.decoder import get_decoder, parse_mac, UrlDecoder, Df3Decoder, Df5Decoder
+from ruuvitag_sensor.decoder import Df3Decoder, Df5Decoder, UrlDecoder, get_decoder, parse_mac
 
 
 class TestDecoder(TestCase):

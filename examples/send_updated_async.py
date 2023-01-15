@@ -19,8 +19,8 @@ from multiprocessing import Manager
 from urllib.parse import quote
 
 from aiohttp import ClientSession
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 all_data = {}
 server_url = 'http://10.0.0.1:5000/api'

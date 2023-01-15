@@ -1,10 +1,11 @@
 import asyncio
 import os
+
 os.environ['RUUVI_BLE_ADAPTER'] = 'bleak'
 
+import ruuvitag_sensor.log
 from ruuvitag_sensor.decoder import Df5Decoder
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-import ruuvitag_sensor.log
 
 ruuvitag_sensor.log.enable_console()
 

@@ -3,6 +3,7 @@ RuuviTagReactive and Reactive Extensions Subject examples
 """
 
 from reactivex import operators as ops
+
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
 tags = {

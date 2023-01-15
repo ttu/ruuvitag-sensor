@@ -1,9 +1,9 @@
 import asyncio
-from dataclasses import dataclass
 import random
+from dataclasses import dataclass
 from typing import Awaitable, Callable, Union
 
-from bleak.backends.scanner import BLEDevice, AdvertisementData
+from bleak.backends.scanner import AdvertisementData, BLEDevice
 
 
 @dataclass
