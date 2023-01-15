@@ -23,7 +23,7 @@ app = Flask(__name__)
 
 all_data = {}
 
-tags = {'F4:A5:74:89:16:57': 'kitchen', 'CC:2C:6A:1E:59:3D': 'bedroom', 'BB:2C:6A:1E:59:3D': 'livingroom'}
+tags = {"F4:A5:74:89:16:57": "kitchen", "CC:2C:6A:1E:59:3D": "bedroom", "BB:2C:6A:1E:59:3D": "livingroom"}
 
 
 def run_get_data_background(macs, queue):
@@ -32,7 +32,7 @@ def run_get_data_background(macs, queue):
     """
 
     def callback(data):
-        data[1]['time'] = str(datetime.now())
+        data[1]["time"] = str(datetime.now())
         queue.put(data)
 
     RuuviTagSensor.get_data(callback, macs)
@@ -48,16 +48,16 @@ def update_data():
         all_data[data[0]] = data[1]
     for key, value in tags.items():
         if key in all_data:
-            all_data[key]['name'] = value
+            all_data[key]["name"] = value
 
 
-@app.route('/data')
+@app.route("/data")
 def get_all_data():
     update_data()
     return json.dumps(all_data)
 
 
-@app.route('/data/<mac>')
+@app.route("/data/<mac>")
 def get_data(mac):
     update_data()
     if mac not in all_data:
@@ -65,7 +65,7 @@ def get_data(mac):
     return json.dumps(all_data[mac])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     m = Manager()
     q = m.Queue()
 
@@ -74,4 +74,4 @@ if __name__ == '__main__':
     executor.submit(run_get_data_background, list(tags.keys()), q)
 
     # Strt Flask application
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)

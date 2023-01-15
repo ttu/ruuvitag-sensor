@@ -26,22 +26,22 @@ from paho.mqtt import publish
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 parser = argparse.ArgumentParser(
-    description='Program relays Ruuvitag BLE temperature and humidity' 'advertisements to MQTT broker.'
+    description="Program relays Ruuvitag BLE temperature and humidity" "advertisements to MQTT broker."
 )
-parser.add_argument('-m', '--mac', dest='mac_address', required=True, help='Ruuvitag MAC address')
-parser.add_argument('-b', '--broker', dest='mqtt_broker', required=True, help='mqtt broker address, ip or fqdn')
-parser.add_argument('-t', '--topic', dest='mqtt_topic', required=True, help='mqtt topic, e.g. ruuvitag/sauna')
-parser.add_argument('-a', '--all', action='store_true', required=False, help='send all Ruuvitag values')
+parser.add_argument("-m", "--mac", dest="mac_address", required=True, help="Ruuvitag MAC address")
+parser.add_argument("-b", "--broker", dest="mqtt_broker", required=True, help="mqtt broker address, ip or fqdn")
+parser.add_argument("-t", "--topic", dest="mqtt_topic", required=True, help="mqtt topic, e.g. ruuvitag/sauna")
+parser.add_argument("-a", "--all", action="store_true", required=False, help="send all Ruuvitag values")
 parser.add_argument(
-    '-i',
-    '--interval',
-    dest='interval',
+    "-i",
+    "--interval",
+    dest="interval",
     default=60,
     type=int,
     required=False,
-    help='seconds to wait between data queries',
+    help="seconds to wait between data queries",
 )
-parser.add_argument('-l', '--location', dest='location', required=False, help='additional location tag for json')
+parser.add_argument("-l", "--location", dest="location", required=False, help="additional location tag for json")
 args = parser.parse_args()
 
 mac_address = args.mac_address
@@ -55,7 +55,7 @@ location = args.location
 # let's trap ctrl-c, SIGINT and come down nicely
 # pylint: disable=unused-argument,redefined-outer-name
 def signal_handler(signal, frame):
-    print('\nterminating gracefully.')
+    print("\nterminating gracefully.")
     client.disconnect()
     sys.exit(0)
 
@@ -66,11 +66,11 @@ signal.signal(signal.SIGINT, signal_handler)
 # The callback for when the client receives a CONNACK response from the MQTT server.
 # pylint: disable=unused-argument,redefined-outer-name
 def on_connect(client, userdata, flags, rc):
-    print(f'Connected to MQTT broker with result code {str(rc)}')
+    print(f"Connected to MQTT broker with result code {str(rc)}")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe('$SYS/#')
+    client.subscribe("$SYS/#")
 
 
 client = mqtt.Client()
@@ -78,7 +78,7 @@ client.on_connect = on_connect
 client.connect(mqtt_broker, 1883, 60)
 client.loop_start()
 
-print('Start listening to Ruuvitag')
+print("Start listening to Ruuvitag")
 
 sensor = RuuviTag(mac_address)
 while True:
@@ -87,22 +87,22 @@ while True:
     state = sensor.update()
 
     if location:
-        state['location'] = location
+        state["location"] = location
     else:
-        state['location'] = mac_address
+        state["location"] = mac_address
 
     if send_all:
         mqtt_msg = json.dumps(state)
     else:
         # extract temp and humidity values, and format data into custom JSON
         for_json = {
-            'location': state['location'],
-            'temperature': round(state['temperature'], 1),
-            'humidity': round(state['humidity'], 1),
+            "location": state["location"],
+            "temperature": round(state["temperature"], 1),
+            "humidity": round(state["humidity"], 1),
         }
         mqtt_msg = json.dumps(for_json)
 
     publish.single(mqtt_topic, mqtt_msg, hostname=mqtt_broker)
-    print('.', end='', flush=True)
+    print(".", end="", flush=True)
 
     time.sleep(interval)

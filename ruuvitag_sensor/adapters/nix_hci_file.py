@@ -12,18 +12,18 @@ class BleCommunicationNixFile(BleCommunicationNix):
     """
 
     @staticmethod
-    def start(bt_device=''):
+    def start(bt_device=""):
         """
         Attributes:
            device (string): BLE device (default hci0).
            This is interpreted as a file to open
         """
-        log.info('Start reading from file %s', bt_device)
-        handle = open(bt_device, 'rb')  # pylint: disable=consider-using-with
+        log.info("Start reading from file %s", bt_device)
+        handle = open(bt_device, "rb")  # pylint: disable=consider-using-with
 
         return (None, handle)
 
     @staticmethod
     def stop(hcitool, hcidump):
-        log.info('Close file')
+        log.info("Close file")
         hcidump.close()

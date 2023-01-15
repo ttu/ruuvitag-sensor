@@ -79,4 +79,3 @@ ensure_newline_before_comments = true
 
 [tool.black]
 line-length = 120
-skip-string-normalization = true

@@ -20,10 +20,10 @@ def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictPro
     run_flag = RunFlag()
 
     def add_data(data):
-        if not shared_data['run_flag']:
+        if not shared_data["run_flag"]:
             run_flag.running = False
 
-        data[1]['time'] = datetime.utcnow().isoformat()
+        data[1]["time"] = datetime.utcnow().isoformat()
         queue.put(data)
 
     RuuviTagSensor.get_data(add_data, macs, run_flag, bt_device)
@@ -48,7 +48,7 @@ class RuuviTagReactive:
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs: List[str] = [], bt_device: str = ''):
+    def __init__(self, macs: List[str] = [], bt_device: str = ""):
         """
         Start background process for get_data and async task for notifying
         all subscribed observers
@@ -66,7 +66,7 @@ class RuuviTagReactive:
 
         # Use Manager dict to share data between processes
         self._shared_data = m.dict()
-        self._shared_data['run_flag'] = True
+        self._shared_data["run_flag"] = True
 
         # Start data updater
         notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self._subjects, q, self._run_flag))
@@ -83,7 +83,7 @@ class RuuviTagReactive:
         """
 
         if not self._run_flag.running:
-            raise Exception('RuuviTagReactive stopped')
+            raise Exception("RuuviTagReactive stopped")
 
         subject: Subject = Subject()
         self._subjects.append(subject)
@@ -95,7 +95,7 @@ class RuuviTagReactive:
         """
 
         self._run_flag.running = False
-        self._shared_data['run_flag'] = False
+        self._shared_data["run_flag"] = False
 
         for s in self._subjects:
             s.dispose()

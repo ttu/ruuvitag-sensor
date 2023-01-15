@@ -9,20 +9,20 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 
 def get_ble_adapter():
-    if 'bleak' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+    if "bleak" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower():
         from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
 
         return BleCommunicationBleak()
-    if 'bleson' in os.environ.get('RUUVI_BLE_ADAPTER', '').lower():
+    if "bleson" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower():
         from ruuvitag_sensor.adapters.bleson import BleCommunicationBleson
 
         return BleCommunicationBleson()
-    if 'RUUVI_NIX_FROMFILE' in os.environ:
+    if "RUUVI_NIX_FROMFILE" in os.environ:
         # Emulate BleCommunicationNix by reading hcidump data from a file
         from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
 
         return BleCommunicationNixFile()
-    if not sys.platform.startswith('linux') or 'CI' in os.environ:
+    if not sys.platform.startswith("linux") or "CI" in os.environ:
         # Use BleCommunicationDummy also for CI as it can't use bluez
         from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
 
@@ -44,12 +44,12 @@ class BleCommunication:
 
     @staticmethod
     @abc.abstractmethod
-    def get_first_data(mac: str, bt_device: str = '') -> RawData:
+    def get_first_data(mac: str, bt_device: str = "") -> RawData:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = '') -> Generator[MacAndRawData, None, None]:
+    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         pass
 
 
@@ -60,12 +60,12 @@ class BleCommunicationAsync:
 
     @staticmethod
     @abc.abstractmethod
-    async def get_first_data(mac: str, bt_device: str = '') -> RawData:
+    async def get_first_data(mac: str, bt_device: str = "") -> RawData:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = '') -> AsyncGenerator[MacAndRawData, None]:
+    async def get_data(blacklist: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
         raise NotImplementedError("must implement get_data()")
         # https://github.com/python/mypy/issues/5070
         # if False: yield is a mypy fix for
