@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml) [![PyPI](https://img.shields.io/pypi/v/ruuvitag_sensor.svg)](https://pypi.python.org/pypi/ruuvitag_sensor)
 
-RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor Beacon](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
+`ruuvitag-sensor` is a Python package for communicating with [RuuviTag BLE Sensor](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
 ### Requirements
 
@@ -21,13 +21,13 @@ RuuviTag Sensor is a Python library for communicating with [RuuviTag BLE Sensor 
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
-__NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [pypi](https://pypi.org/project/ruuvitag-sensor/) or in GitHub switch to the correct release tag from _switch branches/tags_.
+__NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [PyPI](https://pypi.org/project/ruuvitag-sensor/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
 
 ### Installation
 
 Install the latest released version
 ```sh
-$ python -m pip install ruuvitag_sensor
+$ python -m pip install ruuvitag-sensor
 ```
 
 Install the latest development version
@@ -53,7 +53,7 @@ The package provides 3 ways to fetch data from sensors:
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
 
 ```py
-("D2:A3:6E:C8:E0:25", {"data_format": 5, "humidity": 47.62, "temperature": 23.58, "pressure": 1023.68, "acceleration": 993.2331045630729, "acceleration_x": -48, "acceleration_y": -12, "acceleration_z": 992, "tx_power": 4, "battery": 2197, "movement_counter": 0, "measurement_sequence_number": 88, "mac": "d2a36ec8e025", "rssi": -80})
+('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
 ```
 
 #### 1. Get sensor data synchronously with callback
@@ -100,7 +100,7 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 
 #### 2. Get sensor data asynchronously
 
-__NOTE:__ Asynchronous functionality is currently in beta-state and works only with `Bleak`-adapter.
+__NOTE:__ Asynchronous functionality is currently in beta state and works only with `Bleak`-adapter.
 
 ```py
 import asyncio
@@ -120,7 +120,7 @@ The optional list of MACs and run flag can be passed to the `get_data_async` fun
 
 #### 3. Get sensor data with observable streams (ReactiveX / RxPY)
 
-`RuuviTagReactive` is a reactive wrapper and background process for RuuviTagSensor `get_data`. Optional MAC address list can be passed on initializer and execution can be stopped with the stop function.
+`RuuviTagReactive` is a reactive wrapper and background process for RuuviTagSensor `get_data`. An optional MAC address list can be passed on the initializer and execution can be stopped with the stop function.
 
 ```python
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
@@ -151,7 +151,7 @@ ruuvi_rx.stop()
 
 More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and a simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under the examples directory.
 
-Check official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
+Check the official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
 #### Other helper methods
 
@@ -175,7 +175,7 @@ print(data["AA:2C:6A:1E:59:3D"])
 print(data["CC:2C:6A:1E:59:3D"])
 ```
 
-__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use `get_data`-method.
+__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use the `get_data`-method.
 
 ##### Get data from a sensor
 
@@ -197,7 +197,7 @@ print(state)
 
 ##### Find sensors
 
-`RuuviTagSensor.find_ruuvitags` and `RuuviTagSensor.find_ruuvitags_async` methods will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command line applications. Logging must be enabled and set to print to console.
+`RuuviTagSensor.find_ruuvitags` and `RuuviTagSensor.find_ruuvitags_async` methods will execute forever and when a new RuuviTag sensor is found, it will print its MAC address and state at that moment. This function can be used with command-line applications. Logging must be enabled and set to print to the console.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -210,7 +210,7 @@ RuuviTagSensor.find_ruuvitags()
 
 ### Using different Bluetooth device
 
-If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: hci0). The device can be passed with `bt_device` parameter.
+If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: hci0). The device can be passed with a `bt_device`-parameter.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -240,7 +240,7 @@ data = full_data[26:]
 sensor_data = get_decoder(data_format).decode_data(encoded)
 
 print(sensor_data)
-# {"temperature": 25.12, "identifier": "0", "humidity": 26.5, "pressure": 992.0}
+# {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
 ### Data Formats
@@ -253,10 +253,10 @@ Example data has data from 4 sensors with different firmware.
 
 ```python
 {
-"CA:F7:44:DE:EB:E1": { "data_format": 2, "temperature": 22.0, "humidity": 28.0, "pressure": 991.0, "identifier": None, "rssi": None },
-"F4:A5:74:89:16:57": { "data_format": 4, "temperature": 23.24, "humidity": 29.0, "pressure": 991.0, "identifier": "0", "rssi": None },
-"A3:GE:2D:91:A4:1F": { "data_format": 3, "battery": 2899, "pressure": 1027.66, "humidity": 20.5, "acceleration": 63818.215675463696, "acceleration_x": 200.34, "acceleration_y": 0.512, "acceleration_z": -200.42, "temperature": 26.3, "rssi": None },
-"CB:B8:33:4C:88:4F": { "data_format": 5, "battery": 2.995, "pressure": 1000.43, "mac": "cbb8334c884f", "measurement_sequence_number": 2467, "acceleration_z": 1028, "acceleration": 1028.0389097694697, "temperature": 22.14, "acceleration_y": -8, "acceleration_x": 4, "humidity": 53.97, "tx_power": 4, "movement_counter": 70, "rssi": -65 }
+'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None, 'rssi': None },
+'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0', 'rssi': None },
+'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3, 'rssi': None },
+'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70, 'rssi': -65 }
 }
 ```
 
@@ -264,9 +264,9 @@ Example data has data from 4 sensors with different firmware.
 
 There is no reason to use Data Format 2 or 4.
 
-The original reasoning to use the URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
+The original reason to use the URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
 
-### Logging and Printing to console
+### Logging and Printing to the console
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. The command line application has console logging enabled by default.
 
@@ -354,17 +354,17 @@ Install BlueZ.
 $ sudo apt-get install bluez bluez-hcidump
 ```
 
-Ruuvitag_sensor package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, an older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
+`ruuvitag-sensor` package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, an older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 
 ### BlueZ limitations
 
-`Ruuvitag_sensor` package uses BlueZ to listen broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well all unexpected errors or changes, e.g. when the adapter is busy, rebooted or powered down.
+`ruuvitag-sensor` package uses BlueZ to listen to broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well all unexpected errors or changes, e.g. when the adapter is busy, rebooted or powered down.
 
 In case of errors, the application tries to exit immediately, so it can be automatically restarted.
 
 ## Bleak
 
-Bleak is not installed automatically with `ruuvitag_sensor` package. Install it manually from pypi.
+Bleak is not installed automatically with `ruuvitag-sensor` package. Install it manually from PyPI.
 
 ```sh
 $ python -m pip install bleak
@@ -395,7 +395,7 @@ Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examp
 
 ### Bleak dummy BLE data
 
-Bleak-adapter has a development-time generator for dummy data, which can be useful during development, when there are no sensors available. Set `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.
+Bleak-adapter has a development-time generator for dummy data, which can be useful during the development, if no sensors are available. Set `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.
 
 ## Bleson
 
@@ -403,7 +403,7 @@ Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sens
 
 Bleson works with Linux, macOS and partially with Windows.
 
-Bleson is not installed automatically with `ruuvitag_sensor` package. Install it manually from GitHub.
+Bleson is not installed automatically with `ruuvitag-sensor` package. Install it manually from GitHub.
 
 ```sh
 $ pip install git+https://github.com/TheCellule/python-bleson
@@ -415,14 +415,14 @@ Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
 $ export RUUVI_BLE_ADAPTER="Bleson"
 ```
 
-__NOTE:__ On macOS, only Data Format 5 works as macOS doesn't advertise MAC address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
+__NOTE:__ On macOS, only Data Format 5 works, as macOS doesn't advertise MAC address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 __NOTE:__ On Windows, Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for the advertised package, so it is still unusable.
 
 
 ## Python 2.x and 3.6 and below
 
-Last version of ruuvitag-sensor with Python 2.x and <3.7 support is [1.2.1](https://pypi.org/project/ruuvitag-sensor/1.2.1/).
+Last version of `ruuvitag-sensor` with Python 2.x and <3.7 support is [1.2.1](https://pypi.org/project/ruuvitag-sensor/1.2.1/).
 
 [Branch](https://github.com/ttu/ruuvitag-sensor/tree/release/1.2.1) / [Tag / commit](https://github.com/ttu/ruuvitag-sensor/commit/12ca3cfcb7fbed28477bb34f3bffd3eee0f9888d)
 
@@ -430,7 +430,7 @@ Last version of ruuvitag-sensor with Python 2.x and <3.7 support is [1.2.1](http
 $ git checkout release/1.2.1
 ```
 
-Install from pypi
+Install from PyPI
 ```sh
 $ python -m pip install ruuvitag-sensor==1.2.1
 ```
@@ -449,7 +449,7 @@ Examples are in [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/ex
 
 ## Developer notes
 
-[Notes for developers](https://github.com/ttu/ruuvitag-sensor/blob/master/developer_notes.md) who are interested in developing RuuviTag Sensor package or are interested in its internal functionality.
+[Notes for developers](https://github.com/ttu/ruuvitag-sensor/blob/master/developer_notes.md) who are interested in developing `ruuvitag-sensor` package or are interested in its internal functionality.
 
 ## Contributing
 
