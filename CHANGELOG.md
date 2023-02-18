@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [2.1.0] - 2023-02-18
 * CHANGE: Add RSSI reporting
 * ADD: (Beta) Bleak cross-platform BLE adapter with async get_data_async and find_ruuvitags_async methods
 * CHANGE: RuuviTagSensor methods return empty string instead of None if MAC is not found
