@@ -25,7 +25,8 @@ keywords = [ "RuuviTag BLE" ]
 dependencies = [
     "reactivex",
     "ptyprocess;platform_system=='Linux'",
-    "mypy-extensions;python_version<'3.8'"
+    "mypy-extensions;python_version<'3.8'",
+    "importlib-metadata;python_version<'3.8'"
 ]
 
 [project.optional-dependencies]
