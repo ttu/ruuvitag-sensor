@@ -82,7 +82,6 @@ print("Start listening to Ruuvitag")
 
 sensor = RuuviTag(mac_address)
 while True:
-
     # update state from the device
     state = sensor.update()
 

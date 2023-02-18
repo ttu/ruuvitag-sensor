@@ -19,7 +19,6 @@ timeout_in_sec = 4
 url = "http://localhost:8000/data/"
 
 if __name__ == "__main__":
-
     data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
 
     # Use Requests to POST data in json-format
