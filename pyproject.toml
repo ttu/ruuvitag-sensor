@@ -64,6 +64,7 @@ disable = [
     "invalid-name",
     "bare-except",
     "broad-except",
+    "broad-exception-raised",
     "fixme",
     "dangerous-default-value",
     "too-few-public-methods",
