@@ -3,7 +3,6 @@ name: ruuvitag_sensor
 on:
   push:
   pull_request:
-    branches: [ "master" ]
 
 permissions:
   contents: read
