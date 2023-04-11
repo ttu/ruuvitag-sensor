@@ -37,6 +37,10 @@ def is_async_adapter(ble: object):
     return issubclass(type(ble), BleCommunicationAsync)
 
 
+def is_async_from_env():
+    return "bleak" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower()
+
+
 class BleCommunication:
     """Bluetooth LE communication"""
 
