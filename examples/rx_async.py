@@ -1,5 +1,5 @@
-import os
 import asyncio
+import os
 
 os.environ["RUUVI_BLE_ADAPTER"] = "bleak"
 
