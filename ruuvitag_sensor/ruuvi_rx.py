@@ -1,3 +1,4 @@
+import asyncio
 import time
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime
@@ -9,7 +10,20 @@ from typing import List
 
 from reactivex import Subject
 
+from ruuvitag_sensor.adapters import is_async_from_env
 from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor
+
+
+async def _run_get_data_background_async(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
+    """
+    Async background process function for RuuviTag Sensors
+    """
+    async for data in RuuviTagSensor.get_data_async(macs, bt_device):
+        if not shared_data["run_flag"]:
+            break
+
+        data[1]["time"] = datetime.utcnow().isoformat()  # type: ignore
+        queue.put(data)
 
 
 def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
@@ -31,15 +45,13 @@ def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictPro
 
 class RuuviTagReactive:
     """
-    Reactive wrapper and background process for RuuviTagSensor
-    get_data
+    Reactive wrapper and background process for RuuviTagSensor get_data
     """
 
     @staticmethod
     def _data_update(subjects: List[Subject], queue: Queue, run_flag: RunFlag):
         """
-        Get data from background process and notify all subscribed observers
-        with the new data
+        Get data from background process and notify all subscribed observers with the new data
         """
         while run_flag.running:
             while not queue.empty():
@@ -50,8 +62,7 @@ class RuuviTagReactive:
 
     def __init__(self, macs: List[str] = [], bt_device: str = ""):
         """
-        Start background process for get_data and async task for notifying
-        all subscribed observers
+        Start background process for get_data and async task for notifying all subscribed observers
 
         Args:
             macs (list): MAC addresses
@@ -69,12 +80,18 @@ class RuuviTagReactive:
         self._shared_data["run_flag"] = True
 
         # Start data updater
+
         notify_thread = Thread(target=RuuviTagReactive._data_update, args=(self._subjects, q, self._run_flag))
         notify_thread.start()
 
         # Start background process
-        executor = ProcessPoolExecutor(1)
-        executor.submit(_run_get_data_background, macs, q, self._shared_data, bt_device)
+
+        if is_async_from_env():
+            loop = asyncio.get_event_loop()
+            loop.create_task(_run_get_data_background_async(macs, q, self._shared_data, bt_device))
+        else:
+            executor = ProcessPoolExecutor(1)
+            executor.submit(_run_get_data_background, macs, q, self._shared_data, bt_device)
 
     def get_subject(self) -> Subject:
         """

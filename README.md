@@ -395,7 +395,7 @@ if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
-Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) from examples.
+Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and other async examples from [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
 
 ### Bleak dummy BLE data
 

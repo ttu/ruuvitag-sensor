@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* ADD: (Beta) Async support to RuuviTagReactive
 
 ## [2.1.0] - 2023-02-18
 * CHANGE: Add RSSI reporting
