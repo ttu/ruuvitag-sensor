@@ -451,3 +451,33 @@ $ git push origin --tags
 ```
 $ twine upload dist/*
 ```
+
+### Update documentation
+
+Install docsify
+
+```sh
+$ npm install -g docsify
+```
+
+Copy README.md to `docs`-folder and replace `window.$docsify` from `docs/index.html` with
+
+```js
+window.$docsify = {
+      name: '',
+      repo: ''
+    }
+```
+
+Start docsify server
+
+```sh
+$ docsify serve ./docs
+```
+
+Site is served from branch `gh-pages`
+
+```sh
+$ git checkout gh-pages
+$ git rebase origin/master
+```

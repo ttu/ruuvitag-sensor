@@ -9,6 +9,8 @@ RuuviTag Sensor Python Package
 
 `ruuvitag-sensor` is a Python package for communicating with [RuuviTag BLE Sensor](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
+**Documentation website:** [https://ttu.github.io/ruuvitag-sensor/](https://ttu.github.io/ruuvitag-sensor/)
+
 ## Requirements
 
 * RuuviTag with Weather Station firmware
