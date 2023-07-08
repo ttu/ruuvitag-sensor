@@ -13,7 +13,8 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 def _get_scanner(detection_callback):
     # NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
-    scanning_mode = "active" if sys.platform.startswith("linux") else "passive"
+    # NOTE: On macOS - bleak.exc.BleakError: macOS does not support passive scanning
+    scanning_mode = "passive" if sys.platform.startswith("win") else "active"
 
     if "bleak_dev" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower():
         # pylint: disable=import-outside-toplevel
