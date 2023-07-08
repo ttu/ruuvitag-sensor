@@ -75,6 +75,7 @@ def handle_data(found_data):
     print(f"MAC {found_data[0]}")
     print(f"Data {found_data[1]}")
 
+
 if __name__ == "__main__":
     RuuviTagSensor.get_data(handle_data)
 ```
@@ -90,6 +91,7 @@ counter = 10
 # RunFlag for stopping execution at desired time
 run_flag = RunFlag()
 
+
 def handle_data(found_data):
     print(f"MAC: {found_data[0]}")
     print(f"Data: {found_data[1]}")
@@ -98,6 +100,7 @@ def handle_data(found_data):
     counter = counter - 1
     if counter < 0:
         run_flag.running = False
+
 
 # List of MACs of sensors which will execute callback function
 macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
@@ -109,6 +112,8 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 
 __NOTE:__ Asynchronous functionality is currently in beta state and works only with `Bleak`-adapter.
 
+`get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will exceute until iterator is exited. This method is the preferred way to use the library with async-adapter.
+
 ```py
 import asyncio
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -119,11 +124,34 @@ async def main():
         print(f"MAC: {found_data[0]}")
         print(f"Data: {found_data[1]}")
 
+
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
-The optional list of MACs and run flag can be passed to the `get_data_async` function.
+The optional list of MACs can be passed to the `get_data_async` function.
+
+```py
+import asyncio
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
+
+
+async def main():
+    # Get data only for defineded MACs. Exit after 10 found results
+    datas = []
+    async for found_data in RuuviTagSensor.get_data_async(macs):
+        print(f"MAC: {found_data[0]}")
+        print(f"Data: {found_data[1]}")
+        datas.push(found_data)
+        if len(datas) > 10:
+            break
+
+
+if __name__ == "__main__":
+    asyncio.get_event_loop().run_until_complete(main())
+```
 
 ### 3. Get sensor data with observable streams (ReactiveX / RxPY)
 
@@ -384,6 +412,13 @@ Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
 ```sh
 $ export RUUVI_BLE_ADAPTER="Bleak"
 ```
+Or use `os.environ`. NOTE: this must be set before importing `ruuvitag_sensor`.
+
+```py
+import os
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bleak"
+```
 
 Bleak supports only async methods.
 
@@ -395,6 +430,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 async def main():
     async for data in RuuviTagSensor.get_data_async():
         print(data)
+
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
