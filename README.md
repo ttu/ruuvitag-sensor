@@ -305,11 +305,31 @@ The original reason to use the URL-encoded data was to use _Google's Nearby_ not
 
 Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. The command line application has console logging enabled by default.
 
-```python
+```py
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 import ruuvitag_sensor.log
 
 ruuvitag_sensor.log.enable_console()
+
+data = RuuviTagSensor.get_data_for_sensors()
+
+print(data)
+```
+
+To enable debug logging to console, set log-level to `DEBUG`.
+
+```py
+import logging
+import ruuvitag_sensor.log
+from ruuvitag_sensor.log import log
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+ruuvitag_sensor.log.enable_console()
+
+log.setLevel(logging.DEBUG)
+
+for handler in log.handlers:
+    handler.setLevel(logging.DEBUG)
 
 data = RuuviTagSensor.get_data_for_sensors()
 
@@ -324,6 +344,8 @@ By default only errors are logged to `ruuvitag_sensor.log`-file. The level can b
 import logging
 from ruuvitag_sensor.log import log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+log.setLevel(logging.DEBUG)
 
 for handler in log.handlers:
     if isinstance(handler, logging.FileHandler):
