@@ -214,7 +214,7 @@ __NOTE:__ This method shouldn't be used for a long duration with a short timeout
 
 #### Get data from a sensor
 
-__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` methods instead of `RuuviTag`-class.
+__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` methods instead of `RuuviTag`- or `RuuviTagAsync`-class.
 
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
