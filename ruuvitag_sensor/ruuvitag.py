@@ -30,7 +30,9 @@ class RuuviTagBase:
     def state(self) -> Union[Dict, SensorData]:
         return self._state
 
-    def _handle_new_data_and_return_state(self, data_format: DataFormat, data: Optional[str]) -> Union[Dict, SensorData]:
+    def _handle_new_data_and_return_state(
+        self, data_format: DataFormat, data: Optional[str]
+    ) -> Union[Dict, SensorData]:
         if data == self._data:
             return self._state
 
