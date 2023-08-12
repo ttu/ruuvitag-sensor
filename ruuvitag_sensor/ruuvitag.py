@@ -3,12 +3,12 @@ from typing import Dict, Optional, Union
 
 from ruuvitag_sensor.decoder import get_decoder
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.ruuvi_types import SensorData
+from ruuvitag_sensor.ruuvi_types import DataFormat, SensorData
 
 mac_regex = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
 
 
-class RuuviTag:
+class RuuviTagBase:
     """
     RuuviTag Sensors object
     """
@@ -30,16 +30,9 @@ class RuuviTag:
     def state(self) -> Union[Dict, SensorData]:
         return self._state
 
-    def update(self) -> Union[Dict, SensorData]:
-        """
-        Get latest data from the sensor and update own state.
-
-        Returns:
-            dict: Latest state
-        """
-
-        (data_format, data) = RuuviTagSensor.get_first_raw_data(self._mac, self._bt_device)
-
+    def _handle_new_data_and_return_state(
+        self, data_format: DataFormat, data: Optional[str]
+    ) -> Union[Dict, SensorData]:
         if data == self._data:
             return self._state
 
@@ -51,3 +44,29 @@ class RuuviTag:
             self._state = get_decoder(data_format).decode_data(self._data)
 
         return self._state
+
+
+class RuuviTag(RuuviTagBase):
+    def update(self) -> Union[Dict, SensorData]:
+        """
+        Get latest data from the sensor and update own state.
+
+        Returns:
+            dict: Latest state
+        """
+
+        (data_format, raw_data) = RuuviTagSensor.get_first_raw_data(self._mac, self._bt_device)
+        return self._handle_new_data_and_return_state(data_format, raw_data)
+
+
+class RuuviTagAsync(RuuviTagBase):
+    async def update(self) -> Union[Dict, SensorData]:
+        """
+        Get latest data from the sensor and update own state.
+
+        Returns:
+            dict: Latest state
+        """
+
+        (data_format, raw_data) = await RuuviTagSensor.get_first_raw_data_async(self._mac, self._bt_device)
+        return self._handle_new_data_and_return_state(data_format, raw_data)

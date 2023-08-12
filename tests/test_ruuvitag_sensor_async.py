@@ -1,3 +1,4 @@
+import asyncio
 import sys
 from typing import Tuple
 from unittest.mock import patch
@@ -6,6 +7,7 @@ import pytest
 
 from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy, BleCommunicationDummy
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvitag import RuuviTagAsync
 
 # pylint: disable=unused-argument
 
@@ -13,6 +15,12 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 @pytest.mark.skipif(sys.version_info < (3, 8), reason="patch doesn't work correctly on 3.7")
 @pytest.mark.asyncio
 class TestRuuviTagSensorAsync:
+    async def _get_first_data(self, mac, bt_device):
+        await asyncio.sleep(0)
+        # https://ruu.vi/#AjwYAMFc
+        data = "043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"
+        return data[26:]
+
     async def _get_data(self, blacklist=[], bt_device="") -> Tuple[str, str]:
         tag_data = [
             ("EB:A5:D1:02:CE:68", "1c1bFF99040513844533c43dffe0ffd804189ff645fcffeba5d102ce68"),
@@ -62,3 +70,16 @@ class TestRuuviTagSensorAsync:
         """
         with pytest.raises(Exception):
             _ = await RuuviTagSensor.find_ruuvitags_async()
+
+    @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())
+    @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_first_data", _get_first_data)
+    async def test_tag_async_update_is_valid(self):
+        tag = RuuviTagAsync("48:2C:6A:1E:59:3D")
+
+        state = tag.state
+        assert state == {}
+
+        state = await tag.update()
+        assert state["temperature"] == 24
+        assert state["pressure"] == 995
+        assert state["humidity"] == 30
