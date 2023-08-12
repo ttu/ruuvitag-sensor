@@ -30,7 +30,7 @@ class RuuviTagBase:
     def state(self) -> Union[Dict, SensorData]:
         return self._state
 
-    def _handle_new_data_and_return_state(self, data_format: DataFormat, data: SensorData) -> Union[Dict, SensorData]:
+    def _handle_new_data_and_return_state(self, data_format: DataFormat, data: Optional[str]) -> Union[Dict, SensorData]:
         if data == self._data:
             return self._state
 
@@ -53,8 +53,8 @@ class RuuviTag(RuuviTagBase):
             dict: Latest state
         """
 
-        (data_format, data) = RuuviTagSensor.get_first_raw_data(self._mac, self._bt_device)
-        return self._handle_new_data_and_return_state(data_format, data)
+        (data_format, raw_data) = RuuviTagSensor.get_first_raw_data(self._mac, self._bt_device)
+        return self._handle_new_data_and_return_state(data_format, raw_data)
 
 
 class RuuviTagAsync(RuuviTagBase):
@@ -66,5 +66,5 @@ class RuuviTagAsync(RuuviTagBase):
             dict: Latest state
         """
 
-        (data_format, data) = await RuuviTagSensor.get_first_raw_data_async(self._mac, self._bt_device)
-        return self._handle_new_data_and_return_state(data_format, data)
+        (data_format, raw_data) = await RuuviTagSensor.get_first_raw_data_async(self._mac, self._bt_device)
+        return self._handle_new_data_and_return_state(data_format, raw_data)
