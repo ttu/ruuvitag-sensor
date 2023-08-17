@@ -26,6 +26,7 @@ class TestRuuviTagSensorAsync:
             ("EB:A5:D1:02:CE:68", "1c1bFF99040513844533c43dffe0ffd804189ff645fcffeba5d102ce68"),
             ("CD:D4:FA:52:7A:F2", "1c1bFF990405128a423bc45fffd8ff98040cafd6497a83cdd4fa527af2"),
             ("EC:4D:A7:95:08:6B", "1c1bFF9904050d3f5306c4df0024ffe404108f562787f1ec4da795086b"),
+            ("CE:D6:05:F5:17:AA", "1c1bFF990405118f60bcc7f900880000fc0c813624238fc57d89639eb9a6"),
         ]
 
         for data in tag_data:
@@ -39,7 +40,7 @@ class TestRuuviTagSensorAsync:
         async for received in gener:
             data.append(received)
 
-        assert len(data) == 3
+        assert len(data) == 4
 
     @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())
     @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data", _get_data)
@@ -58,7 +59,7 @@ class TestRuuviTagSensorAsync:
         """Tests to see if MAC and the state of the sensors are returned for Bleak enabled request."""
         tags = await RuuviTagSensor.find_ruuvitags_async()
 
-        assert len(tags) == 3
+        assert len(tags) == 4
 
     @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationDummy())
     @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data", _get_data)
@@ -83,3 +84,16 @@ class TestRuuviTagSensorAsync:
         assert state["temperature"] == 24
         assert state["pressure"] == 995
         assert state["humidity"] == 30
+
+    @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())
+    @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data", _get_data)
+    async def test_get_data_for_sensors(self):
+        macs = ["EB:A5:D1:02:CE:68", "CD:D4:FA:52:7A:F2", "CE:D6:05:F5:17:AA"]
+        data = await RuuviTagSensor.get_data_for_sensors_async(macs, 4)
+        assert len(data) == 3
+        assert "EB:A5:D1:02:CE:68" in data
+        assert "CD:D4:FA:52:7A:F2" in data
+        assert "CE:D6:05:F5:17:AA" in data
+        assert data["EB:A5:D1:02:CE:68"]["temperature"] == 24.98
+        assert data["CD:D4:FA:52:7A:F2"]["temperature"] == 23.73
+        assert data["CE:D6:05:F5:17:AA"]["rssi"] == -90
