@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import re
 import sys
 from typing import AsyncGenerator, List, Tuple
 
@@ -9,6 +10,8 @@ from bleak.backends.scanner import AdvertisementData, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
+
+MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
 
 
 def _get_scanner(detection_callback):
@@ -57,7 +60,9 @@ class BleCommunicationBleak(BleCommunicationAsync):
     @staticmethod
     async def get_data(blacklist: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
-            mac: str = device.address
+            # On macOS device address is not a MAC address, but a system specific ID
+            # https://github.com/hbldh/bleak/issues/140
+            mac: str = device.address if re.match(MAC_REGEX, device.address.lower()) else None
             if mac and mac in blacklist:
                 log.debug("MAC blacklised: %s", mac)
                 return
