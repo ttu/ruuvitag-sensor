@@ -25,7 +25,7 @@ def _get_scanner(detection_callback):
 
         return DevBleakScanner(detection_callback, scanning_mode)
 
-    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode, use_bdaddr=True)
+    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)
 
 
 # TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
