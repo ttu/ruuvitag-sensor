@@ -148,6 +148,36 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
+    async def get_data_for_sensors_async(
+        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ""
+    ) -> Dict[Mac, SensorData]:
+        """
+        Get latest data for sensors in the MAC address list.
+
+        Args:
+            macs (array): MAC addresses
+            search_duratio_sec (int): Search duration in seconds. Default 5
+            bt_device (string): Bluetooth device id
+        Returns:
+            dict: MAC and state of found sensors
+        """
+
+        log.info("Get latest data for sensors. Stop with Ctrl+C.")
+        log.info("Stops automatically in %ss", search_duratio_sec)
+        log.info("MACs: %s", macs)
+
+        data: Dict[Mac, SensorData] = {}
+        start_time = time.time()
+
+        async for new_data in RuuviTagSensor.get_data_async(macs, bt_device):
+            mac, sensor_data = new_data
+            data[mac] = sensor_data
+            if search_duratio_sec and time.time() - start_time > search_duratio_sec:
+                break
+
+        return data
+
+    @staticmethod
     async def get_data_async(macs: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
         if not is_async_adapter(ble):
             raise Exception("Only Bleak BLE communication is supported")

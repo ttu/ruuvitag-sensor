@@ -192,7 +192,7 @@ Check the official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/l
 
 #### Get data for specified sensors for a specific duration
 
-`get_data_for_sensors` will collect the latest data from sensors for a specified duration.
+`get_data_for_sensors` and `get_data_for_sensors_async` will collect the latest data from sensors for a specified duration.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -204,17 +204,18 @@ macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
 timeout_in_sec = 4
 
 data = RuuviTagSensor.get_data_for_sensors(macs, timeout_in_sec)
+# data = await RuuviTagSensor.get_data_for_sensors_async(macs, timeout_in_sec)
 
 # Dictionary will have latest data for each sensor
 print(data["AA:2C:6A:1E:59:3D"])
 print(data["CC:2C:6A:1E:59:3D"])
 ```
 
-__NOTE:__ This method shouldn't be used for a long duration with a short timeout. `get_data_for_sensors` will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use the `get_data`-method.
+__NOTE:__ These methods shouldn't be used for a long duration with a short timeout. Methods will start and stop a new BLE scanning process with every method call. For long-running processes, it is recommended to use the `get_data`- and `get_data_async`-method.
 
 #### Get data from a sensor
 
-__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_for_sensors` methods instead of `RuuviTag`- or `RuuviTagAsync`-class.
+__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_async` methods instead of `RuuviTag`- or `RuuviTagAsync`-class.
 
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
