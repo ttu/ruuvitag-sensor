@@ -13,18 +13,18 @@ RuuviTag Sensor Python Package
 
 ## Requirements
 
-* RuuviTag with Weather Station firmware
-    * Setup [guide](https://lab.ruuvi.com/start/)
-    * Supports [Data Format 2, 3, 4 and 5](https://github.com/ruuvi/ruuvi-sensor-protocols)
+* RuuviTag sensor
+    * Setup [guide](https://ruuvi.com/quick-start/)
+    * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
-    * [BlueZ install guide](#BlueZ)
-* __BETA:__ Cross-platform BLE adapters
-    * [Bleak](https://github.com/hbldh/bleak) communication module
-      * Bleak only supports async methods (work in progress)
-      * [Bleak install guide](#Bleak)
-    * [Bleson](https://github.com/TheCellule/python-bleson) communication module
-      * [Bleson install guide](#Bleson)
+    * Default adapter for Linux
+    * Bluez supports only [sync-methods](#usage)
+    * [Install guide](#BlueZ)
+* [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
+    * Default adapter for Windows and macOS
+    * Bleak supports only [async-methods](#usage)
+    * [Install guide](#Bleak)
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
@@ -54,7 +54,7 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 The package provides 3 ways to fetch data from sensors:
 
 1. Synchronously with callback
-2. Asynchronously with async/await (BETA)
+2. Asynchronously with async/await
 3. Observable streams with ReactiveX
 
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
@@ -110,7 +110,7 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 
 ### 2. Get sensor data asynchronously
 
-__NOTE:__ Asynchronous functionality is currently in beta state and works only with `Bleak`-adapter.
+__NOTE:__ Asynchronous functionality works only with `Bleak`-adapter.
 
 `get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will exceute until iterator is exited. This method is the preferred way to use the library with async-adapter.
 
@@ -424,7 +424,7 @@ In case of errors, the application tries to exit immediately, so it can be autom
 
 ### Bleak
 
-Bleak is not installed automatically with `ruuvitag-sensor` package. Install it manually from PyPI.
+On Windows and macOS Bleak is installed automatically with `ruuvitag-sensor` package. On Linux install it manually from PyPI.
 
 ```sh
 $ python -m pip install bleak
