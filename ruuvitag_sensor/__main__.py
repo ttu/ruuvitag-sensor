@@ -1,11 +1,12 @@
 import argparse
+import asyncio
 import logging
 import sys
 
 import ruuvitag_sensor
+from ruuvitag_sensor.adapters import is_async_adapter
 from ruuvitag_sensor.log import log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
-from ruuvitag_sensor.ruuvitag import RuuviTag
 
 ruuvitag_sensor.log.enable_console()
 
@@ -18,6 +19,36 @@ def my_excepthook(exctype, value, traceback):
 
 
 sys.excepthook = my_excepthook
+
+
+async def _async_main_handle(arguments: argparse.Namespace):
+    if arguments.mac_address:
+        data = await RuuviTagSensor.get_data_for_sensors_async(
+            macs=[arguments.mac_address], bt_device=arguments.bt_device
+        )
+        log.info(data)
+    elif arguments.find_action:
+        await RuuviTagSensor.find_ruuvitags_async(arguments.bt_device)
+    elif arguments.latest_action:
+        data = await RuuviTagSensor.get_data_for_sensors_async(bt_device=arguments.bt_device)
+        log.info(data)
+    elif arguments.stream_action:
+        async for data in RuuviTagSensor.get_data_async(bt_device=arguments.bt_device):
+            log.info("%s - %s", data[0], data[1])
+
+
+def _sync_main_handle(arguments: argparse.Namespace):
+    if arguments.mac_address:
+        data = RuuviTagSensor.get_data_for_sensors(macs=[arguments.mac_address], bt_device=arguments.bt_device)
+        log.info(data)
+    elif arguments.find_action:
+        RuuviTagSensor.find_ruuvitags(arguments.bt_device)
+    elif arguments.latest_action:
+        data = RuuviTagSensor.get_data_for_sensors(bt_device=arguments.bt_device)
+        log.info(data)
+    elif arguments.stream_action:
+        RuuviTagSensor.get_data(lambda x: log.info("%s - %s", x[0], x[1]), bt_device=arguments.bt_device)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -39,16 +70,11 @@ if __name__ == "__main__":
         for handler in log.handlers:
             handler.setLevel(logging.DEBUG)
 
-    if args.mac_address:
-        sensor = RuuviTag(args.mac_address, args.bt_device)
-        state = sensor.update()
-        log.info(state)
-    elif args.find_action:
-        RuuviTagSensor.find_ruuvitags(args.bt_device)
-    elif args.latest_action:
-        data = RuuviTagSensor.get_data_for_sensors(bt_device=args.bt_device)
-        log.info(data)
-    elif args.stream_action:
-        RuuviTagSensor.get_data(lambda x: log.info("%s - %s", x[0], x[1]), bt_device=args.bt_device)
-    else:
+    if not args.mac_address and not args.find_action and not args.latest_action and not args.stream_action:
         parser.print_usage()
+        sys.exit(0)
+
+    if is_async_adapter(ruuvitag_sensor.ruuvi.ble):
+        asyncio.get_event_loop().run_until_complete(_async_main_handle(args))
+    else:
+        _sync_main_handle(args)
