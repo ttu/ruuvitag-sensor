@@ -424,7 +424,9 @@ In case of errors, the application tries to exit immediately, so it can be autom
 
 ### Bleak
 
-On Windows and macOS Bleak is installed automatically with `ruuvitag-sensor` package. On Linux install it manually from PyPI.
+On Windows and macOS Bleak is installed and used automatically with `ruuvitag-sensor` package. 
+
+On Linux install it manually from PyPI and enable it with `RUUVI_BLE_ADAPTER` environment variable.
 
 ```sh
 $ python -m pip install bleak
