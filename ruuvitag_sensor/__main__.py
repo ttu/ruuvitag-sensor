@@ -33,8 +33,8 @@ async def _async_main_handle(arguments: argparse.Namespace):
         data = await RuuviTagSensor.get_data_for_sensors_async(bt_device=arguments.bt_device)
         log.info(data)
     elif arguments.stream_action:
-        async for data in RuuviTagSensor.get_data_async(bt_device=arguments.bt_device):
-            log.info("%s - %s", data[0], data[1])
+        async for mac, sensor_data in RuuviTagSensor.get_data_async(bt_device=arguments.bt_device):
+            log.info("%s - %s", mac, sensor_data)
 
 
 def _sync_main_handle(arguments: argparse.Namespace):
