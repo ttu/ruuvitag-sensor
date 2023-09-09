@@ -60,6 +60,10 @@ class RuuviTag(RuuviTagBase):
 
 
 class RuuviTagAsync(RuuviTagBase):
+    """
+    NOTE: This class is not working on macOS
+    """
+
     async def update(self) -> Union[Dict, SensorData]:
         """
         Get latest data from the sensor and update own state.

@@ -95,6 +95,11 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     @staticmethod
     async def get_first_data(mac: str, bt_device: str = "") -> RawData:
+        """
+        NOTE: get_first_data does not work on macOS.
+
+        macOS doesn't return MAC address, as it uses system specific IDs
+        """
         data = None
         data_iter = BleCommunicationBleak.get_data([], bt_device)
         async for d in data_iter:

@@ -50,8 +50,9 @@ class RuuviTagSensor:
     async def get_first_raw_data_async(mac: str, bt_device: str = "") -> DataFormatAndRawSensorData:
         """
         Get raw data for selected RuuviTag. This method is intended to be used only by
-        RuuviTag-class.
-        It doesn't have asynchronous implementation.
+        RuuviTagAsync-class.
+
+        NOTE: This method is not working on macOS
 
         Args:
             mac (string): MAC address

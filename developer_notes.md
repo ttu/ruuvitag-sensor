@@ -36,6 +36,8 @@ Upgrade pip as recommended.
 Install required dependencies
 ```sh
 $ python -m pip install -e .[dev]
+# on zsh, escape square brackets
+$ python -m pip install -e .\[dev\]
 ```
 
 Flake8

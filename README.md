@@ -215,7 +215,7 @@ __NOTE:__ These methods shouldn't be used for a long duration with a short timeo
 
 #### Get data from a sensor
 
-__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_async` methods instead of `RuuviTag`- or `RuuviTagAsync`-class.
+__NOTE:__ For a single sensor it is recommended to use `RuuviTagSensor.get_data` or `RuuviTagSensor.get_data_async` methods instead of `RuuviTag`- or `RuuviTagAsync`-class. `RuuviTagAsync`-class doesn't work with macOS, due to the way how macOS returns MAC address.
 
 ```python
 from ruuvitag_sensor.ruuvitag import RuuviTag
@@ -433,7 +433,7 @@ $ python -m pip install bleak
 Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
 
 ```sh
-$ export RUUVI_BLE_ADAPTER="Bleak"
+$ export RUUVI_BLE_ADAPTER="bleak"
 ```
 Or use `os.environ`. NOTE: this must be set before importing `ruuvitag_sensor`.
 
@@ -477,10 +477,10 @@ Bleson is not installed automatically with `ruuvitag-sensor` package. Install it
 $ pip install git+https://github.com/TheCellule/python-bleson
 ```
 
-Add environment variable `RUUVI_BLE_ADAPTER` with value `Bleson`. E.g.
+Add environment variable `RUUVI_BLE_ADAPTER` with value `bleson`. E.g.
 
 ```sh
-$ export RUUVI_BLE_ADAPTER="Bleson"
+$ export RUUVI_BLE_ADAPTER="bleson"
 ```
 
 __NOTE:__ On macOS, only Data Format 5 works, as macOS doesn't advertise MAC address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
