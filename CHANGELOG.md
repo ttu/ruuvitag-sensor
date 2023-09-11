@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [2.2.0] - 2023-09-11
 * ADD: (Beta) Async support to RuuviTagReactive
 * FIX: (Beta) Use passive scanning on macOS with Bleak
 * ADD: (Beta) Async version to RuuviTag-class
