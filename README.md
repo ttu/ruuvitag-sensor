@@ -19,11 +19,15 @@ RuuviTag Sensor Python Package
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * Bluez (Linux-only)
     * Default adapter for Linux
-    * Bluez supports only [sync-methods](#usage)
+    * Bluez supports
+      * [Sync-methods](#usage)
+      * [Observable streams](#usage)
     * [Install guide](#BlueZ)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for Windows and macOS
-    * Bleak supports only [async-methods](#usage)
+    * Bleak supports
+      * [Async-methods](#usage)
+      * [Observable streams](#usage)
     * [Install guide](#Bleak)
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
@@ -65,7 +69,7 @@ RuuviTag sensors can be identified using MAC addresses. Methods return a tuple w
 
 ### 1. Get sensor data synchronously with callback
 
-`get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library.
+`get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library with _BlueZ_.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -112,7 +116,7 @@ RuuviTagSensor.get_data(handle_data, macs, run_flag)
 
 __NOTE:__ Asynchronous functionality works only with `Bleak`-adapter.
 
-`get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will exceute until iterator is exited. This method is the preferred way to use the library with async-adapter.
+`get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will exceute until iterator is exited. This method is the preferred way to use the library with _Bleak_.
 
 ```py
 import asyncio
@@ -437,6 +441,7 @@ Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
 ```sh
 $ export RUUVI_BLE_ADAPTER="bleak"
 ```
+
 Or use `os.environ`. NOTE: this must be set before importing `ruuvitag_sensor`.
 
 ```py
