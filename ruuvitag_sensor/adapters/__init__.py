@@ -41,6 +41,16 @@ def is_async_from_env():
     return "bleak" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower()
 
 
+def throw_if_not_sync_adapter(ble: object):
+    if is_async_adapter(ble):
+        raise RuntimeError("Sync BLE adapter required")
+
+
+def throw_if_not_async_adapter(ble: object):
+    if not is_async_adapter(ble):
+        raise RuntimeError("Async BLE adapter required")
+
+
 class BleCommunication:
     """Bluetooth LE communication"""
 
