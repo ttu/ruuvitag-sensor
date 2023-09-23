@@ -5,7 +5,7 @@ from multiprocessing.managers import ListProxy
 from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
 from warnings import warn
 
-from ruuvitag_sensor.adapters import get_ble_adapter, is_async_adapter
+from ruuvitag_sensor.adapters import get_ble_adapter, throw_if_not_async_adapter, throw_if_not_sync_adapter
 from ruuvitag_sensor.data_formats import DataFormats
 from ruuvitag_sensor.decoder import get_decoder, parse_mac
 from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, Mac, MacAndRawData, MacAndSensorData, SensorData
@@ -42,6 +42,7 @@ class RuuviTagSensor:
         Returns:
             tuple (int, string): Data Format type and raw Sensor data
         """
+        throw_if_not_sync_adapter(ble)
 
         raw = ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
@@ -60,6 +61,8 @@ class RuuviTagSensor:
         Returns:
             tuple (int, string): Data Format type and raw Sensor data
         """
+        throw_if_not_async_adapter(ble)
+
         raw = await ble.get_first_data(mac, bt_device)
         return DataFormats.convert_data(raw)
 
@@ -74,6 +77,7 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
+        throw_if_not_sync_adapter(ble)
 
         log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
@@ -99,9 +103,7 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
-
-        if not is_async_adapter(ble):
-            raise Exception("Only Bleak BLE communication is supported")
+        throw_if_not_async_adapter(ble)
 
         log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
@@ -135,6 +137,7 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
+        throw_if_not_sync_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
         log.info("Stops automatically in %ss", search_duratio_sec)
@@ -162,6 +165,7 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
+        throw_if_not_async_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
         log.info("Stops automatically in %ss", search_duratio_sec)
@@ -180,8 +184,7 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_data_async(macs: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
-        if not is_async_adapter(ble):
-            raise Exception("Only Bleak BLE communication is supported")
+        throw_if_not_async_adapter(ble)
 
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
@@ -213,6 +216,7 @@ class RuuviTagSensor:
             run_flag (object): RunFlag object. Function executes while run_flag.running
             bt_device (string): Bluetooth device id
         """
+        throw_if_not_sync_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
         log.info("MACs: %s", macs)
@@ -233,6 +237,7 @@ class RuuviTagSensor:
         Use get_data-method instead.
         """
         warn("This method will be removed in a future version, use get_data() instead", FutureWarning)
+        throw_if_not_sync_adapter(ble)
         return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
 
     @staticmethod
