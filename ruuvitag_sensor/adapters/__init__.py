@@ -22,12 +22,17 @@ def get_ble_adapter():
         from ruuvitag_sensor.adapters.nix_hci_file import BleCommunicationNixFile
 
         return BleCommunicationNixFile()
-    if not sys.platform.startswith("linux") or "CI" in os.environ:
-        # Use BleCommunicationDummy also for CI as it can't use bluez
+    if "CI" in os.environ:
+        # Use BleCommunicationDummy for CI as it can't use bluez
         from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
 
         return BleCommunicationDummy()
+    if sys.platform.startswith("win") or sys.platform.startswith("darwin"):
+        from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak
 
+        return BleCommunicationBleak()
+
+    # BlueZ is default for Linux
     from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
 
     return BleCommunicationNix()
