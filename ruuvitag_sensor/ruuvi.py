@@ -184,6 +184,15 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_data_async(macs: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
+        """
+        Get data for all ruuvitag sensors or sensors in the MAC's list.
+
+        Args:
+            macs (list): MAC addresses
+            bt_device (string): Bluetooth device id
+        Returns:
+            AsyncGenerator: MAC and State of RuuviTag sensor data
+        """
         throw_if_not_async_adapter(ble)
 
         mac_blacklist = Manager().list()
