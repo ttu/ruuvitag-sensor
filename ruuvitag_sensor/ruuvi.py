@@ -191,7 +191,7 @@ class RuuviTagSensor:
             macs (list): MAC addresses
             bt_device (string): Bluetooth device id
         Returns:
-            AsyncGenerator: MAC and State of RuuviTag sensor data
+            AsyncGenerator: MAC and State of RuuviTag sensor data (tuple)
         """
         throw_if_not_async_adapter(ble)
 
