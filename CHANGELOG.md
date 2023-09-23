@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* FIX: Verify BLE adapter type before method execution
 
 ## [2.2.0] - 2023-09-11
 * ADD: (Beta) Async support to RuuviTagReactive
