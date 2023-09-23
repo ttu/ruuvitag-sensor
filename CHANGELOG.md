@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [2.3.0] - 2023-09-23
 * FIX: Verify BLE adapter type before method execution
 * ADD: Support for Windows and macOS out of the box
 
