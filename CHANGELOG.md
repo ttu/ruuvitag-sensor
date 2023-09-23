@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * FIX: Verify BLE adapter type before method execution
+* ADD: Support for Windows and macOS out of the box
 
 ## [2.2.0] - 2023-09-11
 * ADD: (Beta) Async support to RuuviTagReactive
