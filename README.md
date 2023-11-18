@@ -29,7 +29,7 @@ RuuviTag Sensor Python Package
       * [Sync-methods](#usage)
       * [Observable streams](#usage)
     * [Install guide](#BlueZ)
-    * NOTE: The BlueZ-communication implementation uses deprecated BlueZ tools that are no longer supported. It is already recommended to use Bleak-communication with Linux.
+    * NOTE: The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported. Even though BlueZ is still the default adapter, it is recommended to use the Bleak-communication adapter with Linux. Bleak will be the default adapter for Linux in the next major release.
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
