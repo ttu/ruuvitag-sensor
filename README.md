@@ -17,18 +17,19 @@ RuuviTag Sensor Python Package
     * Setup [guide](https://ruuvi.com/quick-start/)
     * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
-* Bluez (Linux-only)
-    * Default adapter for Linux
-    * Bluez supports
-      * [Sync-methods](#usage)
-      * [Observable streams](#usage)
-    * [Install guide](#BlueZ)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for Windows and macOS
     * Bleak supports
       * [Async-methods](#usage)
       * [Observable streams](#usage)
     * [Install guide](#Bleak)
+* Bluez (Linux-only)
+    * Default adapter for Linux
+    * Bluez supports
+      * [Sync-methods](#usage)
+      * [Observable streams](#usage)
+    * [Install guide](#BlueZ)
+    * NOTE: The BlueZ-communication implementation uses deprecated BlueZ tools that are no longer supported. It is already recommended to use Bleak-communication with Linux.
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
@@ -57,8 +58,8 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 The package provides 3 ways to fetch data from sensors:
 
-1. Synchronously with callback
-2. Asynchronously with async/await
+1. Asynchronously with async/await
+2. Synchronously with callback
 3. Observable streams with ReactiveX
 
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
@@ -67,52 +68,7 @@ RuuviTag sensors can be identified using MAC addresses. Methods return a tuple w
 ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
 ```
 
-### 1. Get sensor data synchronously with callback
-
-`get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library with _BlueZ_.
-
-```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-
-
-def handle_data(found_data):
-    print(f"MAC {found_data[0]}")
-    print(f"Data {found_data[1]}")
-
-
-if __name__ == "__main__":
-    RuuviTagSensor.get_data(handle_data)
-```
-
-The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
-
-The optional list of MACs and run flag can be passed to the `get_data` function. The callback is called only for MACs in the list and setting the run flag to false will stop execution. If the run flag is not passed, the function will execute forever.
-
-```python
-from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
-
-counter = 10
-# RunFlag for stopping execution at desired time
-run_flag = RunFlag()
-
-
-def handle_data(found_data):
-    print(f"MAC: {found_data[0]}")
-    print(f"Data: {found_data[1]}")
-
-    global counter
-    counter = counter - 1
-    if counter < 0:
-        run_flag.running = False
-
-
-# List of MACs of sensors which will execute callback function
-macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
-
-RuuviTagSensor.get_data(handle_data, macs, run_flag)
-```
-
-### 2. Get sensor data asynchronously
+### 1. Get sensor data asynchronously with async/await
 
 __NOTE:__ Asynchronous functionality works only with `Bleak`-adapter.
 
@@ -155,6 +111,53 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
+```
+
+The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.           ygysg 
+
+### 2. Get sensor data synchronously with callback
+
+__NOTE:__ Asynchronous functionality works only with `BlueZ`-adapter.
+
+`get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library with _BlueZ_.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+
+def handle_data(found_data):
+    print(f"MAC {found_data[0]}")
+    print(f"Data {found_data[1]}")
+
+
+if __name__ == "__main__":
+    RuuviTagSensor.get_data(handle_data)
+```
+
+The optional list of MACs and run flag can be passed to the `get_data` function. The callback is called only for MACs in the list and setting the run flag to false will stop execution. If the run flag is not passed, the function will execute forever.
+
+```python
+from ruuvitag_sensor.ruuvi import RuuviTagSensor, RunFlag
+
+counter = 10
+# RunFlag for stopping execution at desired time
+run_flag = RunFlag()
+
+
+def handle_data(found_data):
+    print(f"MAC: {found_data[0]}")
+    print(f"Data: {found_data[1]}")
+
+    global counter
+    counter = counter - 1
+    if counter < 0:
+        run_flag.running = False
+
+
+# List of MACs of sensors which will execute callback function
+macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
+
+RuuviTagSensor.get_data(handle_data, macs, run_flag)
 ```
 
 ### 3. Get sensor data with observable streams (ReactiveX / RxPY)
