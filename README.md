@@ -72,7 +72,7 @@ RuuviTag sensors can be identified using MAC addresses. Methods return a tuple w
 
 __NOTE:__ Asynchronous functionality works only with `Bleak`-adapter.
 
-`get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will exceute until iterator is exited. This method is the preferred way to use the library with _Bleak_.
+`get_data_async` returns the data whenever a RuuviTag sensor broadcasts data. `get_data_async` will execute until iterator is exited. This method is the preferred way to use the library with _Bleak_.
 
 ```py
 import asyncio
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
 ```
 
-The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.           ygysg 
+The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
 
 ### 2. Get sensor data synchronously with callback
 
@@ -253,7 +253,7 @@ RuuviTagSensor.find_ruuvitags()
 
 ### Using different Bluetooth device
 
-If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: hci0). The device can be passed with a `bt_device`-parameter.
+If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: `hci0`). The device can be passed with a `bt_device`-parameter.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -445,7 +445,7 @@ Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
 $ export RUUVI_BLE_ADAPTER="bleak"
 ```
 
-Or use `os.environ`. NOTE: this must be set before importing `ruuvitag_sensor`.
+Or use `os.environ`. __NOTE:__ this must be set before importing `ruuvitag_sensor`.
 
 ```py
 import os
