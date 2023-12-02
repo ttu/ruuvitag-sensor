@@ -8,6 +8,7 @@ from typing import Generator, List
 from bleson import Observer, get_provider
 
 from ruuvitag_sensor.adapters import BleCommunication
+from ruuvitag_sensor.adapters.utils import rssi_to_hex
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 log = logging.getLogger(__name__)
@@ -56,6 +57,9 @@ class BleCommunicationBleson(BleCommunication):
                 data = f"FF{data.hex()}"
                 data = f"{(len(data) >> 1):02x}{data}"
                 data = f"{(len(data) >> 1):02x}{data}"
+
+                # Add RSSI to encoded data as hex. All adapters use a common decoder.
+                data += rssi_to_hex(advertisement.rssi)
                 queue.put((mac, data.upper()))
             except GeneratorExit:
                 break
