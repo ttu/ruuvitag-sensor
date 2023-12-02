@@ -9,6 +9,7 @@ from bleak import BleakScanner
 from bleak.backends.scanner import AdvertisementData, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
+from ruuvitag_sensor.adapters.utils import rssi_to_hex
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
@@ -74,7 +75,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data = BleCommunicationBleak._parse_data(advertisement_data.manufacturer_data[1177])
 
             # Add RSSI to encoded data as hex. All adapters use a common decoder.
-            data += hex((advertisement_data.rssi + (1 << 8)) % (1 << 8)).replace("0x", "")
+            data += rssi_to_hex(advertisement_data.rssi)
             await queue.put((mac, data))
 
         scanner = _get_scanner(detection_callback)
