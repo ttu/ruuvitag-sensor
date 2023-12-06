@@ -72,6 +72,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
             if 1177 not in advertisement_data.manufacturer_data:
                 return
 
+            log.debug("Received data: %s", advertisement_data)
+
             data = BleCommunicationBleak._parse_data(advertisement_data.manufacturer_data[1177])
 
             # Add RSSI to encoded data as hex. All adapters use a common decoder.
@@ -80,6 +82,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         scanner = _get_scanner(detection_callback)
         await scanner.start()
+
+        log.debug("Bleak scanner started")
 
         try:
             while True:
@@ -93,6 +97,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
             log.info(ex)
 
         await scanner.stop()
+
+        log.debug("Bleak scanner stopped")
 
     @staticmethod
     async def get_first_data(mac: str, bt_device: str = "") -> RawData:
