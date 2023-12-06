@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* FIX: Add RSSI value to Bleson adapter payload
 
 ## [2.3.0] - 2023-09-23
 * FIX: Verify BLE adapter type before method execution
