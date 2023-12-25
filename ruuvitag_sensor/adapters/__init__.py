@@ -5,7 +5,7 @@ from typing import AsyncGenerator, Generator, List
 
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
-# pylint: disable=import-outside-toplevel, cyclic-import
+# pylint: disable=import-outside-toplevel, cyclic-import, too-many-return-statements
 
 
 def get_ble_adapter():
