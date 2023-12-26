@@ -1,8 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
-* FIX: Force the use of Bluez-adapter with environment variable
-* FIX: Add RSSI value to Bleson adapter payload
+* ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable
+* FIX: Add missing RSSI value to Bleson adapter payload
 
 ## [2.3.0] - 2023-09-23
 * FIX: Verify BLE adapter type before method execution
