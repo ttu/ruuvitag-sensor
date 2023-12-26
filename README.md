@@ -29,7 +29,9 @@ RuuviTag Sensor Python Package
       * [Sync-methods](#usage)
       * [Observable streams](#usage)
     * [Install guide](#BlueZ)
-    * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported. Even though BlueZ is still the default adapter, it is recommended to use the Bleak-communication adapter with Linux. Bleak will be the default adapter for Linux in the next major release.
+    * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
+      * Even though BlueZ is still the default adapter, it is recommended to use the Bleak-communication adapter with Linux. Bleak will be the default adapter for Linux in the next major release.
+      * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
@@ -423,6 +425,18 @@ $ sudo apt-get install bluez bluez-hcidump
 
 `ruuvitag-sensor` package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, an older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 
+If you wish to test the library on Windows or macOS, enable it with `RUUVI_BLE_ADAPTER` environment variable.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="bluez"
+```
+
+And install ptyprocess.
+
+```sh
+python -m pip install ptyprocess
+```
+
 #### BlueZ limitations
 
 `ruuvitag-sensor` package uses BlueZ to listen to broadcasted BL information (uses _hciconf_, _hcitool_, _hcidump_). Implementation does not handle well all unexpected errors or changes, e.g. when the adapter is busy, rebooted or powered down.
@@ -479,12 +493,12 @@ Bleak-adapter has a development-time generator for dummy data, which can be usef
 
 Current state and known bugs in [issue #78](https://github.com/ttu/ruuvitag-sensor/issues/78).
 
-Bleson works with Linux, macOS and partially with Windows.
+[Bleson](https://github.com/TheCellule/python-bleson) works with Linux, macOS and partially with Windows.
 
 Bleson is not installed automatically with `ruuvitag-sensor` package. Install it manually from GitHub.
 
 ```sh
-$ pip install git+https://github.com/TheCellule/python-bleson
+$ python -m pip install git+https://github.com/TheCellule/python-bleson
 ```
 
 Add environment variable `RUUVI_BLE_ADAPTER` with value `bleson`. E.g.
