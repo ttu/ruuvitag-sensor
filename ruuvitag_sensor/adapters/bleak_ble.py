@@ -6,7 +6,7 @@ import sys
 from typing import AsyncGenerator, List, Tuple
 
 from bleak import BleakScanner
-from bleak.backends.scanner import AdvertisementData, BLEDevice
+from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
 from ruuvitag_sensor.adapters.utils import rssi_to_hex
@@ -15,7 +15,7 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
 
 
-def _get_scanner(detection_callback):
+def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str = ""):
     # NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
     # NOTE: On macOS - bleak.exc.BleakError: macOS does not support passive scanning
     scanning_mode = "passive" if sys.platform.startswith("win") else "active"
@@ -26,7 +26,12 @@ def _get_scanner(detection_callback):
 
         return DevBleakScanner(detection_callback, scanning_mode)
 
-    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)
+    if bt_device:
+        return BleakScanner(
+            detection_callback=detection_callback, scanning_mode=scanning_mode, adapter=bt_device
+        )  # type: ignore[arg-type]
+
+    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)  # type: ignore[arg-type]
 
 
 # TODO: Python 3.7 - TypeError: 'type' object is not subscriptable
@@ -80,7 +85,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data += rssi_to_hex(advertisement_data.rssi)
             await queue.put((mac, data))
 
-        scanner = _get_scanner(detection_callback)
+        scanner = _get_scanner(detection_callback, bt_device)
         await scanner.start()
 
         log.debug("Bleak scanner started")
