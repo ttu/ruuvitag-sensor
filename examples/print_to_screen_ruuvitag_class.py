@@ -10,7 +10,7 @@ Humidity:    28
 Pressure:    689
 
 NOTE: This example should only be used when interval is really long.
-RuuviTag's update-method will always create new bluetooth scanning
+RuuviTag's update-method will always create new Bluetooth scanning
 process and eventually process creation may fail.
 """
 

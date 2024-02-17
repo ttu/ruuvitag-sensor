@@ -189,7 +189,7 @@ ruuvi_rx.get_subject().pipe(
       ops.distinct_until_changed()
     ).subscribe(lambda x: print(f"Temperature changed: {x}"))
 
-# Close all connections and stop bluetooth communication
+# Close all connections and stop Bluetooth communication
 ruuvi_rx.stop()
 ```
 

@@ -78,7 +78,7 @@ class DataFormats:
                     break
         except ShortDataError as ex:
             # Data might be from RuuviTag, but received data was invalid
-            # e.g. it's possile that bluetooth stack received only partial data
+            # e.g. it's possible that Bluetooth stack received only partial data
             # Set the format to None, and data to '', this allows the
             # caller to determine that we did indeed see a Ruuvitag.
             log.debug("Error parsing advertisement data: %s", ex)
