@@ -3,6 +3,8 @@ name: ruuvitag_sensor
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "0 0 * * 1"
 
 permissions:
   contents: read
