@@ -33,7 +33,7 @@ dependencies = [
     "ptyprocess;platform_system=='Linux'",
     "mypy-extensions;python_version<'3.8'",
     "importlib-metadata<4.3,>=1.1.0;python_version<'3.8'",
-    "bleak;platform_system=='Windows' or platform_system=='Darwin'",
+    "bleak",
 ]
 
 [project.optional-dependencies]

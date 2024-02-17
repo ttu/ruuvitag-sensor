@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* ADD: Install Bleak automatically on all platforms
 
 ## [2.3.1] - 2024-03-10
 * ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable

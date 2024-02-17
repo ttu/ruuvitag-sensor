@@ -445,15 +445,10 @@ In case of errors, the application tries to exit immediately, so it can be autom
 
 ### Bleak
 
-On Windows and macOS Bleak is installed and used automatically with `ruuvitag-sensor` package. 
+Bleak is automatically installed with `ruuvitag-sensor` package on all platforms.
+On Windows and macOS it is automatically used with `ruuvitag-sensor` package.
 
-On Linux install it manually from PyPI and enable it with `RUUVI_BLE_ADAPTER` environment variable.
-
-```sh
-$ python -m pip install bleak
-```
-
-Add environment variable RUUVI_BLE_ADAPTER with value Bleak. E.g.
+To enable Bleak use the `RUUVI_BLE_ADAPTER` environment variable as shown below.
 
 ```sh
 $ export RUUVI_BLE_ADAPTER="bleak"
@@ -467,7 +462,7 @@ import os
 os.environ["RUUVI_BLE_ADAPTER"] = "bleak"
 ```
 
-Bleak supports only async methods.
+Bleak only supports asynchronous methods.
 
 ```py
 import asyncio
