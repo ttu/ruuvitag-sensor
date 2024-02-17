@@ -3,6 +3,7 @@
 ### [Unreleased]
 * ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable
 * FIX: Add missing RSSI value to Bleson adapter payload
+* ADD: Install Bleak automatically on all platforms
 
 ## [2.3.0] - 2023-09-23
 * FIX: Verify BLE adapter type before method execution
