@@ -15,7 +15,7 @@ $ source .venv/bin/activate
 
 3. Install required dependencies
 ```sh
-$ sudo python -m pip install -e .[dev]
+$ python -m pip install -e .[dev]
 ```
 
 If virtualenv and/or pip are not installed, follow installation instructions show in the terminal.
@@ -116,12 +116,12 @@ for Android and iOS.
 
 ## BlueZ commands used by RuuviTag package
 
-Reset bluetooth device:
+Reset Bluetooth device:
 ```sh
 $ sudo hciconfig hci0 reset
 ```
 
-Scan bluetooth devices:
+Scan Bluetooth devices:
 ```sh
 $ sudo hcitool lescan2 --duplicates --passive
 ```
@@ -135,12 +135,12 @@ $ sudo hcidump --raw
 
 ## Other useful commands
 
-List bluetooth devices
+List Bluetooth devices
 ```sh
 $ hcitool dev
 ```
 
-List processes containing hci in order to find BLE scanning subprocesses
+List processes containing `hci` in order to find BLE scanning subprocesses
 ```sh
 $ ps aux | grep hci
 ```
@@ -344,7 +344,7 @@ $ chmod +x verification.sh
 $ sudo ./verification.sh
 ```
 
-Run verification for the package from PyPI
+Run verification for the package from PyPI:
 
 ```sh
 $ sudo ./verification.sh pypi
