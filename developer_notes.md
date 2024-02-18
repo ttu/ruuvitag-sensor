@@ -337,7 +337,7 @@ Or use e.g. VS Code to execute and debug tests.
 
 ## Exeuting Verification Test
 
-Verification test script executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 2.7 and 3.x.
+Verification test script executes a set of tests on active RuuviTags. Tests require at least one active RuuviTag and Python 3.x.
 
 ```sh
 $ chmod +x verification.sh
