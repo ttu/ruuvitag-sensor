@@ -5,7 +5,7 @@ RuuviTag Sensor Python Package
 [![License](https://img.shields.io/pypi/l/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 [![PyPI version](https://img.shields.io/pypi/v/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag_-sensor)
 [![PyPI downloads](https://img.shields.io/pypi/dm/ruuvitag-sensor.svg)](https://pypistats.org/packages/ruuvitag-sensor)
-[![Python versions](https://img.shields.io/pypi/pyversions/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
+[![Python versions](https://img.shields.io/badge/python-3.7+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 
 `ruuvitag-sensor` is a Python package for communicating with [RuuviTag BLE Sensor](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
