@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+
+## [2.3.1] - 2024-03-10
 * ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable
 * FIX: Add missing RSSI value to Bleson adapter payload
 * FIX: Pass Bluetooth device info to BleakScanner class
