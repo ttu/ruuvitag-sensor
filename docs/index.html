@@ -15,6 +15,7 @@
       name: '<a id="home-link" class="app-name-link" data-nosearch href="/">RuuviTag Sensor Python Package</a><br/>' +
             '<select id="version-selector" name="version">' +
               '<option value="development">Development</value>' +
+              '<option value="2.3.1">2.3.1</value>' +
               '<option value="2.3.0">2.3.0</value>' +
               '<option value="2.2.0">2.2.0</value>' +
               '<option value="2.1.0">2.1.0</value>' +
@@ -25,6 +26,7 @@
       repo: 'https://github.com/ttu/ruuvitag-sensor',
       alias: {
         '/development/(.*)': 'https://raw.githubusercontent.com/ttu/ruuvitag-sensor/master/',
+        '/2.3.1/(.*)': 'https://raw.githubusercontent.com/ttu/ruuvitag-sensor/2.3.1/README.md',
         '/2.3.0/(.*)': 'https://raw.githubusercontent.com/ttu/ruuvitag-sensor/2.3.0/README.md',
         '/2.2.0/(.*)': 'https://raw.githubusercontent.com/ttu/ruuvitag-sensor/2.2.0/README.md',
         '/2.1.0/(.*)': 'https://raw.githubusercontent.com/ttu/ruuvitag-sensor/2.1.0/README.md',
@@ -34,7 +36,7 @@
       namespaces: [ 
         {
           id: "version",
-          values: ["development", "2.3.0", "2.2.0", "2.1.0", "2.0.0", "1.2.1"],
+          values: ["development", "2.3.1", "2.3.0", "2.2.0", "2.1.0", "2.0.0", "1.2.1"],
           default: "development",
           optional: true,
           selector: "#version-selector",
