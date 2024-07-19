@@ -10,16 +10,16 @@ else
   python -m pip install -e .
 fi
 
+file_to_run="verification_async.py"
+
 if [ "$RUUVI_BLE_ADAPTER" = "bleson" ]; then
   python -m pip install git+https://github.com/TheCellule/python-bleson
+  file_to_run="verification.py"
+elif [ "$RUUVI_BLE_ADAPTER" = "bluez" ]; then
+  file_to_run="verification.py"
 fi
 
-if [ "$RUUVI_BLE_ADAPTER" = "bleak" ]; then
-  python -m pip install bleak
-  python verification_async.py
-else
-  python verification.py
-fi
+python $file_to_run
 
 ret=$?
 if [ $ret -ne 0 ]; then
