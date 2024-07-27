@@ -28,8 +28,10 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
 
     if bt_device:
         return BleakScanner(
-            detection_callback=detection_callback, scanning_mode=scanning_mode, adapter=bt_device
-        )  # type: ignore[arg-type]
+            detection_callback=detection_callback,
+            scanning_mode=scanning_mode,  # type: ignore[arg-type]
+            adapter=bt_device,
+        )
 
     return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)  # type: ignore[arg-type]
 
