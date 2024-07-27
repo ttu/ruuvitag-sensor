@@ -18,19 +18,17 @@ RuuviTag Sensor Python Package
     * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
-    * Default adapter for Windows and macOS
+    * Default adapter for all supported operating systems
     * Bleak supports
       * [Async-methods](#usage)
       * [Observable streams](#usage)
     * [Install guide](#Bleak)
 * Bluez (Linux-only)
-    * Default adapter for Linux
     * Bluez supports
       * [Sync-methods](#usage)
       * [Observable streams](#usage)
     * [Install guide](#BlueZ)
     * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
-      * Even though BlueZ is still the default adapter, it is recommended to use the Bleak-communication adapter with Linux. Bleak will be the default adapter for Linux in the next major release.
       * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
 * Python 3.7+
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
@@ -425,7 +423,7 @@ $ sudo apt-get install bluez bluez-hcidump
 
 `ruuvitag-sensor` package uses internally _hciconfig_, _hcitool_ and _hcidump_. These tools are deprecated. In case tools are missing, an older version of BlueZ is required ([Issue](https://github.com/ttu/ruuvitag-sensor/issues/31))
 
-If you wish to test the library on Windows or macOS, enable it with `RUUVI_BLE_ADAPTER` environment variable.
+Enable Bluez with the `RUUVI_BLE_ADAPTER` environment variable.
 
 ```sh
 $ export RUUVI_BLE_ADAPTER="bluez"
