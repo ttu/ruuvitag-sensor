@@ -1,5 +1,4 @@
 import asyncio
-import sys
 from typing import Tuple
 from unittest.mock import patch
 
@@ -12,7 +11,6 @@ from ruuvitag_sensor.ruuvitag import RuuviTagAsync
 # pylint: disable=unused-argument
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="patch doesn't work correctly on 3.7")
 @pytest.mark.asyncio
 class TestRuuviTagSensorAsync:
     async def _get_first_data(self, mac, bt_device):

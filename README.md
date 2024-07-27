@@ -5,7 +5,7 @@ RuuviTag Sensor Python Package
 [![License](https://img.shields.io/pypi/l/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 [![PyPI version](https://img.shields.io/pypi/v/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag_-sensor)
 [![PyPI downloads](https://img.shields.io/pypi/dm/ruuvitag-sensor.svg)](https://pypistats.org/packages/ruuvitag-sensor)
-[![Python versions](https://img.shields.io/badge/python-3.7+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
+[![Python versions](https://img.shields.io/badge/python-3.9+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 
 `ruuvitag-sensor` is a Python package for communicating with [RuuviTag BLE Sensor](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
@@ -30,7 +30,8 @@ RuuviTag Sensor Python Package
     * [Install guide](#BlueZ)
     * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
       * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
-* Python 3.7+
+* Python 3.9+
+    * For Python 3.7 and 3.8 support, check [installation instructions](#python-37-and-38) for an older version
     * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
 
 __NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [PyPI](https://pypi.org/project/ruuvitag-sensor/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
@@ -504,6 +505,21 @@ __NOTE:__ On macOS, only Data Format 5 works, as macOS doesn't advertise MAC add
 
 __NOTE:__ On Windows, Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for the advertised package, so it is still unusable.
 
+
+## Python 3.7 and 3.8
+
+Last version of `ruuvitag-sensor` with Python 3.7 and 3.8 support is [2.3.1](https://pypi.org/project/ruuvitag-sensor/2.3.1/).
+
+[Branch](https://github.com/ttu/ruuvitag-sensor/tree/release/2.3.1) / [Tag / commit](https://github.com/ttu/ruuvitag-sensor/commit/b16c9580d75eafe5508d0551642eb3b022ae1325)
+
+```sh
+$ git checkout release/2.3.1
+```
+
+Install from PyPI
+```sh
+$ python -m pip install ruuvitag-sensor==2.3.1
+```
 
 ## Python 2.x and 3.6 and below
 

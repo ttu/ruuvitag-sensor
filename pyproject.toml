@@ -11,11 +11,9 @@ authors = [
 description = "Find RuuviTag sensors and get decoded data from selected sensors"
 readme = "README.md"
 license = { file="LICENSE" }
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -31,8 +29,6 @@ keywords = [ "RuuviTag BLE" ]
 dependencies = [
     "reactivex",
     "ptyprocess;platform_system=='Linux'",
-    "mypy-extensions;python_version<'3.8'",
-    "importlib-metadata<4.3,>=1.1.0;python_version<'3.8'",
     "bleak",
 ]
 
@@ -44,7 +40,7 @@ dev = [
     "pylint",
     "mypy",
     "isort",
-    "black==23.3.0"  # Lock black to the latest version that supports Python 3.7
+    "black"
 ]
 
 [project.urls]
@@ -79,7 +75,7 @@ disable = [
 ]
 
 [tool.mypy]
-python_version = 3.8
+python_version = 3.9
 ignore_missing_imports = true
 
 [tool.isort]

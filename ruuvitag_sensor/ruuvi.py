@@ -320,9 +320,7 @@ class RuuviTagSensor:
         mac_to_send = (
             mac
             if mac
-            else parse_mac(data_format, decoded["mac"])
-            if "mac" in decoded and decoded["mac"] is not None
-            else ""
+            else parse_mac(data_format, decoded["mac"]) if "mac" in decoded and decoded["mac"] is not None else ""
         )
 
         # Check whitelist using MAC from decoded data if advertised MAC is not available
