@@ -430,6 +430,14 @@ Enable Bluez with the `RUUVI_BLE_ADAPTER` environment variable.
 $ export RUUVI_BLE_ADAPTER="bluez"
 ```
 
+Or use `os.environ`. __NOTE:__ this must be set before importing `ruuvitag_sensor`.
+
+```py
+import os
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
+```
+
 And install ptyprocess.
 
 ```sh
@@ -445,21 +453,7 @@ In case of errors, the application tries to exit immediately, so it can be autom
 ### Bleak
 
 Bleak is automatically installed with `ruuvitag-sensor` package on all platforms.
-On Windows and macOS it is automatically used with `ruuvitag-sensor` package.
-
-To enable Bleak use the `RUUVI_BLE_ADAPTER` environment variable as shown below.
-
-```sh
-$ export RUUVI_BLE_ADAPTER="bleak"
-```
-
-Or use `os.environ`. __NOTE:__ this must be set before importing `ruuvitag_sensor`.
-
-```py
-import os
-
-os.environ["RUUVI_BLE_ADAPTER"] = "bleak"
-```
+It is automatically used with `ruuvitag-sensor` package on all platforms.
 
 Bleak only supports asynchronous methods.
 
