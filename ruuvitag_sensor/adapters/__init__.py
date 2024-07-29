@@ -1,6 +1,5 @@
 import abc
 import os
-import sys
 from typing import AsyncGenerator, Generator, List
 
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
