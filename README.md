@@ -105,7 +105,7 @@ async def main():
     async for found_data in RuuviTagSensor.get_data_async(macs):
         print(f"MAC: {found_data[0]}")
         print(f"Data: {found_data[1]}")
-        datas.push(found_data)
+        datas.append(found_data)
         if len(datas) > 10:
             break
 
