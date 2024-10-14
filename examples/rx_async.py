@@ -1,7 +1,4 @@
 import asyncio
-import os
-
-os.environ["RUUVI_BLE_ADAPTER"] = "bleak"
 
 from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 

@@ -29,7 +29,11 @@ Add datasource (type: InfluxDB url: http://localhost:8086, database: ruuvi)
 Add new graph to dashboard
 """
 
+import os
+
 from influxdb import InfluxDBClient
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
