@@ -15,6 +15,8 @@ Pressure:    689
 import os
 from datetime import datetime
 
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
+
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 # Change here your own device's mac-address

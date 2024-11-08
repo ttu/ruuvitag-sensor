@@ -2,6 +2,10 @@
 Find RuuviTags
 """
 
+import os
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
+
 import ruuvitag_sensor.log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 

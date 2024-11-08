@@ -12,10 +12,13 @@ Requires:
 """
 
 import copy
+import os
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
 import requests
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 

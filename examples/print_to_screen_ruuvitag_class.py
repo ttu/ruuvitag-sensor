@@ -20,6 +20,8 @@ import os
 import time
 from datetime import datetime
 
+os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
+
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 # Change here your own device's mac-address
