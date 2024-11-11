@@ -211,7 +211,7 @@ class RuuviTagSensor:
                 data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
 
                 # Check MAC whitelist if advertised MAC available
-                if ble_data[0] and macs and not ble_data[0] in macs:
+                if ble_data[0] and macs and ble_data[0] not in macs:
                     log.debug("MAC not whitelisted: %s", ble_data[0])
                     continue
 
@@ -294,7 +294,7 @@ class RuuviTagSensor:
                 data_iter.close()
                 break
             # Check MAC whitelist if advertised MAC available
-            if ble_data[0] and macs and not ble_data[0] in macs:
+            if ble_data[0] and macs and ble_data[0] not in macs:
                 log.debug("MAC not whitelisted: %s", ble_data[0])
                 continue
 
@@ -331,7 +331,9 @@ class RuuviTagSensor:
         mac_to_send = (
             mac
             if mac
-            else parse_mac(data_format, decoded["mac"]) if "mac" in decoded and decoded["mac"] is not None else ""
+            else parse_mac(data_format, decoded["mac"])
+            if "mac" in decoded and decoded["mac"] is not None
+            else ""
         )
 
         # Check whitelist using MAC from decoded data if advertised MAC is not available

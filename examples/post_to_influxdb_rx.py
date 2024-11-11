@@ -30,24 +30,20 @@ def write_to_influxdb(received_data):
     """
     Convert data into RuuviCollector naming scheme and scale and write to InfluxDB.
     """
-    dataFormat = received_data[1]["data_format"] if ("data_format" in received_data[1]) else None
+    dataFormat = received_data[1].get("data_format", None)
     fields = {}
-    fields["temperature"] = received_data[1]["temperature"] if ("temperature" in received_data[1]) else None
-    fields["humidity"] = received_data[1]["humidity"] if ("humidity" in received_data[1]) else None
-    fields["pressure"] = received_data[1]["pressure"] if ("pressure" in received_data[1]) else None
-    fields["accelerationX"] = received_data[1]["acceleration_x"] if ("acceleration_x" in received_data[1]) else None
-    fields["accelerationY"] = received_data[1]["acceleration_y"] if ("acceleration_y" in received_data[1]) else None
-    fields["accelerationZ"] = received_data[1]["acceleration_z"] if ("acceleration_z" in received_data[1]) else None
+    fields["temperature"] = received_data[1].get("temperature", None)
+    fields["humidity"] = received_data[1].get("humidity", None)
+    fields["pressure"] = received_data[1].get("pressure", None)
+    fields["accelerationX"] = received_data[1].get("acceleration_x", None)
+    fields["accelerationY"] = received_data[1].get("acceleration_y", None)
+    fields["accelerationZ"] = received_data[1].get("acceleration_z", None)
     fields["batteryVoltage"] = received_data[1]["battery"] / 1000.0 if ("battery" in received_data[1]) else None
-    fields["txPower"] = received_data[1]["tx_power"] if ("tx_power" in received_data[1]) else None
-    fields["movementCounter"] = (
-        received_data[1]["movement_counter"] if ("movement_counter" in received_data[1]) else None
-    )
-    fields["measurementSequenceNumber"] = (
-        received_data[1]["measurement_sequence_number"] if ("measurement_sequence_number" in received_data[1]) else None
-    )
-    fields["tagID"] = received_data[1]["tagID"] if ("tagID" in received_data[1]) else None
-    fields["rssi"] = received_data[1]["rssi"] if ("rssi" in received_data[1]) else None
+    fields["txPower"] = received_data[1].get("tx_power", None)
+    fields["movementCounter"] = received_data[1].get("movement_counter", None)
+    fields["measurementSequenceNumber"] = received_data[1].get("measurement_sequence_number", None)
+    fields["tagID"] = received_data[1].get("tagID", None)
+    fields["rssi"] = received_data[1].get("rssi", None)
     json_body = [
         {
             "measurement": "ruuvi_measurements",

@@ -4,8 +4,6 @@ from typing import AsyncGenerator, Generator, List
 
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
-# pylint: disable=import-outside-toplevel, cyclic-import, too-many-return-statements
-
 
 def get_ble_adapter():
     forced_ble_adapter = os.environ.get("RUUVI_BLE_ADAPTER", "").lower()
@@ -98,5 +96,5 @@ class BleCommunicationAsync:
         # if False: yield is a mypy fix for
         # error: Return type "AsyncGenerator[Tuple[str, str], None]" of "get_data" incompatible with return type
         # "Coroutine[Any, Any, AsyncGenerator[Tuple[str, str], None]]" in supertype "BleCommunicationAsync"
-        if False:  # pylint: disable=unreachable,using-constant-test
+        if False:
             yield 0

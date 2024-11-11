@@ -37,11 +37,8 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-asyncio",
-    "flake8-pyproject",
-    "pylint",
-    "mypy",
-    "isort",
-    "black"
+    "ruff",
+    "mypy"
 ]
 
 [project.urls]
@@ -53,35 +50,35 @@ changelog = "https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md"
 [tool.pytest.ini_options]
 testpaths = "tests/"
 
-[tool.flake8]
-exclude = ".venv, .git, .eggs, __pycache__, build, dist"
-max-line-length = 120
-ignore = "E402, E203"
-show-source = true
-max-complexity = 12
+[tool.ruff]
+exclude = [".venv", ".git", ".eggs", "__pycache__", "build", "dist"]
+line-length = 120
 
-[tool.pylint.messages_control]
-max-line-length = 120
-disable = [
-    "import-error",
-    "missing-docstring",
-    "invalid-name",
-    "bare-except",
-    "broad-except",
-    "broad-exception-raised",
-    "fixme",
-    "dangerous-default-value",
-    "too-few-public-methods",
-    "useless-object-inheritance"
+[tool.ruff.lint]
+select = [
+    "A",     # flake8-builtins
+    "C90",   # maccabe
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "PERF",  # perflint
+    "PIE",   # flake8-pie
+    "PL",    # pylint
+    "PTH",   # flake8-use-pathlib
+    "Q",     # flake8-quotes
+    "RUF",   # ruff-specific rules
+    "SIM",   # flake8-simplify
+    "W",     # pycodestyle warnings
 ]
+ignore = [
+    "PLR2004", # Magic value used in comparison
+    "RUF006",  # Store a reference to the return value of asyncio.create_task
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
 
 [tool.mypy]
 python_version = 3.9
 ignore_missing_imports = true
-
-[tool.isort]
-line_length = 120
-ensure_newline_before_comments = true
-
-[tool.black]
-line-length = 120

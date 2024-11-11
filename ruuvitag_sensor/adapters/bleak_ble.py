@@ -21,7 +21,6 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
     scanning_mode = "passive" if sys.platform.startswith("win") else "active"
 
     if "bleak_dev" in os.environ.get("RUUVI_BLE_ADAPTER", "").lower():
-        # pylint: disable=import-outside-toplevel
         from ruuvitag_sensor.adapters.development.dev_bleak_scanner import DevBleakScanner
 
         return DevBleakScanner(detection_callback, scanning_mode)

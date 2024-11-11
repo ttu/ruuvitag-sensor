@@ -10,8 +10,6 @@ Humidity:    28
 Pressure:    689
 """
 
-# pylint: disable=duplicate-code
-
 import os
 from datetime import datetime
 

@@ -33,11 +33,9 @@ class DevBleakScanner:
     async def start(self):
         self.running = True
         asyncio.create_task(self.run())
-        return None
 
     async def stop(self):
         self.running = False
-        return None
 
     async def run(self):
         while self.running:
