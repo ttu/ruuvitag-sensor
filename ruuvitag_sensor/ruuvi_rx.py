@@ -91,7 +91,7 @@ class RuuviTagReactive:
         # Start background process
 
         if is_async_adapter(ble):
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             loop.create_task(_run_get_data_background_async(macs, q, self._shared_data, bt_device))
         else:
             executor = ProcessPoolExecutor(1)

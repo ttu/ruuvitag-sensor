@@ -78,5 +78,4 @@ if __name__ == "__main__":
     executor = ProcessPoolExecutor()
     executor.submit(run_get_data_background, q)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(handle_queue(q))
+    asyncio.run(handle_queue(q))

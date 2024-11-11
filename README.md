@@ -87,7 +87,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 The optional list of MACs can be passed to the `get_data_async` function.
@@ -111,7 +111,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
@@ -468,7 +468,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and other async examples from [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
