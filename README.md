@@ -87,7 +87,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 The optional list of MACs can be passed to the `get_data_async` function.
@@ -111,10 +111,12 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
+Due to limitations in the RuuviTag package's Bleak adapter, Python 3.10 or later is required to use `asyncio.run(main())`.
+If using Python 3.9, replace `asyncio.run(main())` with `asyncio.get_event_loop().run_until_complete(main())`.
 
 ### 2. Get sensor data synchronously with callback
 
@@ -468,7 +470,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
 ```
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and other async examples from [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.

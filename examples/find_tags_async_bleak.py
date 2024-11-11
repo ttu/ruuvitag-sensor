@@ -1,5 +1,5 @@
 """
-Asynchronous find RuuviTags
+Asynchronously find RuuviTags
 """
 
 import asyncio
@@ -11,8 +11,11 @@ ruuvitag_sensor.log.enable_console()
 
 
 async def main():
-    await RuuviTagSensor.find_ruuvitags_async()
+    try:
+        await RuuviTagSensor.find_ruuvitags_async()
+    except asyncio.exceptions.CancelledError:
+        print("Scan stopped")
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())

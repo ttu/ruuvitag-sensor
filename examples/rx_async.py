@@ -8,9 +8,12 @@ async def main():
     subject = ruuvi_rx.get_subject()
     subject.subscribe(print)
 
+    # keep coroutine alive
+    try:
+        await asyncio.get_running_loop().create_future()
+    finally:
+        ruuvi_rx.stop()
+
 
 if __name__ == "__main__":
-    # https://stackoverflow.com/a/56727859/1292530
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-    loop.run_forever()
+    asyncio.run(main())

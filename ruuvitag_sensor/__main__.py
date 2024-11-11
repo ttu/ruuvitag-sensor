@@ -75,6 +75,6 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if is_async_adapter(ruuvitag_sensor.ruuvi.ble):
-        asyncio.get_event_loop().run_until_complete(_async_main_handle(args))
+        asyncio.run(_async_main_handle(args))
     else:
         _sync_main_handle(args)
