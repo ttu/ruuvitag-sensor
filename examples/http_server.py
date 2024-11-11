@@ -42,7 +42,7 @@ def update_data():
     """
     Update data sent by background process to global all_data
     """
-    global all_data  # pylint: disable=global-variable-not-assigned
+    global all_data  # noqa: PLW0602
     while not q.empty():
         data = q.get()
         all_data[data[0]] = data[1]
