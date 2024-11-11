@@ -8,8 +8,6 @@ from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy, BleCommun
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTagAsync
 
-# pylint: disable=unused-argument
-
 
 @pytest.mark.asyncio
 class TestRuuviTagSensorAsync:
@@ -33,21 +31,17 @@ class TestRuuviTagSensorAsync:
     @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())
     @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data", _get_data)
     async def test_get_data_async(self):
-        data = []
         gener = RuuviTagSensor.get_data_async()
-        async for received in gener:
-            data.append(received)
+        data = [received async for received in gener]
 
         assert len(data) == 4
 
     @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())
     @patch("ruuvitag_sensor.adapters.dummy.BleCommunicationAsyncDummy.get_data", _get_data)
     async def test_get_data_async_with_macs(self):
-        data = []
         macs = ["EB:A5:D1:02:CE:68", "EC:4D:A7:95:08:6B"]
         gener = RuuviTagSensor.get_data_async(macs)
-        async for received in gener:
-            data.append(received)
+        data = [received async for received in gener]
 
         assert len(data) == 2
 

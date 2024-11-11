@@ -83,7 +83,7 @@ print("OK")
 #
 print_header("RuuviTagSensor.get_data_for_sensors with macs")
 
-data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duration_sec=15)
+data = RuuviTagSensor.get_data_for_sensors(next(iter(data.keys())), search_duration_sec=15)
 print(data)
 
 if not data:
@@ -97,7 +97,7 @@ print("OK")
 #
 print_header("RuuviTag.update")
 
-tag = RuuviTag(list(data.keys())[0])
+tag = RuuviTag(next(iter(data.keys())))
 tag.update()
 print(tag.state)
 
@@ -147,7 +147,6 @@ def hadle_rx(found_data):
 
 ruuvi_rx.get_subject().subscribe(hadle_rx)
 
-# pylint: disable=protected-access
 wait_for_finish(ruuvi_rx._run_flag, "ruuvi_rx.subscribe")
 
 
