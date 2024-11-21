@@ -10,8 +10,8 @@ from typing import List
 
 from reactivex import Subject
 
-from ruuvitag_sensor.adapters import is_async_from_env
-from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor
+from ruuvitag_sensor.adapters import is_async_adapter
+from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor, ble
 
 
 async def _run_get_data_background_async(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
@@ -86,7 +86,7 @@ class RuuviTagReactive:
 
         # Start background process
 
-        if is_async_from_env():
+        if is_async_adapter(ble):
             loop = asyncio.get_event_loop()
             loop.create_task(_run_get_data_background_async(macs, q, self._shared_data, bt_device))
         else:
