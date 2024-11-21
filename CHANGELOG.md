@@ -4,6 +4,7 @@
 * ADD: Install Bleak automatically on all platforms
 * CHANGE: Async Bleak adapter as default adapter on all platforms
 * CHANGE: Support only Python 3.9 and above
+* FIX: Check if async adapter in use in RuuviTagReactive
 
 ## [2.3.1] - 2024-03-10
 * ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable
