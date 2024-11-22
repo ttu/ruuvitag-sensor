@@ -13,10 +13,12 @@ Requires:
 
 import asyncio
 from multiprocessing import Manager
+from multiprocessing.managers import DictProxy
 
 from aiohttp import web
-from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
 
+from ruuvitag_sensor.ruuvi_rx import RuuviTagReactive
+from ruuvitag_sensor.ruuvi_types import MacAndSensorData
 
 tags: dict[str, str] = {
     # "F4:A5:74:89:16:57": "kitchen",
@@ -25,25 +27,25 @@ tags: dict[str, str] = {
 }
 
 
-async def get_all_data(_, shared_data):
+async def get_all_data(_: web.Request, shared_data: DictProxy):
     return web.json_response(dict(shared_data))
 
 
-async def get_data(request, shared_data):
+async def get_data(request: web.Request, shared_data: DictProxy):
     mac = request.match_info.get("mac")
     if mac not in shared_data:
         return web.json_response(status=404)
     return web.json_response(dict(shared_data[mac]))
 
 
-async def run_get_data_background(known_tags, shared_data):
+async def run_get_data_background(known_tags: dict[str, str], shared_data: DictProxy):
     """
     Background process from RuuviTag Sensors
     """
 
-    def handle_new_data(data):
+    def handle_new_data(data: MacAndSensorData):
         mac, sensor_data = data
-        sensor_data["name"] = known_tags.get(mac, "unknown")
+        sensor_data["name"] = known_tags.get(mac, "unknown")  # type: ignore
         shared_data[data[0]] = sensor_data
 
     ruuvi_rx = RuuviTagReactive(list(known_tags.keys()))
@@ -51,19 +53,19 @@ async def run_get_data_background(known_tags, shared_data):
     data_stream.subscribe(handle_new_data)
 
 
-def setup_routes(application, shared_data):
+def setup_routes(application: web.Application, shared_data: DictProxy):
     application.router.add_get("/data", lambda request: get_all_data(request, shared_data))
     application.router.add_get("/data/{mac}", lambda request: get_data(request, shared_data))
 
 
 if __name__ == "__main__":
     m = Manager()
-    data = m.dict()
+    data: DictProxy = m.dict()
 
-    async def start_background_tasks(application):
+    async def start_background_tasks(application: web.Application):
         application["run_get_data"] = asyncio.create_task(run_get_data_background(tags, data))
 
-    async def cleanup_background_tasks(application):
+    async def cleanup_background_tasks(application: web.Application):
         application["run_get_data"].cancel()
         await asyncio.gather(app["run_get_data"], return_exceptions=True)
         print("Background tasks shut down.")
