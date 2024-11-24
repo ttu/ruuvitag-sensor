@@ -125,14 +125,14 @@ class RuuviTagSensor:
 
     @staticmethod
     def get_data_for_sensors(
-        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ""
+        macs: List[str] = [], search_duration_sec: int = 5, bt_device: str = ""
     ) -> Dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
         Args:
             macs (array): MAC addresses
-            search_duratio_sec (int): Search duration in seconds. Default 5
+            search_duration_sec (int): Search duration in seconds. Default 5
             bt_device (string): Bluetooth device id
         Returns:
             dict: MAC and state of found sensors
@@ -140,12 +140,12 @@ class RuuviTagSensor:
         throw_if_not_sync_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
-        log.info("Stops automatically in %ss", search_duratio_sec)
+        log.info("Stops automatically in %ss", search_duration_sec)
         log.info("MACs: %s", macs)
 
         data: Dict[Mac, SensorData] = {}
 
-        for new_data in RuuviTagSensor._get_ruuvitag_data(macs, search_duratio_sec, bt_device=bt_device):
+        for new_data in RuuviTagSensor._get_ruuvitag_data(macs, search_duration_sec, bt_device=bt_device):
             mac, sensor_data = new_data
             data[mac] = sensor_data
 
@@ -153,14 +153,14 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_data_for_sensors_async(
-        macs: List[str] = [], search_duratio_sec: int = 5, bt_device: str = ""
+        macs: List[str] = [], search_duration_sec: int = 5, bt_device: str = ""
     ) -> Dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
         Args:
             macs (array): MAC addresses
-            search_duratio_sec (int): Search duration in seconds. Default 5
+            search_duration_sec (int): Search duration in seconds. Default 5
             bt_device (string): Bluetooth device id
         Returns:
             dict: MAC and state of found sensors
@@ -168,7 +168,7 @@ class RuuviTagSensor:
         throw_if_not_async_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
-        log.info("Stops automatically in %ss", search_duratio_sec)
+        log.info("Stops automatically in %ss", search_duration_sec)
         log.info("MACs: %s", macs)
 
         data: Dict[Mac, SensorData] = {}
@@ -177,7 +177,7 @@ class RuuviTagSensor:
         async for new_data in RuuviTagSensor.get_data_async(macs, bt_device):
             mac, sensor_data = new_data
             data[mac] = sensor_data
-            if search_duratio_sec and time.time() - start_time > search_duratio_sec:
+            if search_duration_sec and time.time() - start_time > search_duration_sec:
                 break
 
         return data
@@ -252,7 +252,7 @@ class RuuviTagSensor:
     @staticmethod
     def _get_ruuvitag_data(
         macs: List[str] = [],
-        search_duratio_sec: Optional[int] = None,
+        search_duration_sec: Optional[int] = None,
         run_flag: RunFlag = RunFlag(),
         bt_device: str = "",
     ) -> Generator[MacAndSensorData, None, None]:
@@ -261,7 +261,7 @@ class RuuviTagSensor:
 
         Args:
             macs (list): MAC addresses. Default empty list
-            search_duratio_sec (int): Search duration in seconds. Default None
+            search_duration_sec (int): Search duration in seconds. Default None
             run_flag (object): RunFlag object. Function executes while run_flag.running.
                                Default new RunFlag
             bt_device (string): Bluetooth device id
@@ -275,7 +275,7 @@ class RuuviTagSensor:
 
         for ble_data in data_iter:
             # Check duration
-            if search_duratio_sec and time.time() - start_time > search_duratio_sec:
+            if search_duration_sec and time.time() - start_time > search_duration_sec:
                 data_iter.close()
                 break
             # Check running flag

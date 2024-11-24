@@ -365,7 +365,7 @@ ruuvitag_sensor.log.enable_console()
 macs = []
 
 while True:
-   data = RuuviTagSensor.get_data_for_sensors(macs, search_duratio_sec=5)
+   data = RuuviTagSensor.get_data_for_sensors(macs, search_duration_sec=5)
    print(datetime.utcnow().isoformat())
    print(data)
 ```
