@@ -3,8 +3,8 @@ Simple http server, that returns data in json.
 Executes get data for sensors in the background.
 
 Endpoints:
-    http://0.0.0.0:5000/data
-    http://0.0.0.0:5000/data/{mac}
+    http://0.0.0.0:5500/data
+    http://0.0.0.0:5500/data/{mac}
 
 Requires:
     asyncio - Python 3.5
