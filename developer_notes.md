@@ -40,14 +40,9 @@ $ python -m pip install -e .[dev]
 $ python -m pip install -e .\[dev\]
 ```
 
-Flake8
+ruff
 ```sh
-$ flake8
-```
-
-Pylint
-```sh
-$ pylint ./ruuvitag_sensor/
+$ ruff check
 ```
 
 mypy
@@ -57,14 +52,9 @@ $ mypy ./ruuvitag_sensor/
 
 ## Formatting
 
-isort
+ruff
 ```sh
-$ isort .
-```
-
-black
-```sh
-$ black
+$ ruff format --check
 ```
 
 ## Project files

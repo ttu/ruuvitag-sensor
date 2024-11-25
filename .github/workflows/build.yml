@@ -28,17 +28,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .[dev]
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --exit-zero
-    - name: Pylint
-      run: pylint ./ruuvitag_sensor
-    - name: Mypy
+    - name: ruff lint
+      run: ruff check ./ruuvitag_sensor
+    - name: mypy
       run: mypy ./ruuvitag_sensor
-    - name: isort
-      run: isort . --diff --check-only
-    - name: black
-      run: black . --check
+    - name: ruff format
+      run: ruff format --check
     - name: Tests
       run: pytest -v -s --show-capture all

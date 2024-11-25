@@ -83,7 +83,7 @@ async def test_get_data_for_sensors_async() -> list[str]:
         raise Exception("FAILED")
 
     print("OK")
-    return list(data.keys())[0]
+    return next(iter(data.keys()))
 
 
 async def test_get_data_for_sensors_async_with_macs(mac: list[str]):
@@ -149,7 +149,6 @@ async def test_ruuvi_rx():
 
     ruuvi_rx.get_subject().subscribe(handle_rx)
 
-    # pylint: disable=protected-access
     await wait_for_finish(ruuvi_rx._run_flag, "ruuvi_rx.subscribe")
 
 

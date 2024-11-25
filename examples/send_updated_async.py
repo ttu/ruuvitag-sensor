@@ -31,7 +31,7 @@ async def handle_queue(queue):
         async with session.post(
             f"{server_url}/sensordata", data=json.dumps(update_data), headers={"content-type": "application/json"}
         ) as response:
-            response = await response.read()
+            response = await response.read()  # noqa: PLW2901
 
     async def send_put(session, update_data):
         async with session.put(
@@ -39,7 +39,7 @@ async def handle_queue(queue):
             data=json.dumps(update_data),
             headers={"content-type": "application/json"},
         ) as response:
-            response = await response.read()
+            response = await response.read()  # noqa: PLW2901
 
     async with ClientSession() as session:
         while True:
