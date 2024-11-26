@@ -111,15 +111,18 @@ class RuuviTagSensor:
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
-        async for new_data in data_iter:
-            if new_data[0] in data:
-                continue
+        try:
+            async for new_data in data_iter:
+                if new_data[0] in data:
+                    continue
 
-            parsed_data = RuuviTagSensor._parse_data(new_data, mac_blacklist)
-            if parsed_data:
-                data[new_data[0]] = parsed_data
-                log.info(new_data[0])
-                log.info(parsed_data)
+                parsed_data = RuuviTagSensor._parse_data(new_data, mac_blacklist)
+                if parsed_data:
+                    data[new_data[0]] = parsed_data
+                    log.info(new_data[0])
+                    log.info(parsed_data)
+        finally:
+            await data_iter.aclose()
 
         return data
 
@@ -174,11 +177,16 @@ class RuuviTagSensor:
         data: Dict[Mac, SensorData] = {}
         start_time = time.time()
 
-        async for new_data in RuuviTagSensor.get_data_async(macs, bt_device):
-            mac, sensor_data = new_data
-            data[mac] = sensor_data
-            if search_duration_sec and time.time() - start_time > search_duration_sec:
-                break
+        data_iter = RuuviTagSensor.get_data_async(macs, bt_device)
+
+        try:
+            async for new_data in data_iter:
+                mac, sensor_data = new_data
+                data[mac] = sensor_data
+                if search_duration_sec and time.time() - start_time > search_duration_sec:
+                    break
+        finally:
+            await data_iter.aclose()
 
         return data
 
@@ -198,16 +206,19 @@ class RuuviTagSensor:
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
-        async for ble_data in data_iter:
-            data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
+        try:
+            async for ble_data in data_iter:
+                data = RuuviTagSensor._parse_data(ble_data, mac_blacklist, macs)
 
-            # Check MAC whitelist if advertised MAC available
-            if ble_data[0] and macs and not ble_data[0] in macs:
-                log.debug("MAC not whitelisted: %s", ble_data[0])
-                continue
+                # Check MAC whitelist if advertised MAC available
+                if ble_data[0] and macs and not ble_data[0] in macs:
+                    log.debug("MAC not whitelisted: %s", ble_data[0])
+                    continue
 
-            if data:
-                yield data
+                if data:
+                    yield data
+        finally:
+            await data_iter.aclose()
 
     @staticmethod
     def get_data(

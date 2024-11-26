@@ -6,6 +6,7 @@
 * CHANGE: Support only Python 3.9 and above
 * FIX: Check if async adapter in use in RuuviTagReactive
 * FIX: Correct typo in argument name search\_duration\_sec
+* FIX: Ensure the BLE scanner is stopped by explicitly closing the generator
 
 ## [2.3.1] - 2024-03-10
 * ADD: Bluez as option to RUUVI_BLE_ADAPTER environment variable

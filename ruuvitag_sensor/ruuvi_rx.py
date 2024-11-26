@@ -18,12 +18,16 @@ async def _run_get_data_background_async(macs: List[str], queue: Queue, shared_d
     """
     Async background process function for RuuviTag Sensors
     """
-    async for data in RuuviTagSensor.get_data_async(macs, bt_device):
-        if not shared_data["run_flag"]:
-            break
+    data_iter = RuuviTagSensor.get_data_async(macs, bt_device)
+    try:
+        async for data in data_iter:
+            if not shared_data["run_flag"]:
+                break
 
-        data[1]["time"] = datetime.utcnow().isoformat()  # type: ignore
-        queue.put(data)
+            data[1]["time"] = datetime.utcnow().isoformat()  # type: ignore
+            queue.put(data)
+    finally:
+        await data_iter.aclose()
 
 
 def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
