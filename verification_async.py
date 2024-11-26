@@ -76,7 +76,7 @@ async def test_get_data_for_sensors_async() -> list[str]:
     #
     print_header("RuuviTagSensor.get_data_for_sensors_async")
 
-    data = await RuuviTagSensor.get_data_for_sensors_async(search_duratio_sec=5)
+    data = await RuuviTagSensor.get_data_for_sensors_async(search_duration_sec=5)
     print(data)
 
     if not data:
@@ -92,7 +92,7 @@ async def test_get_data_for_sensors_async_with_macs(mac: list[str]):
     #
     print_header("RuuviTagSensor.get_data_for_sensors with macs")
 
-    data = await RuuviTagSensor.get_data_for_sensors_async(mac, search_duratio_sec=5)
+    data = await RuuviTagSensor.get_data_for_sensors_async(mac, search_duration_sec=5)
     print(data)
 
     if not data:

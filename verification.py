@@ -69,7 +69,7 @@ print("OK")
 #
 print_header("RuuviTagSensor.get_data_for_sensors")
 
-data = RuuviTagSensor.get_data_for_sensors(search_duratio_sec=15)
+data = RuuviTagSensor.get_data_for_sensors(search_duration_sec=15)
 print(data)
 
 if not data:
@@ -83,7 +83,7 @@ print("OK")
 #
 print_header("RuuviTagSensor.get_data_for_sensors with macs")
 
-data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duratio_sec=15)
+data = RuuviTagSensor.get_data_for_sensors(list(data.keys())[0], search_duration_sec=15)
 print(data)
 
 if not data:
