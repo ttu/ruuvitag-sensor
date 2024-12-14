@@ -10,8 +10,6 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=duplicate-code
-
 
 class BleCommunicationNix(BleCommunication):
     """Bluetooth LE communication for Linux"""
@@ -24,12 +22,12 @@ class BleCommunicationNix(BleCommunication):
         """
         # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
-        import ptyprocess  # pylint: disable=import-outside-toplevel
+        import ptyprocess
 
         if not bt_device:
             bt_device = "hci0"
 
-        is_root = os.getuid() == 0  # pylint: disable=no-member
+        is_root = os.getuid() == 0
 
         log.info("Start receiving broadcasts (device %s)", bt_device)
         DEVNULL = subprocess.DEVNULL
@@ -95,9 +93,8 @@ class BleCommunicationNix(BleCommunication):
                     data = line[2:].replace(" ", "")
                 elif line.startswith("< "):
                     data = None
-                else:
-                    if data:
-                        data += line.replace(" ", "")
+                elif data:
+                    data += line.replace(" ", "")
         except KeyboardInterrupt:
             return
         except Exception as ex:
@@ -112,7 +109,7 @@ class BleCommunicationNix(BleCommunication):
             log.debug("Parsing line %s", line)
             try:
                 # Make sure we're in upper case
-                line = line.upper()
+                line = line.upper()  # noqa: PLW2901
                 # We're interested in LE meta events, sent by Ruuvitags.
                 # Those start with "043E", followed by a length byte.
 

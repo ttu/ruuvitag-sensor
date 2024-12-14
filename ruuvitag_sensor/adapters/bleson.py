@@ -13,8 +13,6 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 log = logging.getLogger(__name__)
 
-# pylint: disable=duplicate-code
-
 
 class BleCommunicationBleson(BleCommunication):
     """Bluetooth LE communication with Bleson"""
@@ -76,11 +74,8 @@ class BleCommunicationBleson(BleCommunication):
            device (string): BLE device (default 0)
         """
 
-        if not bt_device:
-            bt_device = 0
-        else:
-            # Old communication used hci0 etc.
-            bt_device = bt_device.replace("hci", "")
+        # Old communication used hci0 etc.
+        bt_device = 0 if not bt_device else bt_device.replace("hci", "")
 
         log.info("Start receiving broadcasts (device %s)", bt_device)
 
