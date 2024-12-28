@@ -50,22 +50,20 @@ def write_to_influxdb(received_data):
     mac = received_data[0]
     payload = received_data[1]
 
-    dataFormat = payload["data_format"] if ("data_format" in payload) else None
+    dataFormat = payload.get("data_format", None)
     fields = {}
-    fields["temperature"] = payload["temperature"] if ("temperature" in payload) else None
-    fields["humidity"] = payload["humidity"] if ("humidity" in payload) else None
-    fields["pressure"] = payload["pressure"] if ("pressure" in payload) else None
-    fields["accelerationX"] = payload["acceleration_x"] if ("acceleration_x" in payload) else None
-    fields["accelerationY"] = payload["acceleration_y"] if ("acceleration_y" in payload) else None
-    fields["accelerationZ"] = payload["acceleration_z"] if ("acceleration_z" in payload) else None
+    fields["temperature"] = payload.get("temperature", None)
+    fields["humidity"] = payload.get("humidity", None)
+    fields["pressure"] = payload.get("pressure", None)
+    fields["accelerationX"] = payload.get("acceleration_x", None)
+    fields["accelerationY"] = payload.get("acceleration_y", None)
+    fields["accelerationZ"] = payload.get("acceleration_z", None)
     fields["batteryVoltage"] = payload["battery"] / 1000.0 if ("battery" in payload) else None
-    fields["txPower"] = payload["tx_power"] if ("tx_power" in payload) else None
-    fields["movementCounter"] = payload["movement_counter"] if ("movement_counter" in payload) else None
-    fields["measurementSequenceNumber"] = (
-        payload["measurement_sequence_number"] if ("measurement_sequence_number" in payload) else None
-    )
-    fields["tagID"] = payload["tagID"] if ("tagID" in payload) else None
-    fields["rssi"] = payload["rssi"] if ("rssi" in payload) else None
+    fields["txPower"] = payload.get("tx_power", None)
+    fields["movementCounter"] = payload.get("movement_counter", None)
+    fields["measurementSequenceNumber"] = payload.get("measurement_sequence_number", None)
+    fields["tagID"] = payload.get("tagID", None)
+    fields["rssi"] = payload.get("rssi", None)
     json_body = [
         {"measurement": "ruuvi_measurements", "tags": {"mac": mac, "dataFormat": dataFormat}, "fields": fields}
     ]

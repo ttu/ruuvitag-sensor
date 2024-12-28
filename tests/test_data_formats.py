@@ -1,7 +1,5 @@
 from ruuvitag_sensor.data_formats import DataFormats
 
-# pylint: disable=protected-access
-
 
 class TestDataFormats:
     def test_convert_data_valid_data(self):

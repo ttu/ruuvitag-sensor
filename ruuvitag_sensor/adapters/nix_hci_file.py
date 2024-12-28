@@ -1,5 +1,7 @@
 import logging
 
+import Path
+
 from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
 
 log = logging.getLogger(__name__)
@@ -19,7 +21,7 @@ class BleCommunicationNixFile(BleCommunicationNix):
            This is interpreted as a file to open
         """
         log.info("Start reading from file %s", bt_device)
-        handle = open(bt_device, "rb")  # pylint: disable=consider-using-with
+        handle = Path.open(bt_device, "rb")
 
         return (None, handle)
 

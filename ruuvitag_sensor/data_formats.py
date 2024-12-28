@@ -35,9 +35,8 @@ class DataFormats:
     RuuviTag broadcasted raw data handling for each data format
     """
 
-    # pylint: disable=too-many-return-statements
     @staticmethod
-    def convert_data(raw: str) -> DataFormatAndRawSensorData:
+    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -118,7 +117,7 @@ class DataFormats:
         return (None, None)
 
     @staticmethod
-    def _parse_raw(raw: str, data_format: int) -> str:  # pylint: disable=unused-argument
+    def _parse_raw(raw: str, data_format: int) -> str:
         return raw
 
     @staticmethod

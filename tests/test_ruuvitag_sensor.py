@@ -6,8 +6,6 @@ from ruuvitag_sensor.adapters.dummy import BleCommunicationDummy
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
-# pylint: disable=unused-argument
-
 
 @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationDummy())
 class TestRuuviTagSensor:
