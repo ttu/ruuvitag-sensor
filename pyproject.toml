@@ -26,7 +26,7 @@ classifiers = [
     "Framework :: AsyncIO",
     "Framework :: Pytest"
 ]
-keywords = [ "RuuviTag BLE" ]
+keywords = ["RuuviTag", "BLE", "Bluetooth", "IoT", "Sensor"]
 dependencies = [
     "reactivex",
     "ptyprocess;platform_system=='Linux'",
@@ -43,9 +43,10 @@ dev = [
 
 [project.urls]
 homepage = "https://github.com/ttu/ruuvitag-sensor"
+documentation = "https://ttu.github.io/ruuvitag-sensor/"
 source = "https://github.com/ttu/ruuvitag-sensor"
 changelog = "https://github.com/ttu/ruuvitag-sensor/blob/master/CHANGELOG.md"
-"Bug Tracker" = "https://github.com/ttu/ruuvitag-sensor/issues"
+issues = "https://github.com/ttu/ruuvitag-sensor/issues"
 
 [tool.pytest.ini_options]
 testpaths = "tests/"
