@@ -50,6 +50,8 @@ issues = "https://github.com/ttu/ruuvitag-sensor/issues"
 
 [tool.pytest.ini_options]
 testpaths = "tests/"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 exclude = [".venv", ".git", ".eggs", "__pycache__", "build", "dist"]
