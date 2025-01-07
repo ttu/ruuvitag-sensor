@@ -3,7 +3,7 @@ RuuviTag Sensor Python Package
 
 [![Build Status](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/ttu/ruuvitag-sensor/actions/workflows/build.yml)
 [![License](https://img.shields.io/pypi/l/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
-[![PyPI version](https://img.shields.io/pypi/v/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag_-sensor)
+[![PyPI version](https://img.shields.io/pypi/v/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor)
 [![PyPI downloads](https://img.shields.io/pypi/dm/ruuvitag-sensor.svg)](https://pypistats.org/packages/ruuvitag-sensor)
 [![Python versions](https://img.shields.io/badge/python-3.9+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 
@@ -16,9 +16,9 @@ RuuviTag Sensor Python Package
 * RuuviTag sensor
     * Setup [guide](https://ruuvi.com/quick-start/)
     * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
-      * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used
+      * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
-    * Default adapter for all supported operating systems
+    * Default adapter for all supported operating systems.
     * Bleak supports
       * [Async-methods](#usage)
       * [Observable streams](#usage)
@@ -31,8 +31,8 @@ RuuviTag Sensor Python Package
     * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
       * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
 * Python 3.9+
-    * For Python 3.7 and 3.8 support, check [installation instructions](#python-37-and-38) for an older version
-    * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version
+    * For Python 3.7 and 3.8 support, check [installation instructions](#python-37-and-38) for an older version.
+    * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version.
 
 __NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [PyPI](https://pypi.org/project/ruuvitag-sensor/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
 
@@ -63,7 +63,7 @@ The package provides 3 ways to fetch data from sensors:
 2. Synchronously with callback
 3. Observable streams with ReactiveX
 
-RuuviTag sensors can be identified using MAC addresses. Methods return a tuple with MAC and sensor data payload.
+RuuviTag sensors can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
 
 ```py
 ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
@@ -114,13 +114,13 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. It is not required on Linux, but it is recommended. It is omitted from the rest of the examples below.
-Due to limitations in the RuuviTag package's Bleak adapter, Python 3.10 or later is required to use `asyncio.run(main())`.
-If using Python 3.9, replace `asyncio.run(main())` with `asyncio.get_event_loop().run_until_complete(main())`.
+The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. While not required on Linux, it is recommended. It is omitted from the rest of the examples below.
+
+For Python 3.9, you must replace `asyncio.run(main())` with `asyncio.get_event_loop().run_until_complete(main())` due to limitations in the RuuviTag package's Bleak adapter. In Python 3.10 and later versions, you can use `asyncio.run(main())`.
 
 ### 2. Get sensor data synchronously with callback
 
-__NOTE:__ Asynchronous functionality works only with `BlueZ`-adapter.
+__NOTE:__ Synchronous functionality works only with `BlueZ`-adapter.
 
 `get_data` calls the callback whenever a RuuviTag sensor broadcasts data. This method is the preferred way to use the library with _BlueZ_.
 
@@ -256,7 +256,7 @@ RuuviTagSensor.find_ruuvitags()
 
 ### Using different Bluetooth device
 
-If you have multiple Bluetooth devices installed, a device to be used might not be the default (Linux: `hci0`). The device can be passed with a `bt_device`-parameter.
+If you have multiple Bluetooth devices installed, the device to be used might not be the default (Linux: `hci0`). The device can be passed with a `bt_device` parameter.
 
 ```python
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -310,7 +310,7 @@ Example data has data from 4 sensors with different firmware.
 
 There is no reason to use Data Format 2 or 4.
 
-The original reason to use the URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
+The original reason to use URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
 
 ## Logging and printing to the console
 
@@ -477,7 +477,7 @@ Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examp
 
 #### Bleak dummy BLE data
 
-Bleak-adapter has a development-time generator for dummy data, which can be useful during the development, if no sensors are available. Set `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.
+Bleak-adapter has a development-time generator for dummy data, which can be useful during development if no sensors are available. Set the `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.
 
 ### Bleson
 
