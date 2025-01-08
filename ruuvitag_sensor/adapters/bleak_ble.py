@@ -2,10 +2,12 @@ import asyncio
 import logging
 import os
 import re
+import struct
 import sys
-from typing import AsyncGenerator, List, Tuple
+from datetime import datetime
+from typing import AsyncGenerator, List, Optional, Tuple
 
-from bleak import BleakScanner
+from bleak import BleakClient, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
@@ -13,6 +15,9 @@ from ruuvitag_sensor.adapters.utils import rssi_to_hex
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
+RUUVI_HISTORY_SERVICE_UUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
+RUUVI_HISTORY_TX_CHAR_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+RUUVI_HISTORY_RX_CHAR_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 
 
 def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str = ""):
@@ -120,3 +125,137 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 await data_iter.aclose()
 
         return data or ""
+
+    async def get_history_data(self, mac: str, start_time: Optional[datetime] = None) -> List[dict]:
+        """
+        Get history data from a RuuviTag using GATT connection.
+
+        Args:
+            mac (str): MAC address of the RuuviTag
+            start_time (datetime, optional): Start time for history data
+
+        Returns:
+            List[dict]: List of historical sensor readings
+
+        Raises:
+            RuntimeError: If connection fails or required services not found
+        """
+        history_data: List[bytearray] = []
+        client = None
+
+        try:
+            # Connect to device
+            client = await self._connect_gatt(mac)
+            log.debug("Connected to device %s", mac)
+
+            # Get the history service
+            # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
+            services = await client.get_services()
+            history_service = next(
+                (service for service in services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
+                None,
+            )
+            if not history_service:
+                raise RuntimeError(f"History service not found - device {mac} may not support history")
+
+            # Get characteristics
+            tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
+            rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
+
+            if not tx_char or not rx_char:
+                raise RuntimeError("Required characteristics not found")
+
+            # Set up notification handler
+            notification_received = asyncio.Event()
+
+            def notification_handler(_, data: bytearray):
+                history_data.append(data)
+                notification_received.set()
+
+            # Enable notifications
+            await client.start_notify(tx_char, notification_handler)
+
+            # Request history data
+            command = bytearray([0x26])  # Get logged history command
+            if start_time:
+                timestamp = int(start_time.timestamp())
+                command.extend(struct.pack("<I", timestamp))
+
+            await client.write_gatt_char(rx_char, command)
+            log.debug("Requested history data from device %s", mac)
+
+            # Wait for initial notification
+            await asyncio.wait_for(notification_received.wait(), timeout=5.0)
+
+            # Wait for more data
+            try:
+                while True:
+                    notification_received.clear()
+                    await asyncio.wait_for(notification_received.wait(), timeout=1.0)
+            except asyncio.TimeoutError:
+                # No more data received for 1 second - assume transfer complete
+                pass
+
+            # Parse collected data
+            parsed_data = []
+            for data_point in history_data:
+                if len(data_point) < 10:  # Minimum valid data length
+                    continue
+
+                timestamp = struct.unpack("<I", data_point[0:4])[0]
+                measurement = self._parse_history_data(data_point[4:])
+                if measurement:
+                    measurement["timestamp"] = datetime.fromtimestamp(timestamp)
+                    parsed_data.append(measurement)
+
+            log.info("Downloaded %d history entries from device %s", len(parsed_data), mac)
+            return parsed_data
+        except Exception as e:
+            log.error(f"Failed to get history data from device {mac}: {e}")
+        finally:
+            if client:
+                await client.disconnect()
+                log.debug("Disconnected from device %s", mac)
+        return []
+
+    async def _connect_gatt(self, mac: str) -> BleakClient:
+        """
+        Connect to a BLE device using GATT.
+
+        NOTE: On macOS, the device address is not a MAC address, but a system specific ID
+
+        Args:
+            mac (str): MAC address of the device to connect to
+
+        Returns:
+            BleakClient: Connected BLE client
+        """
+        client = BleakClient(mac)
+        # TODO: Implement retry logic. connect fails for some reason pretty often.
+        await client.connect()
+        return client
+
+    def _parse_history_data(self, data: bytes) -> Optional[dict]:
+        """
+        Parse history data point from RuuviTag
+
+        Args:
+            data (bytes): Raw history data point
+
+        Returns:
+            Optional[dict]: Parsed sensor data or None if parsing fails
+        """
+        try:
+            temperature = struct.unpack("<h", data[0:2])[0] * 0.005
+            humidity = struct.unpack("<H", data[2:4])[0] * 0.0025
+            pressure = struct.unpack("<H", data[4:6])[0] + 50000
+
+            return {
+                "temperature": temperature,
+                "humidity": humidity,
+                "pressure": pressure,
+                "data_format": 5,  # History data uses similar format to data format 5
+            }
+        except Exception as e:
+            log.error(f"Failed to parse history data: {e}")
+            return None

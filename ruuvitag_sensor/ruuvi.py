@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import time
+from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.managers import ListProxy
 from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
@@ -342,3 +344,54 @@ class RuuviTagSensor:
             return None
 
         return (mac_to_send, decoded)
+
+    @staticmethod
+    async def get_history_async(mac: str, start_time: Optional[datetime] = None) -> List[SensorData]:
+        """
+        Get history data from a RuuviTag that supports it (firmware 3.30.0+)
+
+        Args:
+            mac (str): MAC address of the RuuviTag
+            start_time (datetime, optional): Start time for history data. If None, gets all available data
+
+        Returns:
+            List[SensorData]: List of historical sensor readings
+        """
+        throw_if_not_async_adapter(ble)
+        return await ble.get_history_data(mac, start_time)
+
+    @staticmethod
+    async def download_history(mac: str, start_time: Optional[datetime] = None, timeout: int = 300) -> List[SensorData]:
+        """
+        Download history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
+
+        Args:
+            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            start_time (Optional[datetime]): If provided, only get data from this time onwards
+            timeout (int): Maximum time in seconds to wait for history download (default: 30)
+
+        Returns:
+            List[SensorData]: List of historical measurements, ordered by timestamp
+
+        Raises:
+            RuntimeError: If connection fails or device doesn't support history
+            TimeoutError: If download takes longer than timeout
+        """
+        throw_if_not_async_adapter(ble)
+
+        # if not re.match("[0-9A-F]{2}(:[0-9A-F]{2}){5}$", mac.upper()):
+        #     raise ValueError(f"Invalid MAC address: {mac}")
+
+        try:
+            history = await asyncio.wait_for(ble.get_history_data(mac, start_time), timeout=timeout)
+
+            # Sort by timestamp if present
+            if history and "timestamp" in history[0]:
+                history.sort(key=lambda x: x["timestamp"])
+
+            return history
+
+        except asyncio.TimeoutError:
+            raise TimeoutError(f"History download timed out after {timeout} seconds")
+        except Exception as e:
+            raise RuntimeError(f"Failed to download history: {str(e)}") from e
