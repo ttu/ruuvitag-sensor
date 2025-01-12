@@ -14,6 +14,14 @@ from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
 
+# NOTE: macOS uses device specific IDs instead of MAC addresses
+# Bleak has a workaround for this, but it's not enabled by default
+# https://github.com/hbldh/bleak/pull/1073
+# This is behind a env variable as macOS update can break the workaround
+MACOS_USE_MAC_ADDR = os.environ.get("RUUVI_MACOS_USE_MAC_ADDR", "false").strip().lower() == "true"
+MACOS_SCANNER_ARGS = dict(use_bdaddr=True) if MACOS_USE_MAC_ADDR else {}
+SCANNER_ARGS = MACOS_SCANNER_ARGS if sys.platform == "darwin" else {}
+
 
 def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str = ""):
     # NOTE: On Linux - bleak.exc.BleakError: passive scanning mode requires bluez or_patterns
@@ -30,6 +38,7 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
             detection_callback=detection_callback,
             scanning_mode=scanning_mode,  # type: ignore[arg-type]
             adapter=bt_device,
+            cb=SCANNER_ARGS,  # type: ignore[arg-type]
         )
 
     return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)  # type: ignore[arg-type]
