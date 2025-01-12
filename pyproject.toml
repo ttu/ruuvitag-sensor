@@ -79,6 +79,11 @@ ignore = [
     "RUF006",  # Store a reference to the return value of asyncio.create_task
 ]
 
+[tool.ruff.format]
+quote-style = "double"  
+indent-style = "space"
+skip-magic-trailing-comma = false
+
 [tool.ruff.lint.mccabe]
 max-complexity = 12
 

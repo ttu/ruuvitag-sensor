@@ -35,7 +35,7 @@ async def handle_queue(queue):
 
     async def send_put(session, update_data):
         async with session.put(
-            f'{server_url}/sensors/{quote(update_data["mac"])}',
+            f"{server_url}/sensors/{quote(update_data['mac'])}",
             data=json.dumps(update_data),
             headers={"content-type": "application/json"},
         ) as response:

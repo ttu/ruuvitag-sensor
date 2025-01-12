@@ -26,7 +26,7 @@ from paho.mqtt import publish
 from ruuvitag_sensor.ruuvitag import RuuviTag
 
 parser = argparse.ArgumentParser(
-    description="Program relays Ruuvitag BLE temperature and humidity" "advertisements to MQTT broker."
+    description="Program relays Ruuvitag BLE temperature and humidity advertisements to MQTT broker."
 )
 parser.add_argument("-m", "--mac", dest="mac_address", required=True, help="Ruuvitag MAC address")
 parser.add_argument("-b", "--broker", dest="mqtt_broker", required=True, help="mqtt broker address, ip or fqdn")
