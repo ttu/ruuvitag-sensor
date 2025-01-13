@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ruuvitag_sensor"
-version = "2.3.1"
+version = "3.0.0"
 authors = [
   { name="Tomi Tuhkanen", email="tomi.tuhkanen@iki.fi" },
 ]

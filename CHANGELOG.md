@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [3.0.0] - 2025-01-13
 * ADD: Install Bleak automatically on all platforms
 * CHANGE: Async Bleak adapter as default adapter on all platforms
 * CHANGE: Support only Python 3.9 and above

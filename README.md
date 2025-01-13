@@ -31,10 +31,14 @@ RuuviTag Sensor Python Package
     * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
       * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
 * Python 3.9+
-    * For Python 3.7 and 3.8 support, check [installation instructions](#python-37-and-38) for an older version.
-    * For Python 2.x or <3.7 support, check [installation instructions](#python-2x-and-36-and-below) for an older version.
+    * For Python 3.7 and 3.8 support, check installation [instructions](#python-37-and-38) for an older version.
+    * For Python 2.x or <3.7 support, check installation [instructions](#python-2x-and-36-and-below) for an older version.
 
-__NOTE:__ Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [PyPI](https://pypi.org/project/ruuvitag-sensor/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
+
+__NOTE: Major version changes__ 
+* Version 3.0 changed default BLE adapter for all platforms to Bleak with async-methods. To use `Bluez`and sync-methods, check the installation [instructions](#BlueZ).
+* Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [documentation](https://ttu.github.io/ruuvitag-sensor/#/1.2.1/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
+
 
 ## Installation
 
