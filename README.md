@@ -479,6 +479,16 @@ if __name__ == "__main__":
 
 Check [get_async_bleak](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/get_async_bleak.py) and other async examples from [examples](https://github.com/ttu/ruuvitag-sensor/tree/master/examples) directory.
 
+#### Use MAC Address Instead of Device-Specific ID on macOS
+
+Bleak has a workaround for macOS to use MAC address instead of device-specific ID. This is experimental feature from Bleak and may break with macOS updates. 
+
+Set the `RUUVI_MACOS_USE_MAC_ADDR` environment variable to `true` to enable it. 
+
+```sh
+$ export RUUVI_MACOS_USE_MAC_ADDR=true
+```
+
 #### Bleak dummy BLE data
 
 Bleak-adapter has a development-time generator for dummy data, which can be useful during development if no sensors are available. Set the `RUUVI_BLE_ADAPTER` environment variable to `bleak_dev`.

@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-
+* ADD: RUUVI_MACOS_USE_MAC_ADDR environment variable to enable MAC address usage on macOS
 
 ## [3.0.0] - 2025-01-13
 * ADD: Install Bleak automatically on all platforms
