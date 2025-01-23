@@ -150,9 +150,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
             # Get the history service
             # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
-            services = await client.get_services()
             history_service = next(
-                (service for service in services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
+                (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
                 None,
             )
             if not history_service:
