@@ -126,13 +126,16 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         return data or ""
 
-    async def get_history_data(self, mac: str, start_time: Optional[datetime] = None) -> List[dict]:
+    async def get_history_data(
+        self, mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+    ) -> List[dict]:
         """
         Get history data from a RuuviTag using GATT connection.
 
         Args:
             mac (str): MAC address of the RuuviTag
             start_time (datetime, optional): Start time for history data
+            max_items (int, optional): Maximum number of history entries to fetch
 
         Returns:
             List[dict]: List of historical sensor readings
@@ -184,13 +187,17 @@ class BleCommunicationBleak(BleCommunicationAsync):
             log.debug("Requested history data from device %s", mac)
 
             # Wait for initial notification
-            await asyncio.wait_for(notification_received.wait(), timeout=5.0)
+            await asyncio.wait_for(notification_received.wait(), timeout=10.0)
 
             # Wait for more data
             try:
                 while True:
                     notification_received.clear()
-                    await asyncio.wait_for(notification_received.wait(), timeout=1.0)
+                    await asyncio.wait_for(notification_received.wait(), timeout=5.0)
+                    # Check if we've reached the maximum number of items
+                    if max_items and len(history_data) >= max_items:
+                        log.debug("Reached maximum number of items (%d)", max_items)
+                        break
             except asyncio.TimeoutError:
                 # No more data received for 1 second - assume transfer complete
                 pass

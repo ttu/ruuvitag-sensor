@@ -346,29 +346,35 @@ class RuuviTagSensor:
         return (mac_to_send, decoded)
 
     @staticmethod
-    async def get_history_async(mac: str, start_time: Optional[datetime] = None) -> List[SensorData]:
+    async def get_history_async(
+        mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+    ) -> List[SensorData]:
         """
         Get history data from a RuuviTag that supports it (firmware 3.30.0+)
 
         Args:
             mac (str): MAC address of the RuuviTag
             start_time (datetime, optional): Start time for history data. If None, gets all available data
+            max_items (int, optional): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
             List[SensorData]: List of historical sensor readings
         """
         throw_if_not_async_adapter(ble)
-        return await ble.get_history_data(mac, start_time)
+        return await ble.get_history_data(mac, start_time, max_items)
 
     @staticmethod
-    async def download_history(mac: str, start_time: Optional[datetime] = None, timeout: int = 300) -> List[SensorData]:
+    async def download_history(
+        mac: str, start_time: Optional[datetime] = None, timeout: int = 300, max_items: Optional[int] = None
+    ) -> List[SensorData]:
         """
         Download history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
             start_time (Optional[datetime]): If provided, only get data from this time onwards
-            timeout (int): Maximum time in seconds to wait for history download (default: 30)
+            timeout (int): Maximum time in seconds to wait for history download (default: 300)
+            max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
             List[SensorData]: List of historical measurements, ordered by timestamp
@@ -379,11 +385,8 @@ class RuuviTagSensor:
         """
         throw_if_not_async_adapter(ble)
 
-        # if not re.match("[0-9A-F]{2}(:[0-9A-F]{2}){5}$", mac.upper()):
-        #     raise ValueError(f"Invalid MAC address: {mac}")
-
         try:
-            history = await asyncio.wait_for(ble.get_history_data(mac, start_time), timeout=timeout)
+            history = await asyncio.wait_for(ble.get_history_data(mac, start_time, max_items), timeout=timeout)
 
             # Sort by timestamp if present
             if history and "timestamp" in history[0]:
