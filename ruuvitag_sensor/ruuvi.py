@@ -397,4 +397,4 @@ class RuuviTagSensor:
         except asyncio.TimeoutError:
             raise TimeoutError(f"History download timed out after {timeout} seconds")
         except Exception as e:
-            raise RuntimeError(f"Failed to download history: {str(e)}") from e
+            raise RuntimeError(f"Failed to download history: {e!s}") from e
