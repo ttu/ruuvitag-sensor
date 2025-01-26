@@ -41,7 +41,11 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
             cb=SCANNER_ARGS,  # type: ignore[arg-type]
         )
 
-    return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)  # type: ignore[arg-type]
+    return BleakScanner(
+        detection_callback=detection_callback,
+        scanning_mode=scanning_mode,  # type: ignore[arg-type]
+        cb=SCANNER_ARGS,  # type: ignore[arg-type]
+    )
 
 
 queue = asyncio.Queue[Tuple[str, str]]()
