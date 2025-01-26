@@ -316,39 +316,40 @@ There is no reason to use Data Format 2 or 4.
 
 The original reason to use URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
 
-## Logging and printing to the console
+## Logging
 
-Logging can be enabled by importing `ruuvitag_sensor.log`. Console print can be enabled by calling `ruuvitag_sensor.log.enable_console()`. The command line application has console logging enabled by default.
+The package uses Python's standard `logging` module. Each module in the package creates its own logger using `logging.getLogger(__name__)`.
 
-```py
-from ruuvitag_sensor.ruuvi import RuuviTagSensor
-import ruuvitag_sensor.log
+### Library usage
 
-ruuvitag_sensor.log.enable_console()
-
-data = RuuviTagSensor.get_data_for_sensors()
-
-print(data)
-```
-
-To enable debug logging to console, set log-level to `DEBUG`.
+When using ruuvitag-sensor as a library in your application, you should configure logging according to your application's needs:
 
 ```py
 import logging
-import ruuvitag_sensor.log
-from ruuvitag_sensor.log import log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
-ruuvitag_sensor.log.enable_console()
-
-log.setLevel(logging.DEBUG)
-
-for handler in log.handlers:
-    handler.setLevel(logging.DEBUG)
+# Configure logging at the application level
+logging.basicConfig(level=logging.INFO)
+# Or set up custom handlers, formatters, etc.
 
 data = RuuviTagSensor.get_data_for_sensors()
+```
 
-print(data)
+### Command-line and script usage
+
+For command-line and script usage, the package provides convenience functions to enable console output:
+
+```py
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+import ruuvitag_sensor.log
+
+# Enable console logging (defaults to INFO level)
+ruuvitag_sensor.log.enable_console()
+
+# For debug logging
+ruuvitag_sensor.log.enable_console(level=logging.DEBUG)
+
+data = RuuviTagSensor.get_data_for_sensors()
 ```
 
 ### Log all events to log-file
@@ -371,7 +372,7 @@ data = RuuviTagSensor.get_data_for_sensors()
 
 ### A custom event handler for a specific log event
 
-If custom functionality is required when a specific event happens, e.g. exit when a specific sensor is blacklisted, logging event handlers can be utilized for this functionality.
+You can add custom handlers to respond to specific log events. For example, to exit when a specific sensor is blacklisted:
 
 ```py
 from logging import StreamHandler
@@ -382,7 +383,7 @@ from ruuvitag_sensor.ruuvi import RuuviTagSensor
 class ExitHandler(StreamHandler):
 
     def emit(self, record):
-        if (record.levelname != "DEBUG"):
+        if record.levelname != "DEBUG":
             return
         msg = self.format(record)
         if "Blacklisting MAC F4:A5:74:89:16:57E" in msg:
