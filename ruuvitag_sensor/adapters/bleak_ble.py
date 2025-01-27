@@ -128,7 +128,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     async def get_history_data(
         self, mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
-    ) -> List[dict]:
+    ) -> List[bytearray]:
         """
         Get history data from a RuuviTag using GATT connection.
 
@@ -154,8 +154,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             # Get the history service
             # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
             history_data = await self._collect_history_data(client, start_time, max_items)
-            parsed_data = self._parse_history_entries(history_data)
-            return parsed_data
+            return history_data
         except Exception as e:
             log.error("Failed to get history data from device %s: %s", mac, e)
         finally:
@@ -228,43 +227,3 @@ class BleCommunicationBleak(BleCommunicationAsync):
             pass
 
         return history_data
-
-    def _parse_history_entries(self, history_data: List[bytearray]) -> List[dict]:
-        parsed_data = []
-        for data_point in history_data:
-            if len(data_point) < 10:
-                continue
-
-            timestamp = struct.unpack("<I", data_point[0:4])[0]
-            measurement = self._parse_history_data(data_point[4:])
-            if measurement:
-                measurement["timestamp"] = datetime.fromtimestamp(timestamp)
-                parsed_data.append(measurement)
-
-        log.info("Downloaded %d history entries", len(parsed_data))
-        return parsed_data
-
-    def _parse_history_data(self, data: bytes) -> Optional[dict]:
-        """
-        Parse history data point from RuuviTag
-
-        Args:
-            data (bytes): Raw history data point
-
-        Returns:
-            Optional[dict]: Parsed sensor data or None if parsing fails
-        """
-        try:
-            temperature = struct.unpack("<h", data[0:2])[0] * 0.005
-            humidity = struct.unpack("<H", data[2:4])[0] * 0.0025
-            pressure = struct.unpack("<H", data[4:6])[0] + 50000
-
-            return {
-                "temperature": temperature,
-                "humidity": humidity,
-                "pressure": pressure,
-                "data_format": 5,  # History data uses similar format to data format 5
-            }
-        except Exception as e:
-            log.error("Failed to parse history data: %s", e)
-            return None

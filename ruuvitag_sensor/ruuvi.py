@@ -9,8 +9,15 @@ from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, throw_if_not_async_adapter, throw_if_not_sync_adapter
 from ruuvitag_sensor.data_formats import DataFormats
-from ruuvitag_sensor.decoder import get_decoder, parse_mac
-from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, Mac, MacAndRawData, MacAndSensorData, SensorData
+from ruuvitag_sensor.decoder import HistoryDecoder, get_decoder, parse_mac
+from ruuvitag_sensor.ruuvi_types import (
+    DataFormatAndRawSensorData,
+    Mac,
+    MacAndRawData,
+    MacAndSensorData,
+    SensorData,
+    SensorHistoryData,
+)
 
 log = logging.getLogger(__name__)
 ble = get_ble_adapter()
@@ -348,7 +355,7 @@ class RuuviTagSensor:
     @staticmethod
     async def get_history_async(
         mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
-    ) -> List[SensorData]:
+    ) -> List[SensorHistoryData]:
         """
         Get history data from a RuuviTag that supports it (firmware 3.30.0+)
 
@@ -366,7 +373,7 @@ class RuuviTagSensor:
     @staticmethod
     async def download_history(
         mac: str, start_time: Optional[datetime] = None, timeout: int = 300, max_items: Optional[int] = None
-    ) -> List[SensorData]:
+    ) -> List[SensorHistoryData]:
         """
         Download history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
 
@@ -377,7 +384,7 @@ class RuuviTagSensor:
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
-            List[SensorData]: List of historical measurements, ordered by timestamp
+            List[HistoryDecoder]: List of historical measurements, ordered by timestamp
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
@@ -387,12 +394,8 @@ class RuuviTagSensor:
 
         try:
             history = await asyncio.wait_for(ble.get_history_data(mac, start_time, max_items), timeout=timeout)
-
-            # Sort by timestamp if present
-            if history and "timestamp" in history[0]:
-                history.sort(key=lambda x: x["timestamp"])
-
-            return history
+            decoder = HistoryDecoder()
+            return [d for h in history if (d := decoder.decode_data(h)) is not None]
 
         except asyncio.TimeoutError:
             raise TimeoutError(f"History download timed out after {timeout} seconds")

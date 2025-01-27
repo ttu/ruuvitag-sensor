@@ -1,6 +1,7 @@
+from datetime import datetime
 from unittest import TestCase
 
-from ruuvitag_sensor.decoder import Df3Decoder, Df5Decoder, UrlDecoder, get_decoder, parse_mac
+from ruuvitag_sensor.decoder import Df3Decoder, Df5Decoder, HistoryDecoder, UrlDecoder, get_decoder, parse_mac
 
 
 class TestDecoder(TestCase):
@@ -160,3 +161,52 @@ class TestDecoder(TestCase):
 
         parsed = parse_mac(5, mac_payload)
         assert parsed == mac
+
+    def test_history_decode_is_valid(self):
+        decoder = HistoryDecoder()
+        timestamp = 1617184800  # 2021-03-31 12:00:00 UTC
+        # Create test data with:
+        # timestamp: 2021-03-31 12:00:00 UTC (0x60619960)
+        # temperature: 24.30°C = 2430 (0x0000097E)
+        # humidity: 53.49% = 5349 (0x000014E5)
+        # pressure: 100012 Pa = 1000.12 hPa (0x000186AC)
+        data = bytearray.fromhex("60996160" + "7E090000E514000000AC860100")  # Note: values are little-endian
+
+        data = decoder.decode_data(data)
+
+        assert data["temperature"] == 24.30
+        assert data["humidity"] == 53.49
+        assert data["pressure"] == 1000.12
+        assert data["timestamp"] == datetime.fromtimestamp(timestamp)
+
+    def test_history_decode_negative_temperature(self):
+        decoder = HistoryDecoder()
+        timestamp = 1617184800  # 2021-03-31 12:00:00 UTC
+        # Create test data with:
+        # timestamp: 2021-03-31 12:00:00 UTC (0x60619960)
+        # temperature: -24.30°C = -2430 (0xFFFFF682)
+        # humidity: 53.49% = 5349 (0x000014E5)
+        # pressure: 100012 Pa = 1000.12 hPa (0x000186AC)
+        data = bytearray.fromhex("6099616082F6FFFFE514000000AC860100")  # Note: values are little-endian
+
+        data = decoder.decode_data(data)
+
+        assert data["temperature"] == -24.30
+        assert data["humidity"] == 53.49
+        assert data["pressure"] == 1000.12
+        assert data["timestamp"] == datetime.fromtimestamp(timestamp)
+
+    def test_history_decode_invalid_short_data(self):
+        decoder = HistoryDecoder()
+        # Only 12 bytes instead of required 16
+        data = bytearray.fromhex("7E090000E514000000AC860100")
+
+        data = decoder.decode_data(data)
+        assert data is None
+
+    def test_history_decode_invalid_data(self):
+        decoder = HistoryDecoder()
+        data = bytearray.fromhex("invalid")
+
+        data = decoder.decode_data(data)
+        assert data is None

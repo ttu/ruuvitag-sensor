@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, Tuple, TypedDict, Union
 
 
@@ -37,6 +38,13 @@ class SensorData5(SensorDataBase):
     measurement_sequence_number: int
     mac: str
     rssi: Optional[int]
+
+
+class SensorHistoryData(TypedDict):
+    humidity: float
+    temperature: float
+    pressure: float
+    timestamp: datetime
 
 
 SensorData = Union[SensorDataUrl, SensorData3, SensorData5]

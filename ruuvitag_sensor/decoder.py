@@ -2,9 +2,10 @@ import base64
 import logging
 import math
 import struct
+from datetime import datetime
 from typing import Optional, Tuple, Union
 
-from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorDataUrl
+from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorHistoryData, SensorDataUrl
 
 log = logging.getLogger(__name__)
 
@@ -279,6 +280,78 @@ class Df5Decoder:
                 "mac": self._get_mac(byte_data),
                 "rssi": self._get_rssi(rssi) if rssi else None,
             }
+        except Exception:
+            log.exception("Value: %s not valid", data)
+            return None
+
+
+class HistoryDecoder:
+    """
+    Decodes history data from RuuviTag
+    Protocol specification:
+    https://github.com/ruuvi/docs/blob/master/communication/bluetooth-connection/nordic-uart-service-nus/log-read.md
+
+    Data format:
+    - Timestamp: uint32_t, Unix timestamp in seconds
+    - Temperature: int32_t, 0.01°C per LSB
+    - Humidity: uint32_t, 0.01 RH-% per LSB
+    - Pressure: uint32_t, 1 Pa per LSB
+    """
+
+    def _get_temperature(self, data: int) -> float:
+        """Return temperature in celsius"""
+        return round(data * 0.01, 2)
+
+    def _get_humidity(self, data: int) -> float:
+        """Return humidity %"""
+        return round(data * 0.01, 2)
+
+    def _get_pressure(self, data: int) -> float:
+        """Return air pressure hPa"""
+        # Data is already in Pa, convert to hPa
+        return round(data / 100, 2)
+
+    def decode_data(self, data: bytearray) -> Optional[SensorHistoryData]:
+        """
+        Decode history data from RuuviTag.
+
+        The data format is:
+        - 4 bytes: Unix timestamp (uint32, little-endian)
+        - 4 bytes: Temperature in 0.01°C units (int32, little-endian)
+        - 4 bytes: Humidity in 0.01% units (uint32, little-endian)
+        - 4 bytes: Pressure in Pa (uint32, little-endian)
+
+        Args:
+            data: Raw history data bytearray (16 bytes)
+
+        Returns:
+            SensorDataHistory: Decoded sensor values with timestamp, or None if decoding fails
+        """
+        try:
+            # Data format is always 16 bytes:
+            # - 4 bytes timestamp (uint32)
+            # - 4 bytes temperature (int32)
+            # - 4 bytes humidity (uint32)
+            # - 4 bytes pressure (uint32)
+            if len(data) < 16:
+                log.error("History data too short: %d bytes", len(data))
+                return None
+
+            # Use correct formats:
+            # I = unsigned int (uint32_t)
+            # i = signed int (int32_t)
+            # < = little-endian
+            ts, temp, hum, press = struct.unpack("<IiII", data[:16])
+            log.debug("Raw values - ts: %d, temp: %d, hum: %d, press: %d", ts, temp, hum, press)
+
+            result: SensorHistoryData = {
+                "temperature": self._get_temperature(temp),
+                "humidity": self._get_humidity(hum),
+                "pressure": self._get_pressure(press),
+                "timestamp": datetime.fromtimestamp(ts),
+            }
+
+            return result
         except Exception:
             log.exception("Value: %s not valid", data)
             return None
