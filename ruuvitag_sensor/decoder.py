@@ -320,7 +320,7 @@ class HistoryDecoder:
         # The timestamp is a 4-byte value after the header byte, in seconds since Unix epoch
         timestamp_bytes = bytes.fromhex("".join(data[3:7]))
         timestamp = int.from_bytes(timestamp_bytes, "big")
-        return datetime.fromtimestamp(timestamp)
+        return datetime.fromtimestamp(timestamp, tz=None)
 
     def _get_temperature(self, data: list[str]) -> Optional[float]:
         """Return temperature in celsius"""
