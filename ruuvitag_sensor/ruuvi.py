@@ -367,7 +367,8 @@ class RuuviTagSensor:
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Yields:
-            SensorHistoryData: Individual history measurements with timestamp. Each entry contains one measurement type.
+            SensorHistoryData: Individual history measurements with timestamp (UTC).
+                               Each entry contains one measurement type.
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
@@ -403,7 +404,7 @@ class RuuviTagSensor:
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
-            List[SensorHistoryData]: List of historical measurements, ordered by timestamp.
+            List[SensorHistoryData]: List of historical measurements, ordered by timestamp (UTC).
                                    Each entry contains one measurement type.
 
         Raises:

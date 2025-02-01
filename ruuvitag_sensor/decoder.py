@@ -2,7 +2,7 @@ import base64
 import logging
 import math
 import struct
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Tuple, Union
 
 from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorDataUrl, SensorHistoryData
@@ -320,7 +320,7 @@ class HistoryDecoder:
         # The timestamp is a 4-byte value after the header byte, in seconds since Unix epoch
         timestamp_bytes = bytes.fromhex("".join(data[3:7]))
         timestamp = int.from_bytes(timestamp_bytes, "big")
-        return datetime.fromtimestamp(timestamp, tz=None)
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
     def _get_temperature(self, data: list[str]) -> Optional[float]:
         """Return temperature in celsius"""
