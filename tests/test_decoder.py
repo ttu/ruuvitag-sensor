@@ -164,46 +164,71 @@ class TestDecoder(TestCase):
         parsed = parse_mac(5, mac_payload)
         assert parsed == mac
 
-    @pytest.mark.skip("Ignored test")
     def test_history_decode_docs_temperature(self):
         # Data from: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
         # 0x3A 30 10 5D57FEAD 000000098D
-        sample_clean = ["3a", "30", "10", "5D", "57", "FE", "AD", "00", "00", "00", "09", "8D"]
+        sample_clean = ["3a", "30", "10", "5D", "57", "FE", "AD", "00", "00", "09", "8D"]
         sample_bytes = bytearray.fromhex("".join(sample_clean))
         decoder = HistoryDecoder()
         data = decoder.decode_data(sample_bytes)
+        # 2019-08-13 13:18 24.45 C“
         assert data["temperature"] == 24.45
-        assert data["timestamp"] == datetime.fromisoformat("2019-08-13 13:18")
+        # TODO: Check datetime if it is correct in docs
+        assert data["timestamp"] == datetime(2019, 8, 17, 16, 18, 37)  # datetime(2019, 8, 13, 13, 18, 37)
+
+    def test_history_decode_docs_humidity(self):
+        # Data from: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
+        # 0x3A 31 10 5D57FEAD 000000098D
+        sample_clean = ["3a", "31", "10", "5D", "57", "FE", "AD", "00", "00", "09", "8D"]
+        sample_bytes = bytearray.fromhex("".join(sample_clean))
+        decoder = HistoryDecoder()
+        data = decoder.decode_data(sample_bytes)
+        # 2019-08-13 13:18 24.45 RH-%
+        assert data["humidity"] == 24.45
+        # TODO: Check datetime if it is correct in docs
+        assert data["timestamp"] == datetime(2019, 8, 17, 16, 18, 37)  # datetime(2019, 8, 13, 13, 18, 37)
+
+    def test_history_decode_docs_pressure(self):
+        # Data from: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
+        # 0x3A 32 10 5D57FEAD 000000098D
+        sample_clean = ["3a", "32", "10", "5D", "57", "FE", "AD", "00", "00", "09", "8D"]
+        sample_bytes = bytearray.fromhex("".join(sample_clean))
+        decoder = HistoryDecoder()
+        data = decoder.decode_data(sample_bytes)
+        # 2019-08-13 13:18 2445 Pa
+        assert data["pressure"] == 2445
+        # TODO: Check datetime if it is correct in docs
+        assert data["timestamp"] == datetime(2019, 8, 17, 16, 18, 37)  # datetime(2019, 8, 13, 13, 18, 37)
 
     def test_history_decode_real_samples(self):
         decoder = HistoryDecoder()
 
-        data = bytearray(b':0\x10g\x9d\xb5"\x00\x00\x08\xe3')
         # Test temperature data
+        data = bytearray(b':0\x10g\x9d\xb5"\x00\x00\x08\xe3')
         result = decoder.decode_data(data)
         assert result is not None
-        assert result["temperature"] is not None
+        assert result["temperature"] == 22.75
         assert result["humidity"] is None
         assert result["pressure"] is None
-        # assert result["timestamp"] == datetime.fromtimestamp(2946838375)
+        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
 
         # Test humidity data
         data = bytearray(b':1\x10g\x9d\xb5"\x00\x00\x10\x90')
         result = decoder.decode_data(data)
         assert result is not None
-        assert result["humidity"] is not None  # 0x100A = 4106, so 41.14%
+        assert result["humidity"] == 42.4
         assert result["temperature"] is None
         assert result["pressure"] is None
-        # assert result["timestamp"] == datetime.fromtimestamp(2946838375)
+        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
 
         # Test pressure data
         data = bytearray(b':2\x10g\x9d\xb5"\x00\x01\x8b@')
         result = decoder.decode_data(data)
         assert result is not None
-        assert result["pressure"] is not None  # 0x18775 = 99861, so 998.61 hPa
+        assert result["pressure"] == 35648
         assert result["temperature"] is None
         assert result["humidity"] is None
-        # assert result["timestamp"] == datetime.fromtimestamp(2946838375)
+        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
 
     def test_history_decode_is_error(self):
         decoder = HistoryDecoder()
