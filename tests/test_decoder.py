@@ -208,7 +208,7 @@ class TestDecoder(TestCase):
         assert result["temperature"] == 22.75
         assert result["humidity"] is None
         assert result["pressure"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
+        assert result["timestamp"].timestamp() == datetime(2025, 2, 1, 7, 46, 10).timestamp()
 
         # Test humidity data
         data = bytearray(b':1\x10g\x9d\xb5"\x00\x00\x10\x90')
@@ -217,7 +217,7 @@ class TestDecoder(TestCase):
         assert result["humidity"] == 42.4
         assert result["temperature"] is None
         assert result["pressure"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
+        assert result["timestamp"].timestamp() == datetime(2025, 2, 1, 7, 46, 10).timestamp()
 
         # Test pressure data
         data = bytearray(b':2\x10g\x9d\xb5"\x00\x01\x8b@')
@@ -226,7 +226,7 @@ class TestDecoder(TestCase):
         assert result["pressure"] == 35648
         assert result["temperature"] is None
         assert result["humidity"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
+        assert result["timestamp"].timestamp() == datetime(2025, 2, 1, 7, 46, 10).timestamp()
 
     def test_history_end_marker(self):
         decoder = HistoryDecoder()
