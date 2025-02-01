@@ -22,6 +22,7 @@ RuuviTag Sensor Python Package
     * Bleak supports
       * [Async-methods](#usage)
       * [Observable streams](#usage)
+      * [Download history data](#usage)
     * [Install guide](#Bleak)
 * Bluez (Linux-only)
     * Bluez supports
@@ -66,6 +67,7 @@ The package provides 3 ways to fetch data from sensors:
 1. Asynchronously with async/await
 2. Synchronously with callback
 3. Observable streams with ReactiveX
+4. Downloading history data with async/await
 
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
 
@@ -201,6 +203,44 @@ ruuvi_rx.stop()
 More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/reactive_extensions.py) and a simple [HTTP server](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/http_server_asyncio_rx.py) under the examples directory.
 
 Check the official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
+
+### 4. Downloading history data
+
+__NOTE:__ History data functionality works only with `Bleak`-adapter.
+
+RuuviTags with firmware version 3.30.0 or newer support retrieving historical measurements. The package provides two methods to access this data:
+
+1. `get_history_async`: Stream history entries as they arrive
+2. `download_history`: Download all history entries at once
+
+Each history entry contains one measurement type (temperature, humidity, or pressure) with a UTC timestamp. The RuuviTag sends each measurement type as a separate entry.
+
+```py
+import asyncio
+from datetime import datetime, timedelta
+
+from ruuvitag_sensor.ruuvi import RuuviTagSensor
+
+
+async def main():
+    # Get history from the last 10 minutes
+    start_time = datetime.now() - timedelta(minutes=10)
+    
+    # Stream entries as they arrive
+    async for entry in RuuviTagSensor.get_history_async(mac="AA:BB:CC:DD:EE:FF", start_time=start_time):
+        print(f"Time: {entry['timestamp']} - {entry}")
+        
+    # Or download all entries at once
+    history = await RuuviTagSensor.download_history(mac="AA:BB:CC:DD:EE:FF", start_time=start_time)
+    for entry in history:
+        print(f"Time: {entry['timestamp']} - {entry}")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+__NOTE:__ Due to the way macOS handles Bluetooth, methods uses UUIDs to identify RuuviTags instead of MAC addresses.
 
 ### Other helper methods
 
