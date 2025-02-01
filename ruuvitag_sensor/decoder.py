@@ -308,12 +308,12 @@ class HistoryDecoder:
 
     def _is_error_packet(self, data: list[str]) -> bool:
         """Check if this is an error packet"""
-        return data[2] == "10" and all(b == "FF" for b in data[3:])
+        return data[2] == "10" and all(b == "ff" for b in data[3:])
 
     def _is_end_marker(self, data: list[str]) -> bool:
         """Check if this is an end marker packet"""
         # Check for command byte 0x3A, type 0x3A, and remaining bytes are 0xFF
-        return data[0] == "3a" and data[1] == "3a" and all(b == "FF" for b in data[3:])
+        return data[0] == "3a" and data[1] == "3a" and all(b == "ff" for b in data[3:])
 
     def _get_timestamp(self, data: list[str]) -> datetime:
         """Return timestamp"""
@@ -408,9 +408,9 @@ class HistoryDecoder:
                     "timestamp": self._get_timestamp(hex_values),
                 }
             else:
-                log.error("Invalid packet type: %d", packet_type)
+                log.error("Invalid packet type: %d - %s", packet_type, data)
                 return None
 
         except Exception:
-            log.exception("Value: %s not valid", data)
+            log.exception("Value not valid: %s", data)
             return None

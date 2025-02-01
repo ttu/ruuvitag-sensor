@@ -355,7 +355,7 @@ class RuuviTagSensor:
     @staticmethod
     async def get_history_async(
         mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
-    ) -> List[SensorHistoryData]:
+    ) -> AsyncGenerator[SensorHistoryData, None]:
         """
         Get history data from a RuuviTag that supports it (firmware 3.30.0+)
 
@@ -365,10 +365,19 @@ class RuuviTagSensor:
             max_items (int, optional): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
-            List[SensorData]: List of historical sensor readings
+            AsyncGenerator[SensorHistoryData, None]: List of historical sensor readings
         """
         throw_if_not_async_adapter(ble)
-        return await ble.get_history_data(mac, start_time, max_items)
+
+        decoder = HistoryDecoder()
+        data_iter = ble.get_history_data(mac, start_time, max_items)
+        try:
+            async for data in data_iter:
+                history_data = decoder.decode_data(data)
+                if history_data:
+                    yield history_data
+        finally:
+            await data_iter.aclose()
 
     @staticmethod
     async def download_history(
@@ -393,9 +402,16 @@ class RuuviTagSensor:
         throw_if_not_async_adapter(ble)
 
         try:
-            history = await asyncio.wait_for(ble.get_history_data(mac, start_time, max_items), timeout=timeout)
+            history_data: List[SensorHistoryData] = []
             decoder = HistoryDecoder()
-            return [d for h in history if (d := decoder.decode_data(h)) is not None]
+
+            async def collect_history():
+                async for data in ble.get_history_data(mac, start_time, max_items):
+                    if decoded := decoder.decode_data(data):
+                        history_data.append(decoded)
+
+            await asyncio.wait_for(collect_history(), timeout=timeout)
+            return history_data
 
         except asyncio.TimeoutError:
             raise TimeoutError(f"History download timed out after {timeout} seconds")

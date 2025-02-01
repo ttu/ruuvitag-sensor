@@ -127,7 +127,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     async def get_history_data(
         self, mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
-    ) -> List[bytearray]:
+    ) -> AsyncGenerator[bytearray, None]:
         """
         Get history data from a RuuviTag using GATT connection.
 
@@ -136,15 +136,13 @@ class BleCommunicationBleak(BleCommunicationAsync):
             start_time (datetime, optional): Start time for history data
             max_items (int, optional): Maximum number of history entries to fetch
 
-        Returns:
-            List[dict]: List of historical sensor readings
+        Yields:
+            bytearray: Raw history data entries
 
         Raises:
             RuntimeError: If connection fails or required services not found
         """
-        history_data: List[bytearray] = []
         client = None
-
         try:
             # Connect to device
             client = await self._connect_gatt(mac)
@@ -152,15 +150,87 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
             # Get the history service
             # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
-            history_data = await self._collect_history_data(client, start_time, max_items)
-            return history_data
+            history_service = next(
+                (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
+                None,
+            )
+            if not history_service:
+                raise RuntimeError("History service not found - device may not support history")
+
+            tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
+            rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
+
+            if not tx_char or not rx_char:
+                raise RuntimeError("Required characteristics not found")
+
+            data_queue: asyncio.Queue[Optional[bytearray]] = asyncio.Queue()
+
+            def notification_handler(_, data: bytearray):
+                # Ignore heartbeat data that starts with 0x05
+                if data and data[0] == 0x05:
+                    log.debug("Ignoring heartbeat data")
+                    return
+                log.debug("Received data: %s", data)
+                # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF...)
+                if len(data) >= 3 and all(b == 0xFF for b in data[3:]):
+                    log.debug("Received end-of-logs marker")
+                    data_queue.put_nowait(data)
+                    data_queue.put_nowait(None)
+                    return
+                # Check for error message (0x30 30 F0 FF FF FF FF FF FF FF FF)
+                if len(data) >= 11 and data[0:2] == b"00" and data[2] == 0xF0:
+                    log.error("Device reported error in log reading")
+                    data_queue.put_nowait(data)
+                    data_queue.put_nowait(None)
+                    return
+                data_queue.put_nowait(data)
+
+            await client.start_notify(tx_char, notification_handler)
+
+            end_time = int(datetime.now().timestamp())
+            start_time_to_use = int(start_time.timestamp()) if start_time else 0
+
+            command = bytearray(
+                [
+                    0x3A,
+                    0x3A,
+                    0x11,  # Header for temperature query
+                    (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
+                    (end_time >> 16) & 0xFF,  # End timestamp byte 2
+                    (end_time >> 8) & 0xFF,  # End timestamp byte 3
+                    end_time & 0xFF,  # End timestamp byte 4
+                    (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
+                    (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
+                    (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
+                    start_time_to_use & 0xFF,  # Start timestamp byte 4
+                ]
+            )
+
+            log.debug("Sending command: %s", command)
+            await client.write_gatt_char(rx_char, command)
+            log.debug("Sent history command to device")
+
+            items_received = 0
+            while True:
+                try:
+                    data = await asyncio.wait_for(data_queue.get(), timeout=10.0)
+                    if data is None:
+                        break
+                    yield data
+                    items_received += 1
+                    if max_items and items_received >= max_items:
+                        break
+                except asyncio.TimeoutError:
+                    log.error("Timeout waiting for history data")
+                    break
+
         except Exception as e:
             log.error("Failed to get history data from device %s: %r", mac, e)
+            raise
         finally:
             if client:
                 await client.disconnect()
                 log.debug("Disconnected from device %s", mac)
-        return []
 
     async def _connect_gatt(self, mac: str) -> BleakClient:
         """
@@ -178,72 +248,3 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # TODO: Implement retry logic. connect fails for some reason pretty often.
         await client.connect()
         return client
-
-    async def _collect_history_data(
-        self, client: BleakClient, start_time: Optional[datetime], max_items: Optional[int]
-    ) -> List[bytearray]:
-        history_data: List[bytearray] = []
-
-        history_service = next(
-            (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
-            None,
-        )
-        if not history_service:
-            raise RuntimeError("History service not found - device may not support history")
-
-        tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
-        rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
-
-        if not tx_char or not rx_char:
-            raise RuntimeError("Required characteristics not found")
-
-        notification_received = asyncio.Event()
-
-        def notification_handler(_, data: bytearray):
-            # Ignore heartbeat data that starts with 0x05
-            if data and data[0] == 0x05:
-                log.debug("Ignoring heartbeat data")
-                return
-            log.debug("Received data: %s", data)
-            # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF...)
-            if len(data) >= 3 and all(b == 0xFF for b in data[3:]):
-                log.debug("Received end-of-logs marker")
-                notification_received.set()
-                return
-            # Check for error message (0x30 30 F0 FF FF FF FF FF FF FF FF)
-            if len(data) >= 11 and data[0:2] == b"00" and data[2] == 0xF0:
-                log.error("Device reported error in log reading")
-                notification_received.set()
-                return
-            history_data.append(data)
-
-        await client.start_notify(tx_char, notification_handler)
-
-        end_time = int(datetime.now().timestamp())
-        start_time_to_use = int(start_time.timestamp()) if start_time else 0
-
-        command = bytearray(
-            [
-                0x3A,
-                0x3A,
-                0x11,  # Header for temperature query
-                (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
-                (end_time >> 16) & 0xFF,  # End timestamp byte 2
-                (end_time >> 8) & 0xFF,  # End timestamp byte 3
-                end_time & 0xFF,  # End timestamp byte 4
-                (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
-                (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
-                (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
-                start_time_to_use & 0xFF,  # Start timestamp byte 4
-            ]
-        )
-
-        log.debug("Sending command: %s", command)
-
-        await client.write_gatt_char(rx_char, command)
-        log.debug("Sent history command to device")
-
-        await asyncio.wait_for(notification_received.wait(), timeout=60.0)
-        notification_received.clear()
-
-        return history_data

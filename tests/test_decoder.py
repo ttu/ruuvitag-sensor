@@ -230,6 +230,12 @@ class TestDecoder(TestCase):
         assert result["humidity"] is None
         assert result["timestamp"] == datetime(2025, 2, 1, 7, 46, 10)
 
+    def test_history_end_marker(self):
+        decoder = HistoryDecoder()
+        data = bytearray(b"::\x10\xff\xff\xff\xff\xff\xff\xff\xff")
+        result = decoder.decode_data(data)
+        assert result is None
+
     def test_history_decode_is_error(self):
         decoder = HistoryDecoder()
 
