@@ -357,15 +357,20 @@ class RuuviTagSensor:
         mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
     ) -> AsyncGenerator[SensorHistoryData, None]:
         """
-        Get history data from a RuuviTag that supports it (firmware 3.30.0+)
+        Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
+        Each history entry contains one measurement type (temperature, humidity, or pressure).
+        Use download_history() if you want to get all measurements combined by timestamp.
 
         Args:
-            mac (str): MAC address of the RuuviTag
-            start_time (datetime, optional): Start time for history data. If None, gets all available data
-            max_items (int, optional): Maximum number of history entries to fetch. If None, gets all available data
+            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            start_time (Optional[datetime]): If provided, only get data from this time onwards
+            max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
-        Returns:
-            AsyncGenerator[SensorHistoryData, None]: List of historical sensor readings
+        Yields:
+            SensorHistoryData: Individual history measurements with timestamp. Each entry contains one measurement type.
+
+        Raises:
+            RuntimeError: If connection fails or device doesn't support history
         """
         throw_if_not_async_adapter(ble)
 
@@ -384,7 +389,12 @@ class RuuviTagSensor:
         mac: str, start_time: Optional[datetime] = None, timeout: int = 300, max_items: Optional[int] = None
     ) -> List[SensorHistoryData]:
         """
-        Download history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
+        Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
+        This method collects all history entries and returns them as a list.
+        Each history entry contains one measurement type (temperature, humidity, or pressure).
+
+        Note: The RuuviTag sends each measurement type (temperature, humidity, pressure) as separate entries.
+        If you need to combine measurements by timestamp, you'll need to post-process the data.
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
@@ -393,7 +403,8 @@ class RuuviTagSensor:
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
-            List[HistoryDecoder]: List of historical measurements, ordered by timestamp
+            List[SensorHistoryData]: List of historical measurements, ordered by timestamp.
+                                   Each entry contains one measurement type.
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
