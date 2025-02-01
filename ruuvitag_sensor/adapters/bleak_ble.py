@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 from typing import AsyncGenerator, List, Optional, Tuple
 
-from bleak import BleakClient, BleakScanner
+from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
@@ -144,24 +144,11 @@ class BleCommunicationBleak(BleCommunicationAsync):
         """
         client = None
         try:
-            # Connect to device
+            log.debug("Connecting to device %s", mac)
             client = await self._connect_gatt(mac)
             log.debug("Connected to device %s", mac)
 
-            # Get the history service
-            # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
-            history_service = next(
-                (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
-                None,
-            )
-            if not history_service:
-                raise RuntimeError("History service not found - device may not support history")
-
-            tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
-            rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
-
-            if not tx_char or not rx_char:
-                raise RuntimeError("Required characteristics not found")
+            tx_char, rx_char = self._get_history_service_characteristics(client)
 
             data_queue: asyncio.Queue[Optional[bytearray]] = asyncio.Queue()
 
@@ -187,24 +174,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
             await client.start_notify(tx_char, notification_handler)
 
-            end_time = int(datetime.now().timestamp())
-            start_time_to_use = int(start_time.timestamp()) if start_time else 0
-
-            command = bytearray(
-                [
-                    0x3A,
-                    0x3A,
-                    0x11,  # Header for temperature query
-                    (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
-                    (end_time >> 16) & 0xFF,  # End timestamp byte 2
-                    (end_time >> 8) & 0xFF,  # End timestamp byte 3
-                    end_time & 0xFF,  # End timestamp byte 4
-                    (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
-                    (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
-                    (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
-                    start_time_to_use & 0xFF,  # Start timestamp byte 4
-                ]
-            )
+            command = self._create_send_history_command(start_time)
 
             log.debug("Sending command: %s", command)
             await client.write_gatt_char(rx_char, command)
@@ -248,3 +218,45 @@ class BleCommunicationBleak(BleCommunicationAsync):
         # TODO: Implement retry logic. connect fails for some reason pretty often.
         await client.connect()
         return client
+
+    def _get_history_service_characteristics(
+        self, client: BleakClient
+    ) -> Tuple[BleakGATTCharacteristic, BleakGATTCharacteristic]:
+        # Get the history service
+        # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
+        history_service = next(
+            (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
+            None,
+        )
+        if not history_service:
+            raise RuntimeError("History service not found - device may not support history")
+
+        tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
+        rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
+
+        if not tx_char or not rx_char:
+            raise RuntimeError("Required characteristics not found")
+
+        return tx_char, rx_char
+
+    def _create_send_history_command(self, start_time):
+        end_time = int(datetime.now().timestamp())
+        start_time_to_use = int(start_time.timestamp()) if start_time else 0
+
+        command = bytearray(
+            [
+                0x3A,
+                0x3A,
+                0x11,  # Header for temperature query
+                (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
+                (end_time >> 16) & 0xFF,  # End timestamp byte 2
+                (end_time >> 8) & 0xFF,  # End timestamp byte 3
+                end_time & 0xFF,  # End timestamp byte 4
+                (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
+                (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
+                (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
+                start_time_to_use & 0xFF,  # Start timestamp byte 4
+            ]
+        )
+
+        return command

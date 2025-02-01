@@ -349,7 +349,7 @@ class HistoryDecoder:
         pressure_raw = int.from_bytes(pressure_bytes, "big")
         return float(pressure_raw)
 
-    def decode_data(self, data: bytearray) -> Optional[SensorHistoryData]:
+    def decode_data(self, data: bytearray) -> Optional[SensorHistoryData]:  # noqa: PLR0911
         """
         Decode history data from RuuviTag.
 

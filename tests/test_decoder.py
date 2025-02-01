@@ -1,8 +1,6 @@
 from datetime import datetime
 from unittest import TestCase
 
-import pytest
-
 from ruuvitag_sensor.decoder import Df3Decoder, Df5Decoder, HistoryDecoder, UrlDecoder, get_decoder, parse_mac
 
 

@@ -419,7 +419,7 @@ class RuuviTagSensor:
             async def collect_history():
                 async for data in ble.get_history_data(mac, start_time, max_items):
                     if decoded := decoder.decode_data(data):
-                        history_data.append(decoded)
+                        history_data.extend(decoded)
 
             await asyncio.wait_for(collect_history(), timeout=timeout)
             return history_data
