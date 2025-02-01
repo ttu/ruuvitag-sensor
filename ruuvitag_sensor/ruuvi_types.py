@@ -41,9 +41,9 @@ class SensorData5(SensorDataBase):
 
 
 class SensorHistoryData(TypedDict):
-    humidity: float
-    temperature: float
-    pressure: float
+    humidity: Optional[float]
+    temperature: Optional[float]
+    pressure: Optional[float]
     timestamp: datetime
 
 
