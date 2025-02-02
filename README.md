@@ -62,18 +62,32 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 ## Usage
 
-The package provides 3 ways to fetch data from sensors:
+The package provides 3 ways to fetch broadcasted data from sensors:
 
 1. Asynchronously with async/await
 2. Synchronously with callback
 3. Observable streams with ReactiveX
-4. Downloading history data with async/await
 
 RuuviTag sensors can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
 
 ```py
 ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
 ```
+
+Functionality to fetch RuuviTags stored history data from RuuviTags internal memory.
+
+4. Download history data with async/await
+
+Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). The RuuviTag sends each measurement type as a separate entry.
+
+```py
+[
+    {'temperature': 22.22, 'humidity': None, 'pressure': None, 'timestamp': 1738476581}
+    {'temperature': None, 'humidity': 38.8, 'pressure': None, 'timestamp': 1738476581},
+    {'temperature': None, 'humidity': None, 'pressure': 35755.0, 'timestamp': 1738476581},
+]
+```
+
 
 ### 1. Get sensor data asynchronously with async/await
 
@@ -204,7 +218,7 @@ More [samples](https://github.com/ttu/ruuvitag-sensor/blob/master/examples/react
 
 Check the official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/latest/index.html) and the [list of operators](https://rxpy.readthedocs.io/en/latest/operators.html).
 
-### 4. Downloading history data
+### 4. Download history data
 
 __NOTE:__ History data functionality works only with `Bleak`-adapter.
 
@@ -213,7 +227,17 @@ RuuviTags with firmware version 3.30.0 or newer support retrieving historical me
 1. `get_history_async`: Stream history entries as they arrive
 2. `download_history`: Download all history entries at once
 
-Each history entry contains one measurement type (temperature, humidity, or pressure) with a UTC timestamp. The RuuviTag sends each measurement type as a separate entry.
+Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). The RuuviTag sends each measurement type as a separate entry.
+
+Example history entry:
+```py
+{
+    'temperature': 22.22,  # Only one measurement type per entry
+    'humidity': None,
+    'pressure': None,
+    'timestamp': 1738476581  # Unix timestamp (integer)
+}
+```
 
 ```py
 import asyncio

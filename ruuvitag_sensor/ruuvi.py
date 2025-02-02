@@ -358,7 +358,8 @@ class RuuviTagSensor:
     ) -> AsyncGenerator[SensorHistoryData, None]:
         """
         Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
-        Each history entry contains one measurement type (temperature, humidity, or pressure) with Unix timestamp (integer).
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with
+        Unix timestamp (integer).
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
@@ -390,7 +391,8 @@ class RuuviTagSensor:
         """
         Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
         This method collects all history entries and returns them as a list.
-        Each history entry contains one measurement type (temperature, humidity, or pressure) with Unix timestamp (integer).
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with
+        Unix timestamp (integer).
 
         Note: The RuuviTag sends each measurement type (temperature, humidity, pressure) as separate entries.
         If you need to combine measurements by timestamp, you'll need to post-process the data.
