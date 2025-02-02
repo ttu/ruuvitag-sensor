@@ -172,8 +172,8 @@ class TestDecoder(TestCase):
         # 2019-08-13 13:18 24.45 C“
         assert data["temperature"] == 24.45
         # TODO: Check datetime if it is correct in docs
-        assert data["timestamp"] == datetime(
-            2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc
+        assert (
+            data["timestamp"] == datetime(2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc).timestamp()
         )  # datetime(2019, 8, 13, 13, 18, 37)
 
     def test_history_decode_docs_humidity(self):
@@ -186,8 +186,8 @@ class TestDecoder(TestCase):
         # 2019-08-13 13:18 24.45 RH-%
         assert data["humidity"] == 24.45
         # TODO: Check datetime if it is correct in docs
-        assert data["timestamp"] == datetime(
-            2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc
+        assert (
+            data["timestamp"] == datetime(2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc).timestamp()
         )  # datetime(2019, 8, 13, 13, 18, 37)
 
     def test_history_decode_docs_pressure(self):
@@ -200,8 +200,8 @@ class TestDecoder(TestCase):
         # 2019-08-13 13:18 2445 Pa
         assert data["pressure"] == 2445
         # TODO: Check datetime if it is correct in docs
-        assert data["timestamp"] == datetime(
-            2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc
+        assert (
+            data["timestamp"] == datetime(2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc).timestamp()
         )  # datetime(2019, 8, 13, 13, 18, 37)
 
     def test_history_decode_real_samples(self):
@@ -214,7 +214,7 @@ class TestDecoder(TestCase):
         assert result["temperature"] == 22.75
         assert result["humidity"] is None
         assert result["pressure"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc)
+        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc).timestamp()
 
         # Test humidity data
         data = bytearray(b':1\x10g\x9d\xb5"\x00\x00\x10\x90')
@@ -223,7 +223,7 @@ class TestDecoder(TestCase):
         assert result["humidity"] == 42.4
         assert result["temperature"] is None
         assert result["pressure"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc)
+        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc).timestamp()
 
         # Test pressure data
         data = bytearray(b':2\x10g\x9d\xb5"\x00\x01\x8b@')
@@ -232,7 +232,7 @@ class TestDecoder(TestCase):
         assert result["pressure"] == 35648
         assert result["temperature"] is None
         assert result["humidity"] is None
-        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc)
+        assert result["timestamp"] == datetime(2025, 2, 1, 5, 46, 10, tzinfo=timezone.utc).timestamp()
 
     def test_history_end_marker(self):
         decoder = HistoryDecoder()

@@ -358,17 +358,15 @@ class RuuviTagSensor:
     ) -> AsyncGenerator[SensorHistoryData, None]:
         """
         Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
-        Each history entry contains one measurement type (temperature, humidity, or pressure).
-        Use download_history() if you want to get all measurements combined by timestamp.
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with Unix timestamp (integer).
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
-            start_time (Optional[datetime]): If provided, only get data from this time onwards
+            start_time (Optional[datetime]): If provided, only get data from this time onwards. Time should be in UTC.
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Yields:
-            SensorHistoryData: Individual history measurements with timestamp (UTC).
-                               Each entry contains one measurement type.
+            SensorHistoryData: Individual history measurements
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
@@ -392,20 +390,19 @@ class RuuviTagSensor:
         """
         Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
         This method collects all history entries and returns them as a list.
-        Each history entry contains one measurement type (temperature, humidity, or pressure).
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with Unix timestamp (integer).
 
         Note: The RuuviTag sends each measurement type (temperature, humidity, pressure) as separate entries.
         If you need to combine measurements by timestamp, you'll need to post-process the data.
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
-            start_time (Optional[datetime]): If provided, only get data from this time onwards
+            start_time (Optional[datetime]): If provided, only get data from this time onwards.
             timeout (int): Maximum time in seconds to wait for history download (default: 300)
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
         Returns:
-            List[SensorHistoryData]: List of historical measurements, ordered by timestamp (UTC).
-                                   Each entry contains one measurement type.
+            List[SensorHistoryData]: List of historical measurements
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
@@ -420,7 +417,7 @@ class RuuviTagSensor:
             async def collect_history():
                 async for data in ble.get_history_data(mac, start_time, max_items):
                     if decoded := decoder.decode_data(data):
-                        history_data.extend(decoded)
+                        history_data.append(decoded)  # noqa: PERF401
 
             await asyncio.wait_for(collect_history(), timeout=timeout)
             return history_data

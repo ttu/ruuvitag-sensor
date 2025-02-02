@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional, Tuple, TypedDict, Union
 
 
@@ -44,7 +43,7 @@ class SensorHistoryData(TypedDict):
     humidity: Optional[float]
     temperature: Optional[float]
     pressure: Optional[float]
-    timestamp: datetime
+    timestamp: int
 
 
 SensorData = Union[SensorDataUrl, SensorData3, SensorData5]
