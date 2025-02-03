@@ -202,22 +202,22 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 await client.disconnect()
                 log.debug("Disconnected from device %s", mac)
 
-    async def _connect_gatt(self, mac: str) -> BleakClient:
-        """
-        Connect to a BLE device using GATT.
-
-        NOTE: On macOS, the device address is not a MAC address, but a system specific ID
-
-        Args:
-            mac (str): MAC address of the device to connect to
-
-        Returns:
-            BleakClient: Connected BLE client
-        """
+    async def _connect_gatt(self, mac: str, max_retries: int = 3) -> BleakClient:
+        # Connect to a BLE device using GATT.
+        # NOTE: On macOS, the device address is not a MAC address, but a system specific ID
         client = BleakClient(mac)
-        # TODO: Implement retry logic. connect fails for some reason pretty often.
-        await client.connect()
-        return client
+
+        for attempt in range(max_retries):
+            try:
+                await client.connect()
+                return client
+            except Exception as e:  # noqa: PERF203
+                if attempt == max_retries - 1:
+                    raise
+                log.debug("Connection attempt %s failed: %s - Retrying...", attempt + 1, str(e))
+                await asyncio.sleep(1)
+
+        return client  # Satisfy linter - this line will never be reached
 
     def _get_history_service_characteristics(
         self, client: BleakClient
