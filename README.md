@@ -62,6 +62,8 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 ## Usage
 
+### Fetch broadcast data from RuuviTags
+
 The package provides 3 ways to fetch broadcasted data from sensors:
 
 1. Asynchronously with async/await
@@ -74,7 +76,7 @@ RuuviTag sensors can be identified using MAC addresses. Methods return a tuple c
 ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
 ```
 
-Functionality to fetch RuuviTags stored history data from RuuviTags internal memory.
+### Download stored history data from RuuviTags internal memory
 
 4. Download history data with async/await
 
