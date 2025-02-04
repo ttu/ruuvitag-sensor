@@ -158,15 +158,15 @@ class BleCommunicationBleak(BleCommunicationAsync):
                     log.debug("Ignoring heartbeat data")
                     return
                 log.debug("Received data: %s", data)
-                # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF...)
+                # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF ...)
                 if len(data) >= 3 and all(b == 0xFF for b in data[3:]):
                     log.debug("Received end-of-logs marker")
                     data_queue.put_nowait(data)
                     data_queue.put_nowait(None)
                     return
-                # Check for error message (0x30 30 F0 FF FF FF FF FF FF FF FF)
-                if len(data) >= 11 and data[0:2] == b"00" and data[2] == 0xF0:
-                    log.error("Device reported error in log reading")
+                # Check for error message. Header is 0xF0 (0x30 30 F0 FF FF FF FF FF FF FF FF)
+                if len(data) >= 11 and data[2] == 0xF0:
+                    log.debug("Device reported error in log reading")
                     data_queue.put_nowait(data)
                     data_queue.put_nowait(None)
                     return

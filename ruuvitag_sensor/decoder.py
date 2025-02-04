@@ -307,7 +307,7 @@ class HistoryDecoder:
 
     def _is_error_packet(self, data: list[str]) -> bool:
         """Check if this is an error packet"""
-        return data[2] == "10" and all(b == "ff" for b in data[3:])
+        return data[2] == "F0" and all(b == "ff" for b in data[3:])
 
     def _is_end_marker(self, data: list[str]) -> bool:
         """Check if this is an end marker packet"""
@@ -366,17 +366,17 @@ class HistoryDecoder:
             hex_values = [format(x, "02x") for x in data]
 
             if len(hex_values) != 11:
-                log.error("History data too short: %d bytes", len(hex_values))
+                log.info("History data too short: %d bytes", len(hex_values))
                 return None
 
             # Verify this is a history log entry
             if hex_values[0] != "3a":  # ':'
-                log.error("Invalid command byte: %d", data[0])
+                log.info("Invalid command byte: %d", data[0])
                 return None
 
             # Check for error header
             if self._is_error_packet(hex_values):
-                log.error("Device reported error in log reading")
+                log.info("Device reported error in log reading")
                 return None
 
             # Check for end marker packet
@@ -408,7 +408,7 @@ class HistoryDecoder:
                     "timestamp": self._get_timestamp(hex_values),
                 }
             else:
-                log.error("Invalid packet type: %d - %s", packet_type, data)
+                log.info("Invalid packet type: %d - %s", packet_type, data)
                 return None
 
         except Exception:
