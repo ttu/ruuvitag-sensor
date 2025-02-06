@@ -39,6 +39,13 @@ class SensorData5(SensorDataBase):
     rssi: Optional[int]
 
 
+class SensorHistoryData(TypedDict):
+    humidity: Optional[float]
+    temperature: Optional[float]
+    pressure: Optional[float]
+    timestamp: int
+
+
 SensorData = Union[SensorDataUrl, SensorData3, SensorData5]
 
 DataFormat = Optional[int]

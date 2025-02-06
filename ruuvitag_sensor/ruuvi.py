@@ -1,5 +1,7 @@
+import asyncio
 import logging
 import time
+from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.managers import ListProxy
 from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
@@ -7,8 +9,15 @@ from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, throw_if_not_async_adapter, throw_if_not_sync_adapter
 from ruuvitag_sensor.data_formats import DataFormats
-from ruuvitag_sensor.decoder import get_decoder, parse_mac
-from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, Mac, MacAndRawData, MacAndSensorData, SensorData
+from ruuvitag_sensor.decoder import HistoryDecoder, get_decoder, parse_mac
+from ruuvitag_sensor.ruuvi_types import (
+    DataFormatAndRawSensorData,
+    Mac,
+    MacAndRawData,
+    MacAndSensorData,
+    SensorData,
+    SensorHistoryData,
+)
 
 log = logging.getLogger(__name__)
 ble = get_ble_adapter()
@@ -342,3 +351,80 @@ class RuuviTagSensor:
             return None
 
         return (mac_to_send, decoded)
+
+    @staticmethod
+    async def get_history_async(
+        mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+    ) -> AsyncGenerator[SensorHistoryData, None]:
+        """
+        Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with
+        Unix timestamp (integer).
+
+        Args:
+            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            start_time (Optional[datetime]): If provided, only get data from this time onwards. Time should be in UTC.
+            max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
+
+        Yields:
+            SensorHistoryData: Individual history measurements
+
+        Raises:
+            RuntimeError: If connection fails or device doesn't support history
+        """
+        throw_if_not_async_adapter(ble)
+
+        decoder = HistoryDecoder()
+        data_iter = ble.get_history_data(mac, start_time, max_items)
+        try:
+            async for data in data_iter:
+                history_data = decoder.decode_data(data)
+                if history_data:
+                    yield history_data
+        finally:
+            await data_iter.aclose()
+
+    @staticmethod
+    async def download_history(
+        mac: str, start_time: Optional[datetime] = None, timeout: int = 300, max_items: Optional[int] = None
+    ) -> List[SensorHistoryData]:
+        """
+        Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
+        This method collects all history entries and returns them as a list.
+        Each history entry contains one measurement type (temperature, humidity, or pressure) with
+        Unix timestamp (integer).
+
+        Note: The RuuviTag sends each measurement type (temperature, humidity, pressure) as separate entries.
+        If you need to combine measurements by timestamp, you'll need to post-process the data.
+
+        Args:
+            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            start_time (Optional[datetime]): If provided, only get data from this time onwards.
+            timeout (int): Maximum time in seconds to wait for history download (default: 300)
+            max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
+
+        Returns:
+            List[SensorHistoryData]: List of historical measurements
+
+        Raises:
+            RuntimeError: If connection fails or device doesn't support history
+            TimeoutError: If download takes longer than timeout
+        """
+        throw_if_not_async_adapter(ble)
+
+        try:
+            history_data: List[SensorHistoryData] = []
+            decoder = HistoryDecoder()
+
+            async def collect_history():
+                async for data in ble.get_history_data(mac, start_time, max_items):
+                    if decoded := decoder.decode_data(data):
+                        history_data.append(decoded)  # noqa: PERF401
+
+            await asyncio.wait_for(collect_history(), timeout=timeout)
+            return history_data
+
+        except asyncio.TimeoutError:
+            raise TimeoutError(f"History download timed out after {timeout} seconds")
+        except Exception as e:
+            raise RuntimeError(f"Failed to download history: {e!s}") from e

@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-
+* ADD: Support for fetching history data from RuuviTags
 
 ## [3.0.0] - 2025-01-13
 * ADD: Install Bleak automatically on all platforms

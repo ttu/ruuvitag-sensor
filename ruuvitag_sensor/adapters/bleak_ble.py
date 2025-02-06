@@ -3,9 +3,10 @@ import logging
 import os
 import re
 import sys
-from typing import AsyncGenerator, List, Tuple
+from datetime import datetime
+from typing import AsyncGenerator, List, Optional, Tuple
 
-from bleak import BleakScanner
+from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
 
 from ruuvitag_sensor.adapters import BleCommunicationAsync
@@ -13,6 +14,9 @@ from ruuvitag_sensor.adapters.utils import rssi_to_hex
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
 MAC_REGEX = "[0-9a-f]{2}([:])[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"
+RUUVI_HISTORY_SERVICE_UUID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
+RUUVI_HISTORY_RX_CHAR_UUID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"  # Write
+RUUVI_HISTORY_TX_CHAR_UUID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"  # Read and notify
 
 
 def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str = ""):
@@ -120,3 +124,139 @@ class BleCommunicationBleak(BleCommunicationAsync):
                 await data_iter.aclose()
 
         return data or ""
+
+    async def get_history_data(
+        self, mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+    ) -> AsyncGenerator[bytearray, None]:
+        """
+        Get history data from a RuuviTag using GATT connection.
+
+        Args:
+            mac (str): MAC address of the RuuviTag
+            start_time (datetime, optional): Start time for history data
+            max_items (int, optional): Maximum number of history entries to fetch
+
+        Yields:
+            bytearray: Raw history data entries
+
+        Raises:
+            RuntimeError: If connection fails or required services not found
+        """
+        client = None
+        try:
+            log.debug("Connecting to device %s", mac)
+            client = await self._connect_gatt(mac)
+            log.debug("Connected to device %s", mac)
+
+            tx_char, rx_char = self._get_history_service_characteristics(client)
+
+            data_queue: asyncio.Queue[Optional[bytearray]] = asyncio.Queue()
+
+            def notification_handler(_, data: bytearray):
+                # Ignore heartbeat data that starts with 0x05
+                if data and data[0] == 0x05:
+                    log.debug("Ignoring heartbeat data")
+                    return
+                log.debug("Received data: %s", data)
+                # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF ...)
+                if len(data) >= 3 and all(b == 0xFF for b in data[3:]):
+                    log.debug("Received end-of-logs marker")
+                    data_queue.put_nowait(data)
+                    data_queue.put_nowait(None)
+                    return
+                # Check for error message. Header is 0xF0 (0x30 30 F0 FF FF FF FF FF FF FF FF)
+                if len(data) >= 11 and data[2] == 0xF0:
+                    log.debug("Device reported error in log reading")
+                    data_queue.put_nowait(data)
+                    data_queue.put_nowait(None)
+                    return
+                data_queue.put_nowait(data)
+
+            await client.start_notify(tx_char, notification_handler)
+
+            command = self._create_send_history_command(start_time)
+
+            log.debug("Sending command: %s", command)
+            await client.write_gatt_char(rx_char, command)
+            log.debug("Sent history command to device")
+
+            items_received = 0
+            while True:
+                try:
+                    data = await asyncio.wait_for(data_queue.get(), timeout=10.0)
+                    if data is None:
+                        break
+                    yield data
+                    items_received += 1
+                    if max_items and items_received >= max_items:
+                        break
+                except asyncio.TimeoutError:
+                    log.error("Timeout waiting for history data")
+                    break
+
+        except Exception as e:
+            log.error("Failed to get history data from device %s: %r", mac, e)
+            raise
+        finally:
+            if client:
+                await client.disconnect()
+                log.debug("Disconnected from device %s", mac)
+
+    async def _connect_gatt(self, mac: str, max_retries: int = 3) -> BleakClient:
+        # Connect to a BLE device using GATT.
+        # NOTE: On macOS, the device address is not a MAC address, but a system specific ID
+        client = BleakClient(mac)
+
+        for attempt in range(max_retries):
+            try:
+                await client.connect()
+                return client
+            except Exception as e:  # noqa: PERF203
+                if attempt == max_retries - 1:
+                    raise
+                log.debug("Connection attempt %s failed: %s - Retrying...", attempt + 1, str(e))
+                await asyncio.sleep(1)
+
+        return client  # Satisfy linter - this line will never be reached
+
+    def _get_history_service_characteristics(
+        self, client: BleakClient
+    ) -> Tuple[BleakGATTCharacteristic, BleakGATTCharacteristic]:
+        # Get the history service
+        # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
+        history_service = next(
+            (service for service in client.services if service.uuid.lower() == RUUVI_HISTORY_SERVICE_UUID.lower()),
+            None,
+        )
+        if not history_service:
+            raise RuntimeError("History service not found - device may not support history")
+
+        tx_char = history_service.get_characteristic(RUUVI_HISTORY_TX_CHAR_UUID)
+        rx_char = history_service.get_characteristic(RUUVI_HISTORY_RX_CHAR_UUID)
+
+        if not tx_char or not rx_char:
+            raise RuntimeError("Required characteristics not found")
+
+        return tx_char, rx_char
+
+    def _create_send_history_command(self, start_time):
+        end_time = int(datetime.now().timestamp())
+        start_time_to_use = int(start_time.timestamp()) if start_time else 0
+
+        command = bytearray(
+            [
+                0x3A,
+                0x3A,
+                0x11,  # Header for temperature query
+                (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
+                (end_time >> 16) & 0xFF,  # End timestamp byte 2
+                (end_time >> 8) & 0xFF,  # End timestamp byte 3
+                end_time & 0xFF,  # End timestamp byte 4
+                (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
+                (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
+                (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
+                start_time_to_use & 0xFF,  # Start timestamp byte 4
+            ]
+        )
+
+        return command

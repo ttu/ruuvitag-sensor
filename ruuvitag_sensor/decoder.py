@@ -4,7 +4,7 @@ import math
 import struct
 from typing import Optional, Tuple, Union
 
-from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorDataUrl
+from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorDataUrl, SensorHistoryData
 
 log = logging.getLogger(__name__)
 
@@ -281,4 +281,136 @@ class Df5Decoder:
             }
         except Exception:
             log.exception("Value: %s not valid", data)
+            return None
+
+
+class HistoryDecoder:
+    """
+    Decodes history data from RuuviTag
+    Protocol specification:
+    https://github.com/ruuvi/docs/blob/master/communication/bluetooth-connection/nordic-uart-service-nus/log-read.md
+
+    Data format:
+    - First byte: Command byte (0x3A)
+    - Second byte: Packet type (0x30 = temperature, 0x31 = humidity, 0x32 = pressure)
+    - Third byte: Header byte (skipped or error)
+    - Next 4 bytes: Clock time (seconds since unix epoch)
+    - Next 2 bytes: Reserved (always 0x00)
+    - Next 2 bytes: Sensor data (uint16, little-endian)
+        Temperature: 0.01°C units
+        Humidity: 0.01% units
+        Pressure: Raw value in hPa
+
+    Special case:
+    - End marker packet has command byte 0x3A followed by 0x3A
+    """
+
+    def _is_error_packet(self, data: list[str]) -> bool:
+        """Check if this is an error packet"""
+        return data[2] == "F0" and all(b == "ff" for b in data[3:])
+
+    def _is_end_marker(self, data: list[str]) -> bool:
+        """Check if this is an end marker packet"""
+        # Check for command byte 0x3A, type 0x3A, and remaining bytes are 0xFF
+        return data[0] == "3a" and data[1] == "3a" and all(b == "ff" for b in data[3:])
+
+    def _get_timestamp(self, data: list[str]) -> int:
+        """Return timestamp"""
+        # The timestamp is a 4-byte value after the header byte, in seconds since Unix epoch
+        timestamp_bytes = bytes.fromhex("".join(data[3:7]))
+        timestamp = int.from_bytes(timestamp_bytes, "big")
+        return timestamp
+        # return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
+    def _get_temperature(self, data: list[str]) -> Optional[float]:
+        """Return temperature in celsius"""
+        if data[1] != "30":  # '0' for temperature
+            return None
+        # Temperature is in 0.01°C units, little-endian
+        temp_bytes = bytes.fromhex("".join(data[9:11]))
+        temp_raw = int.from_bytes(temp_bytes, "big")
+        return round(temp_raw * 0.01, 2)
+
+    def _get_humidity(self, data: list[str]) -> Optional[float]:
+        """Return humidity %"""
+        if data[1] != "31":  # '1' for humidity
+            return None
+        # Humidity is in 0.01% units, little-endian
+        humidity_bytes = bytes.fromhex("".join(data[9:11]))
+        humidity_raw = int.from_bytes(humidity_bytes, "big")
+        return round(humidity_raw * 0.01, 2)
+
+    def _get_pressure(self, data: list[str]) -> Optional[float]:
+        """Return air pressure hPa"""
+        if data[1] != "32":  # '2' for pressure
+            return None
+        # Pressure is in hPa units, little-endian
+        pressure_bytes = bytes.fromhex("".join(data[9:11]))
+        pressure_raw = int.from_bytes(pressure_bytes, "big")
+        return float(pressure_raw)
+
+    def decode_data(self, data: bytearray) -> Optional[SensorHistoryData]:  # noqa: PLR0911
+        """
+        Decode history data from RuuviTag.
+
+        The data format follows the NUS log format.
+
+        Args:
+            data: Raw history data bytearray
+
+        Returns:
+            SensorDataHistory: Decoded sensor values with timestamp, or None if decoding fails
+            Returns None for both invalid data and end marker packets
+        """
+        try:
+            hex_values = [format(x, "02x") for x in data]
+
+            if len(hex_values) != 11:
+                log.info("History data too short: %d bytes", len(hex_values))
+                return None
+
+            # Verify this is a history log entry
+            if hex_values[0] != "3a":  # ':'
+                log.info("Invalid command byte: %d", data[0])
+                return None
+
+            # Check for error header
+            if self._is_error_packet(hex_values):
+                log.info("Device reported error in log reading")
+                return None
+
+            # Check for end marker packet
+            if self._is_end_marker(hex_values):
+                log.debug("End marker packet received")
+                return None
+
+            # Each packet type contains one measurement
+            packet_type = hex_values[1]
+            if packet_type == "30":  # '0' temperature
+                return {
+                    "temperature": self._get_temperature(hex_values),
+                    "humidity": None,
+                    "pressure": None,
+                    "timestamp": self._get_timestamp(hex_values),
+                }
+            elif packet_type == "31":  # '1' humidity
+                return {
+                    "temperature": None,
+                    "humidity": self._get_humidity(hex_values),
+                    "pressure": None,
+                    "timestamp": self._get_timestamp(hex_values),
+                }
+            elif packet_type == "32":  # '2' pressure
+                return {
+                    "temperature": None,
+                    "humidity": None,
+                    "pressure": self._get_pressure(hex_values),
+                    "timestamp": self._get_timestamp(hex_values),
+                }
+            else:
+                log.info("Invalid packet type: %d - %s", packet_type, data)
+                return None
+
+        except Exception:
+            log.exception("Value not valid: %s", data)
             return None
