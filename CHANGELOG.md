@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [3.1.0] - 2025-03-01
 * ADD: Support for fetching history data from RuuviTags
 
 ## [3.0.0] - 2025-01-13
