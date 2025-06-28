@@ -42,22 +42,22 @@ class TestDecoder(TestCase):
         decoder = Df3Decoder()
         data = decoder.decode_data("03291A1ECE1EFC18F94202CA0B5300000000BB")
 
-        assert data["temperature"], 26.3
-        assert data["pressure"], 1027.66
-        assert data["humidity"], 20.5
-        assert data["battery"], 2899
+        assert data["temperature"] == 26.3
+        assert data["pressure"] == 1027.66
+        assert data["humidity"] == 20.5
+        assert data["battery"] == 2899
         assert data["acceleration"] != 0
-        assert data["acceleration_x"], -1000
+        assert data["acceleration_x"] == -1000
         assert data["acceleration_y"] != 0
         assert data["acceleration_z"] != 0
 
         data = decoder.decode_data("03291A1ECE1EFC18F94202CA0B53BB")
-        assert data["temperature"], 26.3
-        assert data["pressure"], 1027.66
-        assert data["humidity"], 20.5
-        assert data["battery"], 2899
+        assert data["temperature"] == 26.3
+        assert data["pressure"] == 1027.66
+        assert data["humidity"] == 20.5
+        assert data["battery"] == 2899
         assert data["acceleration"] != 0
-        assert data["acceleration_x"], -1000
+        assert data["acceleration_x"] == -1000
         assert data["acceleration_y"] != 0
         assert data["acceleration_z"] != 0
 
