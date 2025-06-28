@@ -22,7 +22,7 @@ class BleCommunicationNix(BleCommunication):
         """
         # import ptyprocess here so as long as all implementations are in
         # the same file, all will work
-        import ptyprocess
+        import ptyprocess  # noqa: PLC0415
 
         if not bt_device:
             bt_device = "hci0"

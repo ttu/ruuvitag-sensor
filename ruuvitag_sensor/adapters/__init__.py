@@ -4,6 +4,9 @@ from typing import AsyncGenerator, Generator, List
 
 from ruuvitag_sensor.ruuvi_types import MacAndRawData, RawData
 
+# Disable imports at the top-level of a file
+# ruff: noqa: PLC0415
+
 
 def get_ble_adapter():
     forced_ble_adapter = os.environ.get("RUUVI_BLE_ADAPTER", "").lower()
