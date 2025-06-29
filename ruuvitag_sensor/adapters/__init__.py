@@ -26,6 +26,10 @@ def get_ble_adapter():
             from ruuvitag_sensor.adapters.nix_hci import BleCommunicationNix
 
             return BleCommunicationNix()
+        if "bluetoothctl" in forced_ble_adapter:
+            from ruuvitag_sensor.adapters.bluetoothctl import BleCommunicationBluetoothctl
+
+            return BleCommunicationBluetoothctl()
 
         raise RuntimeError(f"Unknown BLE adapter: {forced_ble_adapter}")
 
