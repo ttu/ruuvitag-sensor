@@ -1,7 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
-
+* ADD: RUUVI_MACOS_USE_MAC_ADDR environment variable to enable MAC address usage on macOS
 
 ## [3.1.0] - 2025-03-01
 * ADD: Support for fetching history data from RuuviTags
