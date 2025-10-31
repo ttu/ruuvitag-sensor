@@ -92,6 +92,10 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
+        # Ruuvi Air
+        if candidate.startswith("FF990406"):
+            return (3, candidate[6:])
+
         # Ruuvi advertisements start with FF9904 (for format 3 and 5),
         # or 16AAFE (for format 2 and 4).
         if candidate.startswith("FF990403"):
