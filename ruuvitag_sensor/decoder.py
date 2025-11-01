@@ -28,6 +28,9 @@ def get_decoder(data_type: int):
         log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
+    if data_type == 6:
+        # TODO: https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_06.md
+        return Df6Decoder()
     return Df5Decoder()
 
 
@@ -278,6 +281,61 @@ class Df5Decoder:
                 "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
                 "mac": self._get_mac(byte_data),
                 "rssi": self._get_rssi(rssi) if rssi else None,
+            }
+        except Exception:
+            log.exception("Value: %s not valid", data)
+            return None
+
+class Df6Decoder:
+    """
+    Decodes data from RuuviAir with Data Format 1E
+    Protocol specification:
+    https://github.com/ruuvi/ruuvi-sensor-protocols
+    """
+
+    def _get_temperature(self, data: ByteData) -> Optional[int]:
+        """Return temperature in celsius"""
+        if data[1] == -32768:
+            return None
+
+
+        frac = data[2] / 100
+        if data[1] < 0:
+            return -(data[1] + 128 + frac)
+
+        return data[1] + frac
+
+#        return round(data[1] / 200, 2)
+
+    def _get_humidity(self, data: ByteData) -> float:
+        """Return humidity %"""
+        return data[1] * 2
+
+    def _get_pressure(self, data: ByteData) -> float:
+        """Return air pressure hPa"""
+        return (data[4] + 50000) / 100
+
+    def _get_acceleration(self, data: ByteData) -> Tuple[int, int, int]:
+        """Return acceleration mG"""
+        return data[5:8]  # type: ignore
+
+    def _get_battery(self, data: ByteData) -> int:
+        """Return battery mV"""
+        return data[8]
+
+    def decode_data(self, data: str) -> Optional[SensorData3]:
+        """
+        Decode sensor data.
+
+        Returns:
+            dict: Sensor values
+        """
+        try:
+            byte_data: ByteData = struct.unpack(">BBbBHhhhH", bytearray.fromhex(data[:28]))
+            acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
+            return {
+                "data_format": 6,
+                "raw": data,
             }
         except Exception:
             log.exception("Value: %s not valid", data)
