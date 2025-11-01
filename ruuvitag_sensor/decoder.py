@@ -306,17 +306,16 @@ class Df6Decoder:
 
         return round(data[2] / 400, 2)
 
-    def _get_pressure(self, data: ByteData) -> float:
+    def _get_pressure(self, data: ByteData) -> Optional[float]:
         """Return air pressure hPa"""
-        return (data[4] + 50000) / 100
+        if data[3] == 0xFFFF:
+            return None
 
-    def _get_acceleration(self, data: ByteData) -> Tuple[int, int, int]:
-        """Return acceleration mG"""
-        return data[5:8]  # type: ignore
+        return round((data[3] + 50000) / 100, 2)
 
-    def _get_battery(self, data: ByteData) -> int:
-        """Return battery mV"""
-        return data[8]
+
+    def _get_measurementsequencenumber(self, data: ByteData) -> int:
+        return data[8]-4096
 
     def decode_data(self, data: str) -> Optional[SensorData3]:
         """
@@ -326,14 +325,13 @@ class Df6Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack(">BhHhhhhBHBBB", bytearray.fromhex(data[:38]))
-            acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
+            byte_data: ByteData = struct.unpack(">BhHHhhhBHBBB", bytearray.fromhex(data[:38]))
             return {
                 "data_format": 6,
                 "humidity": self._get_humidity(byte_data),  # type: ignore
                 "temperature": self._get_temperature(byte_data),  # type: ignore
-                "raw": data,
-                "bytes": byte_data,
+                "pressure": self._get_pressure(byte_data),  # type: ignore
+                #"measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
             }
         except Exception:
             log.exception("Value: %s not valid", data)
