@@ -297,19 +297,14 @@ class Df6Decoder:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
-
-
-        frac = data[2] / 100
-        if data[1] < 0:
-            return -(data[1] + 128 + frac)
-
-        return data[1] + frac
-
-#        return round(data[1] / 200, 2)
+        return round(data[1] / 200, 2)
 
     def _get_humidity(self, data: ByteData) -> float:
         """Return humidity %"""
-        return data[1] * 2
+        if data[2] == 65535:
+            return None
+
+        return round(data[2] / 400, 2)
 
     def _get_pressure(self, data: ByteData) -> float:
         """Return air pressure hPa"""
@@ -331,11 +326,14 @@ class Df6Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack(">BBbBHhhhH", bytearray.fromhex(data[:28]))
+            byte_data: ByteData = struct.unpack(">BhHhhhhBHBBB", bytearray.fromhex(data[:38]))
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
             return {
                 "data_format": 6,
+                "humidity": self._get_humidity(byte_data),  # type: ignore
+                "temperature": self._get_temperature(byte_data),  # type: ignore
                 "raw": data,
+                "bytes": byte_data,
             }
         except Exception:
             log.exception("Value: %s not valid", data)
