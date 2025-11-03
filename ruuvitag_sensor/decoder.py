@@ -380,6 +380,9 @@ class DfE1Decoder:
         # Bit 0 of flags indicates calibration status
         return bool(data[14] & 1)
 
+    def _get_mac(self, data: ByteData) -> str:
+        return ":".join(f"{b:02X}" for b in bytes(data[16]))
+
     def decode_data(self, data: str) -> Optional[SensorData3]:
         """
         Decode sensor data.
@@ -404,6 +407,7 @@ class DfE1Decoder:
                 "luminosity": self._get_luminosity_lux(byte_data),
                 "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
                 "calibration_in_progress": self._get_calibration_in_progress(byte_data),
+                "mac": self._get_mac(byte_data),
             }
         except Exception:
             log.exception("Value: %s not valid", data)
