@@ -42,6 +42,15 @@ class TestDataFormats:
             encoded = DataFormats._get_data_format_5(x)
             assert encoded is not None
 
+    def test_get_data_format_e1_valid_data(self):
+        test_cases = [
+            "E1170C5668C79E0065007004BD11CA00C90A0213E0ACXXXXXXDECDEE10XXXXXXXXXXCBB8334C884F",
+            "E17FFF9C40FFFE27102710271027109C40FAFADC28F0XXXXXXFFFFFE3FXXXXXXXXXXCBB8334C884F",
+        ]
+        for x in test_cases:
+            encoded = DataFormats._get_data_format_e1(x)
+            assert encoded is not None
+
     def test_get_data_format_2and4_valid_data(self):
         test_cases = [
             "1F0201060303AAFE1716AAFE10F6037275752E76692F234248415A414D576F77C9",

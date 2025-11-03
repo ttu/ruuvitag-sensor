@@ -9,7 +9,7 @@ from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, Sens
 log = logging.getLogger(__name__)
 
 
-def get_decoder(data_type: int):
+def get_decoder(data_type: int|str):
     """
     Get correct decoder for Data Type.
 
@@ -28,9 +28,9 @@ def get_decoder(data_type: int):
         log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
-    if data_type == 6:
-        # TODO: https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_06.md
-        return Df6Decoder()
+    if data_type == "E1":
+        # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1.md
+        return DfE1Decoder()
     return Df5Decoder()
 
 
@@ -286,36 +286,99 @@ class Df5Decoder:
             log.exception("Value: %s not valid", data)
             return None
 
-class Df6Decoder:
+class DfE1Decoder:
     """
-    Decodes data from RuuviAir with Data Format 1E
+    Decodes data from Ruuvi Air with Data Format 1E
     Protocol specification:
-    https://github.com/ruuvi/ruuvi-sensor-protocols
+    https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1.md
     """
 
-    def _get_temperature(self, data: ByteData) -> Optional[int]:
+    def _get_temperature(self, data: ByteData) -> Optional[float]:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
-        return round(data[1] / 200, 2)
+        return round(int(data[1]) * 0.005, 3)
 
-    def _get_humidity(self, data: ByteData) -> float:
+    def _get_humidity(self, data: ByteData) -> Optional[float]:
         """Return humidity %"""
         if data[2] == 65535:
             return None
-
-        return round(data[2] / 400, 2)
+        return round(int(data[2]) * 0.0025, 3)
 
     def _get_pressure(self, data: ByteData) -> Optional[float]:
         """Return air pressure hPa"""
         if data[3] == 0xFFFF:
             return None
+        return round((int(data[3]) + 50000) / 100, 2)
 
-        return round((data[3] + 50000) / 100, 2)
 
+    def _get_pm1_ug_m3(self, data: list[str]) -> Optional[float]:
+        """Return PM 1.0, ug/m^3"""
+        if data[4] == 0xFFFF:
+            return None
+        return round(int(data[4]) * 0.1, 1)
 
-    def _get_measurementsequencenumber(self, data: ByteData) -> int:
-        return data[8]-4096
+    def _get_pm25_ug_m3(self, data: list[str]) -> Optional[float]:
+        """Return PM 2.5, ug/m^3"""
+        if data[5] == 0xFFFF:
+            return None
+        return round(int(data[5]) * 0.1, 1)
+
+    def _get_pm4_ug_m3(self, data: list[str]) -> Optional[float]:
+        """Return PM 4.0, ug/m^3"""
+        if data[6] == 0xFFFF:
+            return None
+        return round(int(data[6]) * 0.1, 1)
+
+    def _get_pm10_ug_m3(self, data: list[str]) -> Optional[float]:
+        """Return PM 10.0, ug/m^3"""
+        if data[7] == 0xFFFF:
+            return None
+        return round(int(data[7]) * 0.1, 1)
+
+    def _get_co2_ppm(self, data: list[str]) -> Optional[int]:
+        """Return CO2 ppm"""
+        if data[8] == 0xFFFF:
+            return None
+        return int(data[8])
+
+    def _get_voc_index(self, data: list[str]) -> Optional[int]:
+        """Return VOC index"""
+        # VOC is 9 bits: 8 bits in data[9], LSB in bit 6 of data[14]
+        val = int(data[9]) << 1
+        if data[14] & 64:  # bit 6 of data[14]
+            val |= 1
+        if val == 0x1FF:
+            return None
+        return int(val)
+
+    def _get_nox_index(self, data: list[str]) -> Optional[int]:
+        """Return NOX index"""
+        # VOC is 9 bits: 8 bits in data[10], LSB in bit 6 of data[14]
+        val = int(data[10]) << 1
+        if data[14] & 64:  # bit 6 of data[14]
+            val |= 1
+        if val == 0x1FF:
+            return None
+        return int(val)
+
+    def _get_luminosity_lux(self, data: list[str]) -> Optional[float]:
+        """Return Luminosity Lux"""
+        lumi_bytes = bytes(data[11])
+        if lumi_bytes == b"\xff\xff\xff":
+            return None
+        lumi_val = int.from_bytes(lumi_bytes, byteorder="big")
+        return round(lumi_val * 0.01, 2)
+
+    def _get_measurementsequencenumber(self, data: ByteData) -> Optional[int]:
+        seq_bytes = bytes(data[13])
+        if seq_bytes == b"\xff\xff\xff":
+            return None
+        return int.from_bytes(seq_bytes, byteorder="big")
+
+    def _get_calibration_in_progress(self, data: ByteData) -> bool:
+        # Bit 0 of flags indicates calibration status
+        return bool(data[14] & 1)
 
     def decode_data(self, data: str) -> Optional[SensorData3]:
         """
@@ -325,13 +388,22 @@ class Df6Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack(">BhHHhhhBHBBB", bytearray.fromhex(data[:38]))
+            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:40]))
             return {
-                "data_format": 6,
-                "humidity": self._get_humidity(byte_data),  # type: ignore
-                "temperature": self._get_temperature(byte_data),  # type: ignore
-                "pressure": self._get_pressure(byte_data),  # type: ignore
-                #"measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
+                "data_format": "E1",
+                "humidity": self._get_humidity(byte_data),
+                "temperature": self._get_temperature(byte_data),
+                "pressure": self._get_pressure(byte_data),
+                "pm_1": self._get_pm1_ug_m3(byte_data),
+                "pm_2_5": self._get_pm25_ug_m3(byte_data),
+                "pm_4": self._get_pm4_ug_m3(byte_data),
+                "pm_10": self._get_pm10_ug_m3(byte_data),
+                "co2": self._get_co2_ppm(byte_data),
+                "voc": self._get_voc_index(byte_data),
+                "nox": self._get_nox_index(byte_data),
+                "luminosity": self._get_luminosity_lux(byte_data),
+                "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
+                "calibration_in_progress": self._get_calibration_in_progress(byte_data),
             }
         except Exception:
             log.exception("Value: %s not valid", data)

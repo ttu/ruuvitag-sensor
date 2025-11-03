@@ -92,9 +92,9 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
-        # Ruuvi Air
+        # Ruuvi Air (E1)
         if candidate.startswith("FF990406"):
-            return (6, candidate[6:])
+            return ("E1", candidate[6:])
 
         # Ruuvi advertisements start with FF9904 (for format 3 and 5),
         # or 16AAFE (for format 2 and 4).
@@ -183,6 +183,25 @@ class DataFormats:
                 return None
 
             payload_start = raw.index("FF990405") + 6
+            return raw[payload_start:]
+        except Exception:
+            return None
+
+    @staticmethod
+    def _get_data_format_e1(raw: str) -> RawSensorData:
+        """
+        Validate that data is from Ruuvi Air and is Data Format E1
+
+        Returns:
+            string: Sensor data
+        """
+        # Search of FF990406 (Manufacturer Specific Data (FF) /
+        # Ruuvi Innovations ltd / Data format E1 (Extended v1)
+        try:
+            if "FF990406" not in raw:
+                return None
+
+            payload_start = raw.index("FF990406") + 6
             return raw[payload_start:]
         except Exception:
             return None
