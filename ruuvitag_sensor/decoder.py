@@ -391,7 +391,7 @@ class DfE1Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:40]))
+            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:80],))
             return {
                 "data_format": "E1",
                 "humidity": self._get_humidity(byte_data),
