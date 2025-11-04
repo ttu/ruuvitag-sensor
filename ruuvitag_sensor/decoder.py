@@ -4,7 +4,7 @@ import math
 import struct
 from typing import Optional, Tuple, Union
 
-from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorDataUrl, SensorHistoryData
+from ruuvitag_sensor.ruuvi_types import ByteData, SensorData3, SensorData5, SensorData6, SensorDataUrl, SensorHistoryData
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +28,13 @@ def get_decoder(data_type: int):
         log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
-    return Df5Decoder()
+    if data_type == 5:
+        return Df5Decoder()
+    if data_type == 6:
+        return Df6Decoder()
+    else:
+        log.warning("INVALID DATA TYPE.")
+    
 
 
 def parse_mac(data_format: int, payload_mac: str) -> str:
@@ -283,6 +289,74 @@ class Df5Decoder:
             log.exception("Value: %s not valid", data)
             return None
 
+class Df6Decoder:
+    """Decodes data from RuuviTag with Data Format 6."""
+
+    def _get_temperature(self, data):
+        raw = int.from_bytes(data[1:3], "big", signed=True)
+        return raw * 0.005
+
+    def _get_humidity(self, data):
+        raw = int.from_bytes(data[3:5], "big")
+        return raw * 0.0025
+
+    def _get_pressure(self, data):
+        raw = int.from_bytes(data[5:7], "big")
+        return raw + 50000
+
+    def _get_pm2_5(self, data):
+        raw = int.from_bytes(data[7:9], "big")
+        return raw * 0.1
+
+    def _get_co2(self, data):
+        return int.from_bytes(data[9:11], "big")
+
+    def _get_voc_index(self, data):
+        return (data[11] << 1) | ((data[16] >> 6) & 1)
+
+    def _get_nox_index(self, data):
+        return (data[12] << 1) | ((data[16] >> 7) & 1)
+
+    def _get_luminosity(self, data):
+        return None if data[13] == 255 else data[13]
+
+    def _get_measurement_sequence_number(self, data):
+        return data[15]
+
+    def _get_flags(self, data):
+        flags_byte = data[16]
+        return {
+            "calibration_in_progress": bool(flags_byte & 0x01),
+        }
+
+    def _get_mac(self, data):
+        return ":".join(f"{b:02X}" for b in data[17:20])
+
+    def decode_data(self, data: str) -> Optional[SensorData6]:
+        # Always start at DF ID and keep max 40 characters (20 bytes)
+        # Some firmware versions append a 1-byte CRC → trim it
+        if len(data) > 40:
+            data = data[:40]
+        try:
+            byte_data = bytearray.fromhex(data)
+            flags = self._get_flags(byte_data)
+            return {
+                "data_format": 6,
+                "temperature": self._get_temperature(byte_data),
+                "humidity": self._get_humidity(byte_data),
+                "pressure": self._get_pressure(byte_data),
+                "pm2_5": self._get_pm2_5(byte_data),
+                "co2": self._get_co2(byte_data),
+                "voc_index": self._get_voc_index(byte_data),
+                "nox_index": self._get_nox_index(byte_data),
+                "luminosity": self._get_luminosity(byte_data),
+                "measurement_sequence_number": self._get_measurement_sequence_number(byte_data),
+                "flags": flags,
+                "mac": self._get_mac(byte_data),
+            }
+        except Exception:
+            log.exception("Value: %s not valid", data)
+            return None
 
 class HistoryDecoder:
     """

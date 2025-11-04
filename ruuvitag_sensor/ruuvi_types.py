@@ -38,6 +38,18 @@ class SensorData5(SensorDataBase):
     mac: str
     rssi: Optional[int]
 
+class SensorData6(SensorDataBase):
+    humidity: float
+    temperature: float
+    pressure: float
+    pm2_5: float
+    co2: int
+    voc_index: int
+    nox_index: int
+    luminosity: Optional[float]
+    measurement_sequence_number: int
+    flags: dict
+    mac: str
 
 class SensorHistoryData(TypedDict):
     humidity: Optional[float]

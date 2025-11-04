@@ -99,6 +99,9 @@ class DataFormats:
 
         if candidate.startswith("FF990405"):
             return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
+        
+        if candidate.startswith("FF990406"):  # Check for Data Format 6
+            return (6, (candidate[6:] + rssi) if rssi else candidate[6:])  # Return the extracted payload as sensor data
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
@@ -179,6 +182,23 @@ class DataFormats:
                 return None
 
             payload_start = raw.index("FF990405") + 6
+            return raw[payload_start:]
+        except Exception:
+            return None
+
+    @staticmethod
+    def _get_data_format_6(raw: str) -> RawSensorData:
+        """
+        Validate that data is from RuuviTag and is Data Format 6.
+
+        Returns:
+            string: Sensor data or None if the raw data is not from Data Format 6.
+        """
+        try:
+            if "FF990406" not in raw:
+                return None
+
+            payload_start = raw.index("FF990406") + 6
             return raw[payload_start:]
         except Exception:
             return None
