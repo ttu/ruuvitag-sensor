@@ -2,6 +2,26 @@ from ruuvitag_sensor.data_formats import DataFormats
 
 
 class TestDataFormats:
+
+    @staticmethod
+    def _get_data_format_e1(raw: str) -> RawSensorData:
+        """
+        Validate that data is from Ruuvi Air and is Data Format E1
+
+        Returns:
+            string: Sensor data
+        """
+        # Search of FF9904E1 (Manufacturer Specific Data (FF) /
+        # Ruuvi Innovations ltd / Data format E1 (Extended v1)
+        try:
+            if "FF9904E1" not in raw:
+                return None
+
+            payload_start = raw.index("FF9904E1") + 6
+            return raw[payload_start:]
+        except Exception:
+            return None
+
     def test_convert_data_valid_data(self):
         test_cases = [
             ("1502010611FF990403651652CAE900080018041C0C8BC6", 3, "03651652CAE900080018041C0C8B"),
@@ -48,7 +68,7 @@ class TestDataFormats:
             "E17FFF9C40FFFE27102710271027109C40FAFADC28F0000000FFFFFE3F0000000000CBB8334C884F",
         ]
         for x in test_cases:
-            encoded = DataFormats._get_data_format_e1(x)
+            encoded = _get_data_format_e1(x)
             assert encoded is not None
 
     def test_get_data_format_2and4_valid_data(self):
