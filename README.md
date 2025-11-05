@@ -5,7 +5,7 @@ RuuviTag Sensor Python Package
 [![License](https://img.shields.io/pypi/l/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 [![PyPI version](https://img.shields.io/pypi/v/ruuvitag-sensor.svg)](https://pypi.python.org/pypi/ruuvitag-sensor)
 [![PyPI downloads](https://img.shields.io/pypi/dm/ruuvitag-sensor.svg)](https://pypistats.org/packages/ruuvitag-sensor)
-[![Python versions](https://img.shields.io/badge/python-3.9+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
+[![Python versions](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.python.org/pypi/ruuvitag-sensor/)
 
 `ruuvitag-sensor` is a Python package for communicating with [RuuviTag BLE Sensor](https://ruuvi.com/) and for decoding measurement data from broadcasted BLE data.
 
@@ -13,10 +13,11 @@ RuuviTag Sensor Python Package
 
 ## Requirements
 
-* RuuviTag sensor
+* RuuviTag sensor or Ruuvi Air
     * Setup [guide](https://ruuvi.com/quick-start/)
-    * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
+    * Supports [Data Format 2, 3, 4, 5 and 6](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
+      * __Data Format 6:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM2.5, VOC, NOx, luminosity)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for all supported operating systems.
     * Bleak supports
@@ -31,7 +32,8 @@ RuuviTag Sensor Python Package
     * [Install guide](#BlueZ)
     * __NOTE:__ The BlueZ-adapter implementation uses deprecated BlueZ tools that are no longer supported.
       * Bleson-adapter supports sync-methods, but please be aware that it is not fully supported due to the alpha release status of the Bleson communication module. See [Bleson](#Bleson) for more information.
-* Python 3.9+
+* Python 3.10+
+    * For Python 3.9 support, check installation [instructions](#python-39) for an older version.
     * For Python 3.7 and 3.8 support, check installation [instructions](#python-37-and-38) for an older version.
     * For Python 2.x or <3.7 support, check installation [instructions](#python-2x-and-36-and-below) for an older version.
 
@@ -137,8 +139,6 @@ if __name__ == "__main__":
 ```
 
 The line `if __name__ == "__main__":` is required on Windows and macOS due to the way the `multiprocessing` library works. While not required on Linux, it is recommended. It is omitted from the rest of the examples below.
-
-For Python 3.9, you must replace `asyncio.run(main())` with `asyncio.get_event_loop().run_until_complete(main())` due to limitations in the RuuviTag package's Bleak adapter. In Python 3.10 and later versions, you can use `asyncio.run(main())`.
 
 ### 2. Get sensor data synchronously with callback
 
@@ -359,13 +359,15 @@ print(sensor_data)
 # {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
-## RuuviTag Data Formats
+## Data Formats
 
-Example data has data from 4 sensors with different firmware.
-* 1st is Data Format 2 (URL), the identifier is None as the sensor doesn't broadcast any identifier data
-* 2nd is Data Format 4 (URL) and it has an identifier character
-* 3rd is Data Format 3 (RAW)
-* 4th is Data Format 5 (RAW v2)
+### RuuviTag Data Formats
+
+RuuviTag sensors support multiple data formats. Example data from sensors with different firmware:
+* Data Format 2 (URL) - Deprecated
+* Data Format 3 (RAW) - Deprecated  
+* Data Format 4 (URL with identifier) - Deprecated
+* Data Format 5 (RAW v2)
 
 ```python
 {
@@ -376,11 +378,25 @@ Example data has data from 4 sensors with different firmware.
 }
 ```
 
-### Note on Data Format 2 and 4
+#### Note on Data Format 2 and 4
 
 There is no reason to use Data Format 2 or 4.
 
 The original reason to use URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
+
+### Ruuvi Air Data Formats
+
+#### Data Format 6
+
+Ruuvi Air uses Data Format 6 for comprehensive indoor air quality monitoring. For more details, see the [official specification](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-6).
+
+Example data from a Ruuvi Air sensor:
+
+```python
+{
+'4C:88:4F:AA:BB:CC': { 'data_format': 6, 'temperature': 29.5, 'humidity': 55.3, 'pressure': 1011.02, 'pm_2_5': 11.2, 'co2': 201, 'voc': 10, 'nox': 2, 'luminosity': 13026.67, 'measurement_sequence_number': 205, 'calibration_in_progress': False, 'mac': '4c884f' }
+}
+```
 
 ## Logging
 
@@ -571,6 +587,22 @@ $ export RUUVI_BLE_ADAPTER="bleson"
 __NOTE:__ On macOS, only Data Format 5 works, as macOS doesn't advertise MAC address and only DF5 has MAC in sensor payload. `RuuviTag`-class doesn't work with macOS.
 
 __NOTE:__ On Windows, Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for the advertised package, so it is still unusable.
+
+
+## Python 3.9
+
+Last version of `ruuvitag-sensor` with Python 3.9 support is [3.1.0](https://pypi.org/project/ruuvitag-sensor/3.1.0/).
+
+[Branch](https://github.com/ttu/ruuvitag-sensor/tree/release/3.1.0) / [Tag / commit](https://github.com/ttu/ruuvitag-sensor/commit/e722700e21b75adfcec515c640d447f6e701bf1b)
+
+```sh
+$ git checkout release/3.1.0
+```
+
+Install from PyPI
+```sh
+$ python -m pip install ruuvitag-sensor==3.1.0
+```
 
 
 ## Python 3.7 and 3.8

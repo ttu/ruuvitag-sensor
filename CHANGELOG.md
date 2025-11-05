@@ -1,7 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
-
+* CHANGE: Support only Python 3.10 and newer
+* ADD: Support for Ruuvi Air (Data Format 6)
 
 ## [3.1.0] - 2025-03-01
 * ADD: Support for fetching history data from RuuviTags
