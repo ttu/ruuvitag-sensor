@@ -13,10 +13,11 @@ RuuviTag Sensor Python Package
 
 ## Requirements
 
-* RuuviTag sensor
+* RuuviTag sensor or Ruuvi Air
     * Setup [guide](https://ruuvi.com/quick-start/)
-    * Supports [Data Format 2, 3, 4 and 5](https://docs.ruuvi.com/)
+    * Supports [Data Format 2, 3, 4, 5 and 6](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
+      * __Data Format 6:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM2.5, VOC, NOx, luminosity)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for all supported operating systems.
     * Bleak supports
@@ -358,13 +359,15 @@ print(sensor_data)
 # {'temperature': 25.12, 'identifier': '0', 'humidity': 26.5, 'pressure': 992.0}
 ```
 
-## RuuviTag Data Formats
+## Data Formats
 
-Example data has data from 4 sensors with different firmware.
-* 1st is Data Format 2 (URL), the identifier is None as the sensor doesn't broadcast any identifier data
-* 2nd is Data Format 4 (URL) and it has an identifier character
-* 3rd is Data Format 3 (RAW)
-* 4th is Data Format 5 (RAW v2)
+### RuuviTag Data Formats
+
+RuuviTag sensors support multiple data formats. Example data from sensors with different firmware:
+* Data Format 2 (URL) - Deprecated
+* Data Format 3 (RAW) - Deprecated  
+* Data Format 4 (URL with identifier) - Deprecated
+* Data Format 5 (RAW v2)
 
 ```python
 {
@@ -375,11 +378,25 @@ Example data has data from 4 sensors with different firmware.
 }
 ```
 
-### Note on Data Format 2 and 4
+#### Note on Data Format 2 and 4
 
 There is no reason to use Data Format 2 or 4.
 
 The original reason to use URL-encoded data was to use _Google's Nearby_ notifications to let users view tags without the need to install any app. Since _Google's Nearby_ has been discontinued, there isn't any benefit in using the Eddystone format anymore.
+
+### Ruuvi Air Data Formats
+
+#### Data Format 6
+
+Ruuvi Air uses Data Format 6 for comprehensive indoor air quality monitoring. For more details, see the [official specification](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-6).
+
+Example data from a Ruuvi Air sensor:
+
+```python
+{
+'4C:88:4F:AA:BB:CC': { 'data_format': 6, 'temperature': 29.5, 'humidity': 55.3, 'pressure': 1011.02, 'pm_2_5': 11.2, 'co2': 201, 'voc': 10, 'nox': 2, 'luminosity': 13026.67, 'measurement_sequence_number': 205, 'calibration_in_progress': False, 'mac': '4c884f' }
+}
+```
 
 ## Logging
 

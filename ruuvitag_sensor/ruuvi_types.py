@@ -39,6 +39,20 @@ class SensorData5(SensorDataBase):
     rssi: Optional[int]
 
 
+class SensorData6(SensorDataBase):
+    humidity: float
+    temperature: float
+    pressure: float
+    pm_2_5: float
+    co2: int
+    voc: int
+    nox: int
+    luminosity: float
+    measurement_sequence_number: int
+    calibration_in_progress: bool
+    mac: str
+
+
 class SensorHistoryData(TypedDict):
     humidity: Optional[float]
     temperature: Optional[float]
@@ -46,7 +60,7 @@ class SensorHistoryData(TypedDict):
     timestamp: int
 
 
-SensorData = Union[SensorDataUrl, SensorData3, SensorData5]
+SensorData = Union[SensorDataUrl, SensorData3, SensorData5, SensorData6]
 
 DataFormat = Optional[int]
 RawSensorData = Optional[str]

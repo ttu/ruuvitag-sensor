@@ -92,13 +92,16 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
-        # Ruuvi advertisements start with FF9904 (for format 3 and 5),
+        # Ruuvi advertisements start with FF9904 (for format 3, 5, and 6),
         # or 16AAFE (for format 2 and 4).
         if candidate.startswith("FF990403"):
             return (3, candidate[6:])
 
         if candidate.startswith("FF990405"):
             return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
+
+        if candidate.startswith("FF990406"):
+            return (6, candidate[6:])
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
