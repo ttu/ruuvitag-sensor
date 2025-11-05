@@ -257,6 +257,7 @@ class Df5Decoder:
             dict: Sensor values
         """
         try:
+            print("RAW DATA 5: ", data)
             byte_data: ByteData = struct.unpack(">BhHHhhhHBH6B", bytearray.fromhex(data[:48]))
             rssi = data[48:]
 
@@ -391,7 +392,9 @@ class DfE1Decoder:
             dict: Sensor values
         """
         try:
-            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:80],))
+            print("RAW DATA: ", data)
+            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex("E17FFF9C40FFFE27102710271027109C40FAFADC28F0000000FFFFFE3F0000000000CBB8334C884F"[:80]))
+#            byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:80]))
             return {
                 "data_format": "E1",
                 "humidity": self._get_humidity(byte_data),
