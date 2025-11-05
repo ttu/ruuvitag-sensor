@@ -88,5 +88,5 @@ skip-magic-trailing-comma = false
 max-complexity = 12
 
 [tool.mypy]
-python_version = 3.10
+python_version = "3.10"
 ignore_missing_imports = true

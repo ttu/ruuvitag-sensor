@@ -41,7 +41,7 @@ class RuuviTagBase:
         if self._data is None:
             self._state = {}
         elif data_format is not None:
-            self._state = get_decoder(data_format).decode_data(self._data)
+            self._state = get_decoder(data_format).decode_data(self._data)  # type: ignore[assignment]
 
         return self._state
 
