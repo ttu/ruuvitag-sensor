@@ -1,6 +1,7 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Support only Python 3.10 and newer
 
 
 ## [3.1.0] - 2025-03-01
