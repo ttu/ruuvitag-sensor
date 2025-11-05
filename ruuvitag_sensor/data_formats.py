@@ -92,12 +92,8 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
-        # Ruuvi Air (E1)
-        if candidate.startswith("FF9904E1"):
-            return ("E1", candidate[6:])
 
-        # Ruuvi advertisements start with FF9904 (for format 3 and 5),
-        # Ruuvi advertisements start with FF9904 (for format 3, 5, and 6),
+        # Ruuvi advertisements start with FF9904 (for format 3, 5, 6 and E1),
         # or 16AAFE (for format 2 and 4).
         if candidate.startswith("FF990403"):
             return (3, candidate[6:])
@@ -107,6 +103,9 @@ class DataFormats:
 
         if candidate.startswith("FF990406"):
             return (6, candidate[6:])
+
+        if candidate.startswith("FF9904E1"):
+            return ("E1", candidate[6:])
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
