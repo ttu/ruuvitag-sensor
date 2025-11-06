@@ -313,7 +313,7 @@ class Df5Decoder:
 
 class DfE1Decoder:
     """
-    Decodes data from Ruuvi Air with Data Format 1E
+    Decodes data from Ruuvi Air with Data Format E1
     Protocol specification:
     https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1.md
     """
@@ -335,7 +335,6 @@ class DfE1Decoder:
         if data[3] == 0xFFFF:
             return None
         return round((int(data[3]) + 50000) / 100, 2)
-
 
     def _get_pm1_ug_m3(self, data: list[str]) -> Optional[float]:
         """Return PM 1.0, ug/m^3"""
