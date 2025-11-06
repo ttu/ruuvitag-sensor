@@ -11,6 +11,7 @@ from ruuvitag_sensor.ruuvi_types import (
     SensorData3,
     SensorData5,
     SensorData6,
+    SensorDataE1,
     SensorDataUrl,
     SensorHistoryData,
 )

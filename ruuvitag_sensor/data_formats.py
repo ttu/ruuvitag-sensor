@@ -36,7 +36,7 @@ class DataFormats:
     """
 
     @staticmethod
-    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911
+    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911, C901
         """
         Validate that data is from RuuviTag and get correct data part.
 

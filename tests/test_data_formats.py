@@ -1,4 +1,4 @@
-from ruuvitag_sensor.data_formats import DataFormats
+from ruuvitag_sensor.data_formats import DataFormats, RawSensorData
 
 
 class TestDataFormats:
@@ -68,7 +68,7 @@ class TestDataFormats:
             "E17FFF9C40FFFE27102710271027109C40FAFADC28F0000000FFFFFE3F0000000000CBB8334C884F",
         ]
         for x in test_cases:
-            encoded = _get_data_format_e1(x)
+            encoded = TestDataFormats._get_data_format_e1(x)
             assert encoded is not None
 
     def test_get_data_format_6_valid_data(self):
