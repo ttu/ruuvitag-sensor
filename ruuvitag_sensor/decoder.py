@@ -60,7 +60,7 @@ def get_decoder(data_format: int|str) -> UrlDecoder | Df3Decoder | Df5Decoder | 
     raise ValueError(f"Unknown data format: {data_format}")
 
 
-def parse_mac(data_format: int, payload_mac: str) -> str:
+def parse_mac(data_format: int|str, payload_mac: str) -> str:
     """
     Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
 
@@ -367,7 +367,7 @@ class DfE1Decoder:
             return None
         return int(data[8])
 
-    def _get_voc_index(self, data: list[str]) -> Optional[int]:
+    def _get_voc_index(self, data: ByteData) -> Optional[int]:
         """Return VOC index"""
         # VOC is 9 bits: 8 bits in data[9], LSB in bit 6 of data[14]
         val = int(data[9]) << 1
@@ -377,7 +377,7 @@ class DfE1Decoder:
             return None
         return int(val)
 
-    def _get_nox_index(self, data: list[str]) -> Optional[int]:
+    def _get_nox_index(self, data: ByteData) -> Optional[int]:
         """Return NOX index"""
         # VOC is 9 bits: 8 bits in data[10], LSB in bit 6 of data[14]
         val = int(data[10]) << 1
@@ -387,7 +387,7 @@ class DfE1Decoder:
             return None
         return int(val)
 
-    def _get_luminosity_lux(self, data: list[str]) -> Optional[float]:
+    def _get_luminosity_lux(self, data: ByteData) -> Optional[float]:
         """Return Luminosity Lux"""
         lumi_bytes = bytes(data[11])
         if lumi_bytes == b"\xff\xff\xff":
@@ -407,7 +407,6 @@ class DfE1Decoder:
 
     def _get_mac(self, data: ByteData) -> str:
         return ":".join(f"{b:02X}" for b in bytes(data[16]))
-
     def decode_data(self, data: str) -> Optional[SensorDataE1]:
         """
         Decode sensor data.
@@ -419,17 +418,17 @@ class DfE1Decoder:
             byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:80]))
             return {
                 "data_format": "E1",
-                "humidity": self._get_humidity(byte_data),
-                "temperature": self._get_temperature(byte_data),
-                "pressure": self._get_pressure(byte_data),
-                "pm_1": self._get_pm1_ug_m3(byte_data),
-                "pm_2_5": self._get_pm25_ug_m3(byte_data),
-                "pm_4": self._get_pm4_ug_m3(byte_data),
-                "pm_10": self._get_pm10_ug_m3(byte_data),
-                "co2": self._get_co2_ppm(byte_data),
-                "voc": self._get_voc_index(byte_data),
-                "nox": self._get_nox_index(byte_data),
-                "luminosity": self._get_luminosity_lux(byte_data),
+                "humidity": self._get_humidity(byte_data), # type: ignore
+                "temperature": self._get_temperature(byte_data), # type: ignore
+                "pressure": self._get_pressure(byte_data), # type: ignore
+                "pm_1": self._get_pm1_ug_m3(byte_data), # type: ignore
+                "pm_2_5": self._get_pm25_ug_m3(byte_data), # type: ignore
+                "pm_4": self._get_pm4_ug_m3(byte_data), # type: ignore
+                "pm_10": self._get_pm10_ug_m3(byte_data), # type: ignore
+                "co2": self._get_co2_ppm(byte_data), # type: ignore
+                "voc": self._get_voc_index(byte_data), # type: ignore
+                "nox": self._get_nox_index(byte_data),# type: ignore
+                "luminosity": self._get_luminosity_lux(byte_data), # type: ignore
                 "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
                 "calibration_in_progress": self._get_calibration_in_progress(byte_data),
                 "mac": self._get_mac(byte_data),
