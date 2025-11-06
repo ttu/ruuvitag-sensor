@@ -340,8 +340,8 @@ class RuuviTagSensor:
         mac_to_send = (
             mac
             if mac
-            else parse_mac(data_format, decoded["mac"])
-            if "mac" in decoded and decoded["mac"] is not None
+            else parse_mac(data_format, decoded["mac"])  # type: ignore[typeddict-item]
+            if "mac" in decoded and decoded["mac"] is not None  # type: ignore[typeddict-item]
             else ""
         )
 

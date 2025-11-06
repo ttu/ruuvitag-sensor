@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import logging
 import math
@@ -16,33 +18,45 @@ from ruuvitag_sensor.ruuvi_types import (
 log = logging.getLogger(__name__)
 
 
-def get_decoder(data_type: int|str):
+def get_decoder(data_format: int|str) -> UrlDecoder | Df3Decoder | Df5Decoder | Df6Decoder | DfE1Decoder:
     """
-    Get correct decoder for Data Type.
+    Get correct decoder for Data Format.
+
+    Args:
+        data_format: The data format number (2, 3, 4, 5, or 6)
 
     Returns:
-        object: Data decoder
+        object: Data decoder instance
+
+    Raises:
+        ValueError: If data_format is not a recognized format
     """
-    if data_type == 2:
+    if data_format == 2:
         log.warning("DATA TYPE 2 IS OBSOLETE. UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
-    if data_type == 4:
+    if data_format == 4:
         log.warning("DATA TYPE 4 IS OBSOLETE. UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_04.md
         return UrlDecoder()
-    if data_type == 3:
+    if data_format == 3:
         log.warning("DATA TYPE 3 IS DEPRECATED - UPDATE YOUR TAG")
         # https://github.com/ruuvi/ruuvi-sensor-protocols/blob/master/dataformat_03.md
         return Df3Decoder()
-    if data_type == "E1":
+    if data_format == "E1":
         # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1.md
         return DfE1Decoder()
-    if data_type == 6:
+    if data_format == 5:
+        # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-5-rawv2
+        return Df5Decoder()
+    if data_format == 6:
         # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-6
         return Df6Decoder()
-    # https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-5-rawv2
-    return Df5Decoder()
+
+    # This should never happen in normal operation since DataFormats.convert_data()
+    # already validates and identifies the data format. If we reach here, it indicates
+    # a programming error (e.g., convert_data was bypassed or returned an unhandled format).
+    raise ValueError(f"Unknown data format: {data_format}")
 
 
 def parse_mac(data_format: int, payload_mac: str) -> str:
