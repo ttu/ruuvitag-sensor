@@ -2,7 +2,7 @@ from typing import Optional, Tuple, TypedDict, Union
 
 
 class SensorDataBase(TypedDict):
-    data_format: int|str
+    data_format: int | str
 
 
 class SensorDataUrl(SensorDataBase):
@@ -52,10 +52,12 @@ class SensorData6(SensorDataBase):
     calibration_in_progress: bool
     mac: str
 
+
 class SensorDataE1(SensorData6):
     pm_1: float
     pm_4: float
     pm_10: float
+
 
 class SensorHistoryData(TypedDict):
     humidity: Optional[float]
@@ -66,7 +68,7 @@ class SensorHistoryData(TypedDict):
 
 SensorData = Union[SensorDataUrl, SensorData3, SensorData5, SensorData6]
 
-DataFormat = Optional[int|str]
+DataFormat = Optional[int | str]
 RawSensorData = Optional[str]
 DataFormatAndRawSensorData = Tuple[DataFormat, RawSensorData]
 

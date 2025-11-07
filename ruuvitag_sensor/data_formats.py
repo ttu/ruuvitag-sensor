@@ -92,7 +92,6 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
-
         # Ruuvi advertisements start with FF9904 (for format 3, 5, 6 and E1),
         # or 16AAFE (for format 2 and 4).
         if candidate.startswith("FF990403"):

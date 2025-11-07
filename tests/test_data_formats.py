@@ -2,7 +2,6 @@ from ruuvitag_sensor.data_formats import DataFormats, RawSensorData
 
 
 class TestDataFormats:
-
     @staticmethod
     def _get_data_format_e1(raw: str) -> RawSensorData:
         """

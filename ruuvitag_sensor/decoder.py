@@ -19,7 +19,7 @@ from ruuvitag_sensor.ruuvi_types import (
 log = logging.getLogger(__name__)
 
 
-def get_decoder(data_format: int|str) -> UrlDecoder | Df3Decoder | Df5Decoder | Df6Decoder | DfE1Decoder:
+def get_decoder(data_format: int | str) -> UrlDecoder | Df3Decoder | Df5Decoder | Df6Decoder | DfE1Decoder:
     """
     Get correct decoder for Data Format.
 
@@ -60,7 +60,7 @@ def get_decoder(data_format: int|str) -> UrlDecoder | Df3Decoder | Df5Decoder | 
     raise ValueError(f"Unknown data format: {data_format}")
 
 
-def parse_mac(data_format: int|str, payload_mac: str) -> str:
+def parse_mac(data_format: int | str, payload_mac: str) -> str:
     """
     Data format 5 payload contains MAC-address in format e.g. e62eb92e73e5
 
@@ -312,6 +312,7 @@ class Df5Decoder:
             log.exception("Value: %s not valid", data)
             return None
 
+
 class DfE1Decoder:
     """
     Decodes data from Ruuvi Air with Data Format E1
@@ -407,6 +408,7 @@ class DfE1Decoder:
 
     def _get_mac(self, data: ByteData) -> str:
         return ":".join(f"{b:02X}" for b in bytes(data[16]))
+
     def decode_data(self, data: str) -> Optional[SensorDataE1]:
         """
         Decode sensor data.
@@ -418,17 +420,17 @@ class DfE1Decoder:
             byte_data: ByteData = struct.unpack(">BhHHHHHHHBB3s3s3sB5s6s", bytearray.fromhex(data[:80]))
             return {
                 "data_format": "E1",
-                "humidity": self._get_humidity(byte_data), # type: ignore
-                "temperature": self._get_temperature(byte_data), # type: ignore
-                "pressure": self._get_pressure(byte_data), # type: ignore
-                "pm_1": self._get_pm1_ug_m3(byte_data), # type: ignore
-                "pm_2_5": self._get_pm25_ug_m3(byte_data), # type: ignore
-                "pm_4": self._get_pm4_ug_m3(byte_data), # type: ignore
-                "pm_10": self._get_pm10_ug_m3(byte_data), # type: ignore
-                "co2": self._get_co2_ppm(byte_data), # type: ignore
-                "voc": self._get_voc_index(byte_data), # type: ignore
-                "nox": self._get_nox_index(byte_data),# type: ignore
-                "luminosity": self._get_luminosity_lux(byte_data), # type: ignore
+                "humidity": self._get_humidity(byte_data),  # type: ignore
+                "temperature": self._get_temperature(byte_data),  # type: ignore
+                "pressure": self._get_pressure(byte_data),  # type: ignore
+                "pm_1": self._get_pm1_ug_m3(byte_data),  # type: ignore
+                "pm_2_5": self._get_pm25_ug_m3(byte_data),  # type: ignore
+                "pm_4": self._get_pm4_ug_m3(byte_data),  # type: ignore
+                "pm_10": self._get_pm10_ug_m3(byte_data),  # type: ignore
+                "co2": self._get_co2_ppm(byte_data),  # type: ignore
+                "voc": self._get_voc_index(byte_data),  # type: ignore
+                "nox": self._get_nox_index(byte_data),  # type: ignore
+                "luminosity": self._get_luminosity_lux(byte_data),  # type: ignore
                 "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
                 "calibration_in_progress": self._get_calibration_in_progress(byte_data),
                 "mac": self._get_mac(byte_data),
