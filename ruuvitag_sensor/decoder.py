@@ -338,31 +338,31 @@ class DfE1Decoder:
             return None
         return round((int(data[3]) + 50000) / 100, 2)
 
-    def _get_pm1_ug_m3(self, data: list[str]) -> Optional[float]:
+    def _get_pm1_ug_m3(self, data: ByteData) -> Optional[float]:
         """Return PM 1.0, ug/m^3"""
         if data[4] == 0xFFFF:
             return None
         return round(int(data[4]) * 0.1, 1)
 
-    def _get_pm25_ug_m3(self, data: list[str]) -> Optional[float]:
+    def _get_pm25_ug_m3(self, data: ByteData) -> Optional[float]:
         """Return PM 2.5, ug/m^3"""
         if data[5] == 0xFFFF:
             return None
         return round(int(data[5]) * 0.1, 1)
 
-    def _get_pm4_ug_m3(self, data: list[str]) -> Optional[float]:
+    def _get_pm4_ug_m3(self, data: ByteData) -> Optional[float]:
         """Return PM 4.0, ug/m^3"""
         if data[6] == 0xFFFF:
             return None
         return round(int(data[6]) * 0.1, 1)
 
-    def _get_pm10_ug_m3(self, data: list[str]) -> Optional[float]:
+    def _get_pm10_ug_m3(self, data: ByteData) -> Optional[float]:
         """Return PM 10.0, ug/m^3"""
         if data[7] == 0xFFFF:
             return None
         return round(int(data[7]) * 0.1, 1)
 
-    def _get_co2_ppm(self, data: list[str]) -> Optional[int]:
+    def _get_co2_ppm(self, data: ByteData) -> Optional[int]:
         """Return CO2 ppm"""
         if data[8] == 0xFFFF:
             return None
