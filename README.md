@@ -15,7 +15,7 @@ RuuviTag Sensor Python Package
 
 * RuuviTag sensor or Ruuvi Air
     * Setup [guide](https://ruuvi.com/quick-start/)
-    * Supports [Data Format 2, 3, 4, 5, 6, E1](https://docs.ruuvi.com/)
+    * Supports [Data Format 2, 3, 4, 5, 6 and E1](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
       * __Data Format 6:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM2.5, VOC, NOx, luminosity)
       * __Data Format E1:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM1.0, PM2.5, PM4.0, PM10.0, VOC, NOx, luminosity)
