@@ -369,24 +369,30 @@ class DfE1Decoder:
         return int(data[8])
 
     def _get_voc_index(self, data: ByteData) -> Optional[int]:
-        """Return VOC index"""
-        # VOC is 9 bits: 8 bits in data[9], LSB in bit 6 of data[14]
-        val = int(data[9]) << 1
-        if data[14] & 64:  # bit 6 of data[14]
-            val |= 1
-        if val == 0x1FF:
+        """Return VOC index (unitless, 9-bit)"""
+        # VOC: bits [8:1] are in data[6], bit [0] (LSB) is FLAGS bit 6
+        # As per spec: "9 bit unsigned, least significant bit in Flags byte"
+        voc_high_bits = data[9]  # bits [8:1]
+        voc_lsb = (data[14] >> 6) & 0x01  # bit [0]
+        voc = (voc_high_bits << 1) | voc_lsb
+
+        if voc == 511:  # 0x1FF
             return None
-        return int(val)
+
+        return voc
 
     def _get_nox_index(self, data: ByteData) -> Optional[int]:
-        """Return NOX index"""
-        # VOC is 9 bits: 8 bits in data[10], LSB in bit 6 of data[14]
-        val = int(data[10]) << 1
-        if data[14] & 64:  # bit 6 of data[14]
-            val |= 1
-        if val == 0x1FF:
+        """Return NOx index (unitless, 9-bit)"""
+        # NOx: bits [8:1] are in data[7], bit [0] (LSB) is FLAGS bit 7
+        # As per spec: "9 bit unsigned, least significant bit in Flags byte"
+        nox_high_bits = data[10]  # bits [8:1]
+        nox_lsb = (data[14] >> 7) & 0x01  # bit [0]
+        nox = (nox_high_bits << 1) | nox_lsb
+
+        if nox == 511:  # 0x1FF
             return None
-        return int(val)
+
+        return nox
 
     def _get_luminosity_lux(self, data: ByteData) -> Optional[float]:
         """Return Luminosity Lux"""

@@ -103,7 +103,7 @@ class DataFormats:
         if candidate.startswith("FF990406"):
             return (6, candidate[6:])
 
-        if candidate.lower().startswith("FF9904E1".lower()):
+        if candidate.startswith("FF9904E1"):
             return ("E1", candidate[6:])
 
         if candidate.startswith("16AAFE"):
@@ -200,10 +200,10 @@ class DataFormats:
         # Search of FF9904E1 (Manufacturer Specific Data (FF) /
         # Ruuvi Innovations ltd / Data format E1 (Extended v1)
         try:
-            if "FF9904E1".lower() not in raw.lower():
+            if "FF9904E1" not in raw:
                 return None
 
-            payload_start = raw.lower().index("FF9904E1".lower()) + 6
-            return raw[payload_start:].lower()
+            payload_start = raw.index("FF9904E1") + 6
+            return raw[payload_start:]
         except Exception:
             return None
