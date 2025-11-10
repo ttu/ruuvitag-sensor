@@ -23,6 +23,8 @@ class TestDecoder(TestCase):
         self.assertIsInstance(dec, Df5Decoder)
         dec = get_decoder(6)
         self.assertIsInstance(dec, Df6Decoder)
+        dec = get_decoder("E1")
+        self.assertIsInstance(dec, DfE1Decoder)
         # Test unknown format raises ValueError
         with self.assertRaises(ValueError) as context:
             get_decoder(99)
