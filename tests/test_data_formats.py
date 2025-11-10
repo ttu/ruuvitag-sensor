@@ -1,4 +1,4 @@
-from ruuvitag_sensor.data_formats import DataFormats, RawSensorData
+from ruuvitag_sensor.data_formats import DataFormats
 
 
 class TestDataFormats:

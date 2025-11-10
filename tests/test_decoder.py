@@ -381,7 +381,8 @@ class TestDecoder(TestCase):
         """Test Data Format E1 decoder with valid data test vector from official docs"""
         decoder = DfE1Decoder()
         # Test vector from https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1
-        # Raw binary data: 0xE1170C5668C79E0065007004BD11CA00C90A0213E0ACXXXXXXDECDEE10XXXXXXXXXXCBB8334C884F (XX = Reserved, 0xFF)
+        # Raw binary data: 0xE1170C5668C79E0065007004BD11CA00C90A0213E0ACXXXXXXDECDEE10XXXXXXXXXXCBB8334C884F
+        # (XX = Reserved, 0xFF)
         # VOC/NOx use LSB encoding: bits[8:1] in byte, bit[0] in FLAGS
         data = decoder.decode_data("E1170C5668C79E0065007004BD11CA00C90A0213E0ACFFFFFFDECDEE11FFFFFFFFFFCBB8334C884F")
 
@@ -403,7 +404,8 @@ class TestDecoder(TestCase):
         """Test Data Format E1 decoder with maximum values test vector"""
         decoder = DfE1Decoder()
         # Test vector from https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1
-        # Raw binary data: 0xE17FFF9C40FFFE27102710271027109C40FAFADC28F0XXXXXXFFFFFE3FXXXXXXXXXXCBB8334C884F (XX = Reserved, 0x00)
+        # Raw binary data: 0xE17FFF9C40FFFE27102710271027109C40FAFADC28F0XXXXXXFFFFFE3FXXXXXXXXXXCBB8334C884F
+        # (XX = Reserved, 0x00)
         # With LSB encoding: (0xFA << 1) | 0 = 500 for both VOC and NOx
         data = decoder.decode_data("E17FFF9C40FFFE27102710271027109C40FAFADC28F0000000FFFFFE300000000000CBB8334C884F")
 
@@ -425,7 +427,8 @@ class TestDecoder(TestCase):
         """Test Data Format E1 decoder with minimum values test vector"""
         decoder = DfE1Decoder()
         # Test vector from https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-E1
-        # Raw binary data: 0xE1800100000000000000000000000000000000000000XXXXXX0000000XXXXXXXXXXXCBB8334C884F (XX = Reserved, 0x00)
+        # Raw binary data: 0xE1800100000000000000000000000000000000000000XXXXXX0000000XXXXXXXXXXXCBB8334C884F
+        # (XX = Reserved, 0x00)
         data = decoder.decode_data("E1800100000000000000000000000000000000000000000000000000000000000000CBB8334C884F")
 
         assert data is not None
@@ -446,7 +449,8 @@ class TestDecoder(TestCase):
         """Test Data Format E1 decoder with invalid/not available values"""
         decoder = DfE1Decoder()
         # Test vector from https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-E1
-        # Raw binary data: 0xE18000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFXXXXXXFFFFFFFEXXXXXXXXXXFFFFFFFFFFFF (XX = Reserved, 0x00)
+        # Raw binary data: 0xE18000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFXXXXXXFFFFFFFEXXXXXXXXXXFFFFFFFFFFFF
+        # (XX = Reserved, 0x00)
         data = decoder.decode_data("E18000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFE0000000000FFFFFFFFFFFF")
 
         assert data is not None
@@ -459,7 +463,7 @@ class TestDecoder(TestCase):
         assert data["voc"] is None
         assert data["nox"] is None
         assert data["luminosity"] is None
-        assert data["measurement_sequence_number"] == None
+        assert data["measurement_sequence_number"] is None
         assert data["calibration_in_progress"] is False
         assert data["mac"] == "FF:FF:FF:FF:FF:FF"
 
