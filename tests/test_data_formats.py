@@ -47,16 +47,16 @@ class TestDataFormats:
         # BLE advertisement structure: [total_len][chunks...][rssi]
         # Format E1 has 40 bytes of payload data
         # Chunk 1: 020106 (BLE flags)
-        # Chunk 2: 2B FF9904E1[40 bytes of DFE1 data]
+        # Chunk 2: 2B FF9904e1[40 bytes of DFE1 data]
         # Total: 30 (48 bytes) + BC (RSSI)
         test_case = (
-            "30020106 2BFF9904E1170C5668C79E0065007004BD11CA00C90A0213E0AC000000DECDEE110000000000CBB8334C884F BC"
+            "30020106 2BFF9904e1170c5668c79e0065007004bd11ca00c90a0213e0ac000000decdee110000000000cbb8334c884f BC"
         )
         test_case = test_case.replace(" ", "")  # Remove spaces for clarity
         encoded = DataFormats.convert_data(test_case)
         assert encoded is not None
         assert encoded[0] == "E1"
-        assert encoded[1].startswith("E1")
+        assert encoded[1].startswith("e1")
 
     def test_get_data_format_6_valid_data(self):
         # Test cases based on Ruuvi Air Data Format 6 specification

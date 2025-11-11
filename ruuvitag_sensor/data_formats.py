@@ -103,8 +103,9 @@ class DataFormats:
         if candidate.startswith("FF990406"):
             return (6, candidate[6:])
 
-        if candidate.startswith("FF9904E1"):
-            return ("E1", candidate[6:])
+        # Ruuvi Air sends E1 in lowercase, e.g. `ff9904e1...`
+        if candidate.lower().startswith("ff9904e1"):
+            return ("E1", candidate[6:].lower())
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
@@ -197,13 +198,14 @@ class DataFormats:
         Returns:
             string: Sensor data
         """
-        # Search of FF9904E1 (Manufacturer Specific Data (FF) /
+        # Search of ff9904e1 (Manufacturer Specific Data (FF) /
         # Ruuvi Innovations ltd / Data format E1 (Extended v1)
         try:
-            if "FF9904E1" not in raw:
+            raw = raw.lower()
+            if "ff9904e1" not in raw:
                 return None
 
-            payload_start = raw.index("FF9904E1") + 6
+            payload_start = raw.index("ff9904e1") + 6
             return raw[payload_start:]
         except Exception:
             return None
