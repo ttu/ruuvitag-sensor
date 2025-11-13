@@ -36,7 +36,7 @@ class DataFormats:
     """
 
     @staticmethod
-    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911
+    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911, C901
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -92,7 +92,7 @@ class DataFormats:
 
         log.debug("Found candidate %s", candidate)
 
-        # Ruuvi advertisements start with FF9904 (for format 3, 5, and 6),
+        # Ruuvi advertisements start with FF9904 (for format 3, 5, 6 and E1),
         # or 16AAFE (for format 2 and 4).
         if candidate.startswith("FF990403"):
             return (3, candidate[6:])
@@ -102,6 +102,10 @@ class DataFormats:
 
         if candidate.startswith("FF990406"):
             return (6, candidate[6:])
+
+        # Ruuvi Air sends E1 in lowercase, e.g. `ff9904e1...`
+        if candidate.lower().startswith("ff9904e1"):
+            return ("E1", candidate[6:].lower())
 
         if candidate.startswith("16AAFE"):
             # TODO: Check from raw data correct data format
@@ -182,6 +186,26 @@ class DataFormats:
                 return None
 
             payload_start = raw.index("FF990405") + 6
+            return raw[payload_start:]
+        except Exception:
+            return None
+
+    @staticmethod
+    def _get_data_format_e1(raw: str) -> RawSensorData:
+        """
+        Validate that data is from Ruuvi Air and is Data Format E1
+
+        Returns:
+            string: Sensor data
+        """
+        # Search of ff9904e1 (Manufacturer Specific Data (FF) /
+        # Ruuvi Innovations ltd / Data format E1 (Extended v1)
+        try:
+            raw = raw.lower()
+            if "ff9904e1" not in raw:
+                return None
+
+            payload_start = raw.index("ff9904e1") + 6
             return raw[payload_start:]
         except Exception:
             return None

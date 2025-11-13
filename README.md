@@ -15,9 +15,10 @@ RuuviTag Sensor Python Package
 
 * RuuviTag sensor or Ruuvi Air
     * Setup [guide](https://ruuvi.com/quick-start/)
-    * Supports [Data Format 2, 3, 4, 5 and 6](https://docs.ruuvi.com/)
+    * Supports [Data Format 2, 3, 4, 5, 6 and E1](https://docs.ruuvi.com/)
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
       * __Data Format 6:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM2.5, VOC, NOx, luminosity)
+      * __Data Format E1:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM1.0, PM2.5, PM4.0, PM10.0, VOC, NOx, luminosity)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for all supported operating systems.
     * Bleak supports
@@ -395,6 +396,18 @@ Example data from a Ruuvi Air sensor:
 ```python
 {
 '4C:88:4F:AA:BB:CC': { 'data_format': 6, 'temperature': 29.5, 'humidity': 55.3, 'pressure': 1011.02, 'pm_2_5': 11.2, 'co2': 201, 'voc': 10, 'nox': 2, 'luminosity': 13026.67, 'measurement_sequence_number': 205, 'calibration_in_progress': False, 'mac': '4c884f' }
+}
+```
+
+#### Data Format E1
+
+Ruuvi Air uses Data Format E1 to extend format 6 data. If same Ruuvi Air device provides both, format 6 and E1 data, the format 6 data should be discarded as E1 data includes all format 6 data fields. For more details, see the [official specification](https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1).
+
+Example data from a Ruuvi Air sensor:
+
+```python
+{
+'CB:B8:33:4C:88:4F', {'data_format': 'E1', 'humidity': 55.3, 'temperature': 29.5, 'pressure': 1011.02, 'pm_1': 10.1, 'pm_2_5': 11.2, 'pm_4': 121.3, 'pm_10': 455.4, 'co2': 201, 'voc': 20, 'nox': 4, 'luminosity': 13027.0, 'measurement_sequence_number': 14601710, 'calibration_in_progress': True, 'mac': 'CB:B8:33:4C:88:4F'}
 }
 ```
 
