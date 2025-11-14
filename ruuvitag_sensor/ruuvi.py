@@ -1,10 +1,10 @@
 import asyncio
 import logging
 import time
+from collections.abc import AsyncGenerator, Callable, Generator
 from datetime import datetime
 from multiprocessing import Manager
 from multiprocessing.managers import ListProxy
-from typing import AsyncGenerator, Callable, Dict, Generator, List, Optional
 from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, throw_if_not_async_adapter, throw_if_not_sync_adapter
@@ -76,7 +76,7 @@ class RuuviTagSensor:
         return DataFormats.convert_data(raw)
 
     @staticmethod
-    def find_ruuvitags(bt_device: str = "") -> Dict[Mac, SensorData]:
+    def find_ruuvitags(bt_device: str = "") -> dict[Mac, SensorData]:
         """
         CLI helper function.
 
@@ -90,7 +90,7 @@ class RuuviTagSensor:
 
         log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
-        data: Dict[str, SensorData] = {}
+        data: dict[str, SensorData] = {}
         for new_data in RuuviTagSensor._get_ruuvitag_data(bt_device=bt_device):
             mac, sensor_data = new_data
             if not mac or mac in data:
@@ -102,7 +102,7 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    async def find_ruuvitags_async(bt_device: str = "") -> Dict[Mac, MacAndSensorData]:
+    async def find_ruuvitags_async(bt_device: str = "") -> dict[Mac, MacAndSensorData]:
         """
         CLI helper function.
 
@@ -116,7 +116,7 @@ class RuuviTagSensor:
 
         log.info("Finding RuuviTags. Stop with Ctrl+C.")
 
-        data: Dict[Mac, MacAndSensorData] = {}
+        data: dict[Mac, MacAndSensorData] = {}
         mac_blacklist = Manager().list()
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
@@ -137,8 +137,8 @@ class RuuviTagSensor:
 
     @staticmethod
     def get_data_for_sensors(
-        macs: List[str] = [], search_duration_sec: int = 5, bt_device: str = ""
-    ) -> Dict[Mac, SensorData]:
+        macs: list[str] = [], search_duration_sec: int = 5, bt_device: str = ""
+    ) -> dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -155,7 +155,7 @@ class RuuviTagSensor:
         log.info("Stops automatically in %ss", search_duration_sec)
         log.info("MACs: %s", macs)
 
-        data: Dict[Mac, SensorData] = {}
+        data: dict[Mac, SensorData] = {}
 
         for new_data in RuuviTagSensor._get_ruuvitag_data(macs, search_duration_sec, bt_device=bt_device):
             mac, sensor_data = new_data
@@ -165,8 +165,8 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_data_for_sensors_async(
-        macs: List[str] = [], search_duration_sec: int = 5, bt_device: str = ""
-    ) -> Dict[Mac, SensorData]:
+        macs: list[str] = [], search_duration_sec: int = 5, bt_device: str = ""
+    ) -> dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
 
@@ -183,7 +183,7 @@ class RuuviTagSensor:
         log.info("Stops automatically in %ss", search_duration_sec)
         log.info("MACs: %s", macs)
 
-        data: Dict[Mac, SensorData] = {}
+        data: dict[Mac, SensorData] = {}
         start_time = time.time()
 
         data_iter = RuuviTagSensor.get_data_async(macs, bt_device)
@@ -200,7 +200,7 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    async def get_data_async(macs: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
+    async def get_data_async(macs: list[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -232,7 +232,7 @@ class RuuviTagSensor:
     @staticmethod
     def get_data(
         callback: Callable[[MacAndSensorData], None],
-        macs: List[str] = [],
+        macs: list[str] = [],
         run_flag: RunFlag = RunFlag(),
         bt_device: str = "",
     ) -> None:
@@ -256,7 +256,7 @@ class RuuviTagSensor:
     @staticmethod
     def get_datas(
         callback: Callable[[MacAndSensorData], None],
-        macs: List[str] = [],
+        macs: list[str] = [],
         run_flag: RunFlag = RunFlag(),
         bt_device: str = "",
     ) -> None:
@@ -271,8 +271,8 @@ class RuuviTagSensor:
 
     @staticmethod
     def _get_ruuvitag_data(
-        macs: List[str] = [],
-        search_duration_sec: Optional[int] = None,
+        macs: list[str] = [],
+        search_duration_sec: int | None = None,
         run_flag: RunFlag = RunFlag(),
         bt_device: str = "",
     ) -> Generator[MacAndSensorData, None, None]:
@@ -313,8 +313,8 @@ class RuuviTagSensor:
 
     @staticmethod
     def _parse_data(
-        ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: List[str] = []
-    ) -> Optional[MacAndSensorData]:
+        ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: list[str] = []
+    ) -> MacAndSensorData | None:
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
 
@@ -354,7 +354,7 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_history_async(
-        mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+        mac: str, start_time: datetime | None = None, max_items: int | None = None
     ) -> AsyncGenerator[SensorHistoryData, None]:
         """
         Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
@@ -386,8 +386,8 @@ class RuuviTagSensor:
 
     @staticmethod
     async def download_history(
-        mac: str, start_time: Optional[datetime] = None, timeout: int = 300, max_items: Optional[int] = None
-    ) -> List[SensorHistoryData]:
+        mac: str, start_time: datetime | None = None, timeout: int = 300, max_items: int | None = None
+    ) -> list[SensorHistoryData]:
         """
         Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
         This method collects all history entries and returns them as a list.
@@ -413,7 +413,7 @@ class RuuviTagSensor:
         throw_if_not_async_adapter(ble)
 
         try:
-            history_data: List[SensorHistoryData] = []
+            history_data: list[SensorHistoryData] = []
             decoder = HistoryDecoder()
 
             async def collect_history():

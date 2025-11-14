@@ -1,9 +1,9 @@
 import logging
 import sys
 import time
+from collections.abc import Generator
 from multiprocessing import Manager, Process
 from queue import Queue
-from typing import Generator, List
 
 from bleson import Observer, get_provider
 
@@ -105,7 +105,7 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist: List[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+    def get_data(blacklist: list[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         m = Manager()
         q = m.Queue()
 

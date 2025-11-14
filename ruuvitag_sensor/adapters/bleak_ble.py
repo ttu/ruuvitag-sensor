@@ -3,8 +3,8 @@ import logging
 import os
 import re
 import sys
+from collections.abc import AsyncGenerator
 from datetime import datetime
-from typing import AsyncGenerator, List, Optional, Tuple
 
 from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
@@ -39,7 +39,7 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
     return BleakScanner(detection_callback=detection_callback, scanning_mode=scanning_mode)  # type: ignore[arg-type]
 
 
-queue = asyncio.Queue[Tuple[str, str]]()
+queue = asyncio.Queue[tuple[str, str]]()
 
 log = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         return formatted
 
     @staticmethod
-    async def get_data(blacklist: List[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
+    async def get_data(blacklist: list[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             # On macOS device address is not a MAC address, but a system specific ID
             # https://github.com/hbldh/bleak/issues/140
@@ -95,7 +95,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         try:
             while True:
-                next_item: Tuple[str, str] = await queue.get()
+                next_item: tuple[str, str] = await queue.get()
                 yield next_item
         except KeyboardInterrupt:
             pass
@@ -126,7 +126,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         return data or ""
 
     async def get_history_data(
-        self, mac: str, start_time: Optional[datetime] = None, max_items: Optional[int] = None
+        self, mac: str, start_time: datetime | None = None, max_items: int | None = None
     ) -> AsyncGenerator[bytearray, None]:
         """
         Get history data from a RuuviTag using GATT connection.
@@ -150,7 +150,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
             tx_char, rx_char = self._get_history_service_characteristics(client)
 
-            data_queue: asyncio.Queue[Optional[bytearray]] = asyncio.Queue()
+            data_queue: asyncio.Queue[bytearray | None] = asyncio.Queue()
 
             def notification_handler(_, data: bytearray):
                 # Ignore heartbeat data that starts with 0x05
@@ -221,7 +221,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
     def _get_history_service_characteristics(
         self, client: BleakClient
-    ) -> Tuple[BleakGATTCharacteristic, BleakGATTCharacteristic]:
+    ) -> tuple[BleakGATTCharacteristic, BleakGATTCharacteristic]:
         # Get the history service
         # https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus
         history_service = next(
