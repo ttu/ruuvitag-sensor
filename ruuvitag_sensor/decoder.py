@@ -4,7 +4,6 @@ import base64
 import logging
 import math
 import struct
-from typing import Optional, Tuple, Union
 
 from ruuvitag_sensor.ruuvi_types import (
     ByteData,
@@ -107,7 +106,7 @@ class UrlDecoder:
         pressure = ((decoded[4] << 8) + decoded[5]) + 50000
         return pressure / 100
 
-    def decode_data(self, encoded) -> Optional[SensorDataUrl]:
+    def decode_data(self, encoded) -> SensorDataUrl | None:
         """
         Decode sensor data.
 
@@ -167,7 +166,7 @@ class Df3Decoder:
         """Return air pressure hPa"""
         return (data[4] + 50000) / 100
 
-    def _get_acceleration(self, data: ByteData) -> Tuple[int, int, int]:
+    def _get_acceleration(self, data: ByteData) -> tuple[int, int, int]:
         """Return acceleration mG"""
         return data[5:8]  # type: ignore
 
@@ -175,7 +174,7 @@ class Df3Decoder:
         """Return battery mV"""
         return data[8]
 
-    def decode_data(self, data: str) -> Optional[SensorData3]:
+    def decode_data(self, data: str) -> SensorData3 | None:
         """
         Decode sensor data.
 
@@ -208,42 +207,42 @@ class Df5Decoder:
     https://github.com/ruuvi/ruuvi-sensor-protocols
     """
 
-    def _get_temperature(self, data: ByteData) -> Optional[float]:
+    def _get_temperature(self, data: ByteData) -> float | None:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
 
         return round(data[1] / 200, 2)
 
-    def _get_humidity(self, data: ByteData) -> Optional[float]:
+    def _get_humidity(self, data: ByteData) -> float | None:
         """Return humidity %"""
         if data[2] == 65535:
             return None
 
         return round(data[2] / 400, 2)
 
-    def _get_pressure(self, data: ByteData) -> Optional[float]:
+    def _get_pressure(self, data: ByteData) -> float | None:
         """Return air pressure hPa"""
         if data[3] == 0xFFFF:
             return None
 
         return round((data[3] + 50000) / 100, 2)
 
-    def _get_acceleration(self, data: ByteData) -> Union[Tuple[None, None, None], Tuple[int, int, int]]:
+    def _get_acceleration(self, data: ByteData) -> tuple[None, None, None] | tuple[int, int, int]:
         """Return acceleration mG"""
         if data[4] == -32768 or data[5] == -32768 or data[6] == -32768:
             return (None, None, None)
 
         return data[4:7]  # type: ignore
 
-    def _get_powerinfo(self, data: ByteData) -> Tuple[int, int]:
+    def _get_powerinfo(self, data: ByteData) -> tuple[int, int]:
         """Return battery voltage and tx power"""
         battery_voltage = data[7] >> 5
         tx_power = data[7] & 0x001F
 
         return (battery_voltage, tx_power)
 
-    def _get_battery(self, data: ByteData) -> Optional[int]:
+    def _get_battery(self, data: ByteData) -> int | None:
         """Return battery mV"""
         battery_voltage = self._get_powerinfo(data)[0]
         if battery_voltage == 0b11111111111:
@@ -251,7 +250,7 @@ class Df5Decoder:
 
         return battery_voltage + 1600
 
-    def _get_txpower(self, data: ByteData) -> Optional[int]:
+    def _get_txpower(self, data: ByteData) -> int | None:
         """Return transmit power"""
         tx_power = self._get_powerinfo(data)[1]
         if tx_power == 0b11111:
@@ -275,7 +274,7 @@ class Df5Decoder:
             rssi = (256 - rssi) * -1
         return rssi
 
-    def decode_data(self, data: str) -> Optional[SensorData5]:
+    def decode_data(self, data: str) -> SensorData5 | None:
         """
         Decode sensor data.
 
@@ -320,55 +319,55 @@ class DfE1Decoder:
     https://docs.ruuvi.com/communication/bluetooth-advertisements/data-format-e1.md
     """
 
-    def _get_temperature(self, data: ByteData) -> Optional[float]:
+    def _get_temperature(self, data: ByteData) -> float | None:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
         return round(int(data[1]) * 0.005, 3)
 
-    def _get_humidity(self, data: ByteData) -> Optional[float]:
+    def _get_humidity(self, data: ByteData) -> float | None:
         """Return humidity %"""
         if data[2] == 65535:
             return None
         return round(int(data[2]) * 0.0025, 3)
 
-    def _get_pressure(self, data: ByteData) -> Optional[float]:
+    def _get_pressure(self, data: ByteData) -> float | None:
         """Return air pressure hPa"""
         if data[3] == 0xFFFF:
             return None
         return round((int(data[3]) + 50000) / 100, 2)
 
-    def _get_pm1_ug_m3(self, data: ByteData) -> Optional[float]:
+    def _get_pm1_ug_m3(self, data: ByteData) -> float | None:
         """Return PM 1.0, ug/m^3"""
         if data[4] == 0xFFFF:
             return None
         return round(int(data[4]) * 0.1, 1)
 
-    def _get_pm25_ug_m3(self, data: ByteData) -> Optional[float]:
+    def _get_pm25_ug_m3(self, data: ByteData) -> float | None:
         """Return PM 2.5, ug/m^3"""
         if data[5] == 0xFFFF:
             return None
         return round(int(data[5]) * 0.1, 1)
 
-    def _get_pm4_ug_m3(self, data: ByteData) -> Optional[float]:
+    def _get_pm4_ug_m3(self, data: ByteData) -> float | None:
         """Return PM 4.0, ug/m^3"""
         if data[6] == 0xFFFF:
             return None
         return round(int(data[6]) * 0.1, 1)
 
-    def _get_pm10_ug_m3(self, data: ByteData) -> Optional[float]:
+    def _get_pm10_ug_m3(self, data: ByteData) -> float | None:
         """Return PM 10.0, ug/m^3"""
         if data[7] == 0xFFFF:
             return None
         return round(int(data[7]) * 0.1, 1)
 
-    def _get_co2_ppm(self, data: ByteData) -> Optional[int]:
+    def _get_co2_ppm(self, data: ByteData) -> int | None:
         """Return CO2 ppm"""
         if data[8] == 0xFFFF:
             return None
         return int(data[8])
 
-    def _get_voc_index(self, data: ByteData) -> Optional[int]:
+    def _get_voc_index(self, data: ByteData) -> int | None:
         """Return VOC index (unitless, 9-bit)"""
         # VOC: bits [8:1] are in data[6], bit [0] (LSB) is FLAGS bit 6
         # As per spec: "9 bit unsigned, least significant bit in Flags byte"
@@ -381,7 +380,7 @@ class DfE1Decoder:
 
         return voc
 
-    def _get_nox_index(self, data: ByteData) -> Optional[int]:
+    def _get_nox_index(self, data: ByteData) -> int | None:
         """Return NOx index (unitless, 9-bit)"""
         # NOx: bits [8:1] are in data[7], bit [0] (LSB) is FLAGS bit 7
         # As per spec: "9 bit unsigned, least significant bit in Flags byte"
@@ -394,7 +393,7 @@ class DfE1Decoder:
 
         return nox
 
-    def _get_luminosity_lux(self, data: ByteData) -> Optional[float]:
+    def _get_luminosity_lux(self, data: ByteData) -> float | None:
         """Return Luminosity Lux"""
         lumi_bytes = bytes(data[11])
         if lumi_bytes == b"\xff\xff\xff":
@@ -402,7 +401,7 @@ class DfE1Decoder:
         lumi_val = int.from_bytes(lumi_bytes, byteorder="big")
         return round(lumi_val * 0.01, 2)
 
-    def _get_measurementsequencenumber(self, data: ByteData) -> Optional[int]:
+    def _get_measurementsequencenumber(self, data: ByteData) -> int | None:
         seq_bytes = bytes(data[13])
         if seq_bytes == b"\xff\xff\xff":
             return None
@@ -415,7 +414,7 @@ class DfE1Decoder:
     def _get_mac(self, data: ByteData) -> str:
         return ":".join(f"{b:02X}" for b in bytes(data[16]))
 
-    def decode_data(self, data: str) -> Optional[SensorDataE1]:
+    def decode_data(self, data: str) -> SensorDataE1 | None:
         """
         Decode sensor data.
 
@@ -456,42 +455,42 @@ class Df6Decoder:
     It includes CO2, PM2.5, VOC, NOx, luminosity along with traditional sensors.
     """
 
-    def _get_temperature(self, data: ByteData) -> Optional[float]:
+    def _get_temperature(self, data: ByteData) -> float | None:
         """Return temperature in celsius"""
         if data[1] == -32768:
             return None
 
         return round(data[1] * 0.005, 3)
 
-    def _get_humidity(self, data: ByteData) -> Optional[float]:
+    def _get_humidity(self, data: ByteData) -> float | None:
         """Return humidity %"""
         if data[2] == 65535:
             return None
 
         return round(data[2] * 0.0025, 3)
 
-    def _get_pressure(self, data: ByteData) -> Optional[float]:
+    def _get_pressure(self, data: ByteData) -> float | None:
         """Return air pressure hPa"""
         if data[3] == 65535:
             return None
 
         return round((data[3] + 50000) / 100, 2)
 
-    def _get_pm_2_5(self, data: ByteData) -> Optional[float]:
+    def _get_pm_2_5(self, data: ByteData) -> float | None:
         """Return PM 2.5 in ug/m³"""
         if data[4] == 65535:
             return None
 
         return round(data[4] * 0.1, 1)
 
-    def _get_co2(self, data: ByteData) -> Optional[int]:
+    def _get_co2(self, data: ByteData) -> int | None:
         """Return CO2 concentration in ppm"""
         if data[5] == 65535:
             return None
 
         return data[5]
 
-    def _get_voc(self, data: ByteData) -> Optional[int]:
+    def _get_voc(self, data: ByteData) -> int | None:
         """Return VOC index (unitless, 9-bit)"""
         # VOC: bits [8:1] are in data[6], bit [0] (LSB) is FLAGS bit 6
         # As per spec: "9 bit unsigned, least significant bit in Flags byte"
@@ -504,7 +503,7 @@ class Df6Decoder:
 
         return voc
 
-    def _get_nox(self, data: ByteData) -> Optional[int]:
+    def _get_nox(self, data: ByteData) -> int | None:
         """Return NOx index (unitless, 9-bit)"""
         # NOx: bits [8:1] are in data[7], bit [0] (LSB) is FLAGS bit 7
         # As per spec: "9 bit unsigned, least significant bit in Flags byte"
@@ -517,7 +516,7 @@ class Df6Decoder:
 
         return nox
 
-    def _get_luminosity(self, data: ByteData) -> Optional[float]:
+    def _get_luminosity(self, data: ByteData) -> float | None:
         """Return luminosity in lux (logarithmic scale)"""
         code = data[8]
 
@@ -548,7 +547,7 @@ class Df6Decoder:
         """Return MAC address (last 3 bytes)"""
         return "".join(f"{x:02x}" for x in data[12:15])
 
-    def decode_data(self, data: str) -> Optional[SensorData6]:
+    def decode_data(self, data: str) -> SensorData6 | None:
         """
         Decode sensor data.
 
@@ -629,7 +628,7 @@ class HistoryDecoder:
         return timestamp
         # return datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
-    def _get_temperature(self, data: list[str]) -> Optional[float]:
+    def _get_temperature(self, data: list[str]) -> float | None:
         """Return temperature in celsius"""
         if data[1] != "30":  # '0' for temperature
             return None
@@ -638,7 +637,7 @@ class HistoryDecoder:
         temp_raw = int.from_bytes(temp_bytes, "big")
         return round(temp_raw * 0.01, 2)
 
-    def _get_humidity(self, data: list[str]) -> Optional[float]:
+    def _get_humidity(self, data: list[str]) -> float | None:
         """Return humidity %"""
         if data[1] != "31":  # '1' for humidity
             return None
@@ -647,7 +646,7 @@ class HistoryDecoder:
         humidity_raw = int.from_bytes(humidity_bytes, "big")
         return round(humidity_raw * 0.01, 2)
 
-    def _get_pressure(self, data: list[str]) -> Optional[float]:
+    def _get_pressure(self, data: list[str]) -> float | None:
         """Return air pressure hPa"""
         if data[1] != "32":  # '2' for pressure
             return None
@@ -656,7 +655,7 @@ class HistoryDecoder:
         pressure_raw = int.from_bytes(pressure_bytes, "big")
         return float(pressure_raw)
 
-    def decode_data(self, data: bytearray) -> Optional[SensorHistoryData]:  # noqa: PLR0911
+    def decode_data(self, data: bytearray) -> SensorHistoryData | None:  # noqa: PLR0911
         """
         Decode history data from RuuviTag.
 

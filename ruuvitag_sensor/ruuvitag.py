@@ -1,5 +1,4 @@
 import re
-from typing import Dict, Optional, Union
 
 from ruuvitag_sensor.decoder import get_decoder
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -18,8 +17,8 @@ class RuuviTagBase:
             raise ValueError(f"{mac} is not a valid MAC address")
 
         self._mac: str = mac
-        self._state: Union[Dict, SensorData] = {}
-        self._data: Optional[str] = None
+        self._state: dict | SensorData = {}
+        self._data: str | None = None
         self._bt_device: str = bt_device
 
     @property
@@ -27,12 +26,10 @@ class RuuviTagBase:
         return self._mac
 
     @property
-    def state(self) -> Union[Dict, SensorData]:
+    def state(self) -> dict | SensorData:
         return self._state
 
-    def _handle_new_data_and_return_state(
-        self, data_format: DataFormat, data: Optional[str]
-    ) -> Union[Dict, SensorData]:
+    def _handle_new_data_and_return_state(self, data_format: DataFormat, data: str | None) -> dict | SensorData:
         if data == self._data:
             return self._state
 
@@ -47,7 +44,7 @@ class RuuviTagBase:
 
 
 class RuuviTag(RuuviTagBase):
-    def update(self) -> Union[Dict, SensorData]:
+    def update(self) -> dict | SensorData:
         """
         Get latest data from the sensor and update own state.
 
@@ -64,7 +61,7 @@ class RuuviTagAsync(RuuviTagBase):
     NOTE: This class is not working on macOS
     """
 
-    async def update(self) -> Union[Dict, SensorData]:
+    async def update(self) -> dict | SensorData:
         """
         Get latest data from the sensor and update own state.
 

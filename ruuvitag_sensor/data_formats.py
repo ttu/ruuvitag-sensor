@@ -1,5 +1,4 @@
 import logging
-from typing import Tuple
 
 from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, RawSensorData
 
@@ -10,7 +9,7 @@ class ShortDataError(Exception):
     pass
 
 
-def _dechunk(raw: str) -> Tuple[str, str]:
+def _dechunk(raw: str) -> tuple[str, str]:
     """
     Given a BLE advertisement in hex format, interpret the first
     byte as a length byte, return the data indicated by the length
