@@ -15,6 +15,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    # Note: Python 3.10 or later is required with asyncio.run
-    # For older versions of Python, use asyncio.get_event_loop().run_until_complete(main())
     asyncio.run(main())
