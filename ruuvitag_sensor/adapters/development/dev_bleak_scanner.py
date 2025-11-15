@@ -1,7 +1,7 @@
 import asyncio
 import random
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Awaitable, Callable, Union
 
 from bleak.backends.scanner import AdvertisementData, BLEDevice
 
@@ -27,7 +27,7 @@ data = [
 
 class DevBleakScanner:
     def __init__(self, callback, _):
-        self.callback: Union[Callable[[BLEDevice, AdvertisementData], Awaitable[None]], None] = callback
+        self.callback: Callable[[BLEDevice, AdvertisementData], Awaitable[None]] | None = callback
         self.running: bool = False
 
     async def start(self):

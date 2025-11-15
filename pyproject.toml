@@ -73,6 +73,7 @@ select = [
     "RUF",   # ruff-specific rules
     "SIM",   # flake8-simplify
     "W",     # pycodestyle warnings
+    "UP",    # pyupgrade
 ]
 ignore = [
     "PLR2004", # Magic value used in comparison

@@ -6,7 +6,6 @@ from multiprocessing import Manager
 from multiprocessing.managers import DictProxy
 from queue import Queue
 from threading import Thread
-from typing import List
 
 from reactivex import Subject
 
@@ -14,7 +13,7 @@ from ruuvitag_sensor.adapters import is_async_adapter
 from ruuvitag_sensor.ruuvi import RunFlag, RuuviTagSensor, ble
 
 
-async def _run_get_data_background_async(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
+async def _run_get_data_background_async(macs: list[str], queue: Queue, shared_data: DictProxy, bt_device: str):
     """
     Async background process function for RuuviTag Sensors
     """
@@ -30,7 +29,7 @@ async def _run_get_data_background_async(macs: List[str], queue: Queue, shared_d
         await data_iter.aclose()
 
 
-def _run_get_data_background(macs: List[str], queue: Queue, shared_data: DictProxy, bt_device: str):
+def _run_get_data_background(macs: list[str], queue: Queue, shared_data: DictProxy, bt_device: str):
     """
     Background process function for RuuviTag Sensors
     """
@@ -53,7 +52,7 @@ class RuuviTagReactive:
     """
 
     @staticmethod
-    def _data_update(subjects: List[Subject], queue: Queue, run_flag: RunFlag):
+    def _data_update(subjects: list[Subject], queue: Queue, run_flag: RunFlag):
         """
         Get data from background process and notify all subscribed observers with the new data
         """
@@ -64,7 +63,7 @@ class RuuviTagReactive:
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs: List[str] = [], bt_device: str = ""):
+    def __init__(self, macs: list[str] = [], bt_device: str = ""):
         """
         Start background process for get_data and async task for notifying all subscribed observers
 
@@ -74,7 +73,7 @@ class RuuviTagReactive:
         """
 
         self._run_flag = RunFlag()
-        self._subjects: List[Subject] = []
+        self._subjects: list[Subject] = []
 
         m = Manager()
         q = m.Queue()
