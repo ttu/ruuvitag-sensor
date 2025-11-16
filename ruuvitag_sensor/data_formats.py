@@ -107,7 +107,7 @@ class DataFormats:
             case _ if candidate.startswith("16AAFE"):
                 # TODO: Check from raw data correct data format
                 # Now this returns 2 also for Data Format 4
-                url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
+                url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw))
                 if url_data is not None:
                     return (2, url_data)
                 return (None, None)
@@ -120,7 +120,7 @@ class DataFormats:
                 return (None, None)
 
     @staticmethod
-    def _parse_raw(raw: str, data_format: int) -> str:
+    def _parse_raw(raw: str) -> str:
         return raw
 
     @staticmethod
