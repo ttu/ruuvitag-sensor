@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, TypedDict, Union
+from typing import TypedDict
 
 
 class SensorDataBase(TypedDict):
@@ -9,7 +9,7 @@ class SensorDataUrl(SensorDataBase):
     humidity: float
     temperature: float
     pressure: float
-    identifier: Optional[str]
+    identifier: str | None
 
 
 class SensorData3(SensorDataBase):
@@ -36,7 +36,7 @@ class SensorData5(SensorDataBase):
     movement_counter: int
     measurement_sequence_number: int
     mac: str
-    rssi: Optional[int]
+    rssi: int | None
 
 
 class SensorData6(SensorDataBase):
@@ -60,22 +60,22 @@ class SensorDataE1(SensorData6):
 
 
 class SensorHistoryData(TypedDict):
-    humidity: Optional[float]
-    temperature: Optional[float]
-    pressure: Optional[float]
+    humidity: float | None
+    temperature: float | None
+    pressure: float | None
     timestamp: int
 
 
-SensorData = Union[SensorDataUrl, SensorData3, SensorData5, SensorData6]
+SensorData = SensorDataUrl | SensorData3 | SensorData5 | SensorData6
 
-DataFormat = Optional[int | str]
-RawSensorData = Optional[str]
-DataFormatAndRawSensorData = Tuple[DataFormat, RawSensorData]
+DataFormat = int | str | None
+RawSensorData = str | None
+DataFormatAndRawSensorData = tuple[DataFormat, RawSensorData]
 
 Mac = str
-MacAndSensorData = Tuple[Mac, SensorData]
+MacAndSensorData = tuple[Mac, SensorData]
 
 RawData = str
-MacAndRawData = Tuple[str, str]
+MacAndRawData = tuple[str, str]
 
-ByteData = Tuple[int, ...]
+ByteData = tuple[int, ...]

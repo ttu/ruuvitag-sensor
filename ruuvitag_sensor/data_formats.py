@@ -1,5 +1,4 @@
 import logging
-from typing import Tuple
 
 from ruuvitag_sensor.ruuvi_types import DataFormatAndRawSensorData, RawSensorData
 
@@ -10,7 +9,7 @@ class ShortDataError(Exception):
     pass
 
 
-def _dechunk(raw: str) -> Tuple[str, str]:
+def _dechunk(raw: str) -> tuple[str, str]:
     """
     Given a BLE advertisement in hex format, interpret the first
     byte as a length byte, return the data indicated by the length
@@ -36,7 +35,7 @@ class DataFormats:
     """
 
     @staticmethod
-    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911, C901
+    def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911, PLR0912, C901
         """
         Validate that data is from RuuviTag and get correct data part.
 
@@ -94,34 +93,31 @@ class DataFormats:
 
         # Ruuvi advertisements start with FF9904 (for format 3, 5, 6 and E1),
         # or 16AAFE (for format 2 and 4).
-        if candidate.startswith("FF990403"):
-            return (3, candidate[6:])
-
-        if candidate.startswith("FF990405"):
-            return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
-
-        if candidate.startswith("FF990406"):
-            return (6, candidate[6:])
-
-        # Ruuvi Air sends E1 in lowercase, e.g. `ff9904e1...`
-        if candidate.lower().startswith("ff9904e1"):
-            return ("E1", candidate[6:].lower())
-
-        if candidate.startswith("16AAFE"):
-            # TODO: Check from raw data correct data format
-            # Now this returns 2 also for Data Format 4
-            url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
-
-            if url_data is not None:
-                return (2, url_data)
-
-        elif candidate.startswith("095275757669"):
-            # This is a Ruuvitag, but this advertisement does not contain any data.
-            # Set the format to None, and data to '', this allows the
-            # caller to determine that we did indeed see a Ruuvitag.
-            return (None, "")
-
-        return (None, None)
+        match candidate:
+            # Data formats are ordered by priority, so the most common formats are at the top.
+            case _ if candidate.startswith("FF990405"):
+                return (5, (candidate[6:] + rssi) if rssi else candidate[6:])
+            case _ if candidate.startswith("FF990406"):
+                return (6, candidate[6:])
+            case _ if candidate.lower().startswith("ff9904e1"):
+                # Ruuvi Air sends E1 in lowercase, e.g. `FF9904e1...`
+                return ("E1", candidate[6:].lower())
+            case _ if candidate.startswith("FF990403"):
+                return (3, candidate[6:])
+            case _ if candidate.startswith("16AAFE"):
+                # TODO: Check from raw data correct data format
+                # Now this returns 2 also for Data Format 4
+                url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw, 2))
+                if url_data is not None:
+                    return (2, url_data)
+                return (None, None)
+            case _ if candidate.startswith("095275757669"):
+                # This is a Ruuvitag, but this advertisement does not contain any data.
+                # Set the format to None, and data to '', this allows the
+                # caller to determine that we did indeed see a Ruuvitag.
+                return (None, "")
+            case _:
+                return (None, None)
 
     @staticmethod
     def _parse_raw(raw: str, data_format: int) -> str:
