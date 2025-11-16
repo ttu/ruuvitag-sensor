@@ -440,7 +440,7 @@ class DfE1Decoder:
                 "voc": self._get_voc_index(byte_data),  # type: ignore
                 "nox": self._get_nox_index(byte_data),  # type: ignore
                 "luminosity": self._get_luminosity_lux(byte_data),  # type: ignore
-                "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),
+                "measurement_sequence_number": self._get_measurementsequencenumber(byte_data),  # type: ignore
                 "calibration_in_progress": self._get_calibration_in_progress(byte_data),
                 "mac": self._get_mac(byte_data),
             }

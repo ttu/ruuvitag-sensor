@@ -66,7 +66,7 @@ class SensorHistoryData(TypedDict):
     timestamp: int
 
 
-SensorData = SensorDataUrl | SensorData3 | SensorData5 | SensorData6
+SensorData = SensorDataUrl | SensorData3 | SensorData5 | SensorData6 | SensorDataE1
 
 DataFormat = int | str | None
 RawSensorData = str | None
