@@ -26,6 +26,6 @@ class BleCommunicationNixFile(BleCommunicationNix):
         return (None, handle)
 
     @staticmethod
-    def stop(hcitool, hcidump):
+    def stop(_hcitool, hcidump):
         log.info("Close file")
         hcidump.close()
