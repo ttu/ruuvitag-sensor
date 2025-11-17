@@ -4,7 +4,7 @@ import os
 import re
 import sys
 from collections.abc import AsyncGenerator
-from datetime import datetime
+from datetime import datetime, timezone
 
 from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
@@ -133,7 +133,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         Args:
             mac (str): MAC address of the RuuviTag
-            start_time (datetime, optional): Start time for history data
+            start_time (datetime, optional): Start time for history data. Time should be in UTC.
             max_items (int, optional): Maximum number of history entries to fetch
 
         Yields:
@@ -239,8 +239,8 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         return tx_char, rx_char
 
-    def _create_send_history_command(self, start_time):
-        end_time = int(datetime.now().timestamp())
+    def _create_send_history_command(self, start_time: datetime | None = None):
+        end_time = int(datetime.now(timezone.utc).timestamp())
         start_time_to_use = int(start_time.timestamp()) if start_time else 0
 
         command = bytearray(

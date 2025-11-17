@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import ruuvitag_sensor.log
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
@@ -12,7 +12,7 @@ async def main():
     mac = "CA:F7:44:DE:EB:E1"
     # On macOS, the device address is not a MAC address, but a system specific ID
     # mac = "873A13F5-ED14-AEE1-E446-6ACF31649A1D"
-    start_time = datetime.now() - timedelta(minutes=10)
+    start_time = datetime.now(timezone.utc) - timedelta(minutes=10)
     data = await RuuviTagSensor.download_history(mac, start_time=start_time)
     print(data)
 

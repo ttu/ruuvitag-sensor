@@ -399,7 +399,7 @@ class RuuviTagSensor:
 
         Args:
             mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
-            start_time (Optional[datetime]): If provided, only get data from this time onwards.
+            start_time (Optional[datetime]): If provided, only get data from this time onwards. Time should be in UTC.
             timeout (int): Maximum time in seconds to wait for history download (default: 300)
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
 
