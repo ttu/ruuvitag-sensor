@@ -244,14 +244,14 @@ Example history entry:
 
 ```py
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
 
 
 async def main():
     # Get history from the last 10 minutes
-    start_time = datetime.now() - timedelta(minutes=10)
+    start_time = datetime.now(timezone.utc) - timedelta(minutes=10)
     
     # Stream entries as they arrive
     async for entry in RuuviTagSensor.get_history_async(mac="AA:BB:CC:DD:EE:FF", start_time=start_time):
