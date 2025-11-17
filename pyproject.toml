@@ -61,6 +61,7 @@ line-length = 120
 select = [
     "A",     # flake8-builtins
     "C90",   # maccabe
+    "DTZ",   # flake8-datetimez - datetime best practices
     "E",     # pycodestyle errors
     "F",     # pyflakes
     "G",     # flake8-logging-format
@@ -72,8 +73,8 @@ select = [
     "Q",     # flake8-quotes
     "RUF",   # ruff-specific rules
     "SIM",   # flake8-simplify
-    "W",     # pycodestyle warnings
     "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
 ]
 ignore = [
     "PLR2004", # Magic value used in comparison
