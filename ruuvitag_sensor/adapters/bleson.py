@@ -105,13 +105,13 @@ class BleCommunicationBleson(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist: list[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+    def get_data(blacklist: list[str] | None = None, bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         m = Manager()
         q = m.Queue()
 
         # Use Manager dict to share data between processes
         shared_data = m.dict()
-        shared_data["blacklist"] = blacklist
+        shared_data["blacklist"] = blacklist or []
         shared_data["stop"] = False
 
         # Start background process

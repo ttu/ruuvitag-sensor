@@ -14,7 +14,7 @@ Requires:
 import asyncio
 import json
 from concurrent.futures import ProcessPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
 from multiprocessing import Manager
 from urllib.parse import quote
 
@@ -59,7 +59,7 @@ async def handle_queue(queue):
 
 def run_get_data_background(queue):
     def handle_new_data(new_data):
-        current_time = datetime.now()
+        current_time = datetime.now(timezone.utc)
         sensor_mac = new_data[0]
         sensor_data = new_data[1]
 

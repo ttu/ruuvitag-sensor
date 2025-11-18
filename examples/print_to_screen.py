@@ -11,7 +11,7 @@ Pressure:    689
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 os.environ["RUUVI_BLE_ADAPTER"] = "bluez"
 
@@ -35,7 +35,7 @@ def print_data(received_data):
     # Clear screen and print sensor data
     os.system("clear")
     print("Press Ctrl+C to quit.\n\r\n\r")
-    print(str(datetime.now()))
+    print(str(datetime.now(timezone.utc)))
     print(line_sen)
     print(line_tem)
     print(line_hum)

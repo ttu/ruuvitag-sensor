@@ -77,7 +77,7 @@ class BleCommunication:
 
     @staticmethod
     @abc.abstractmethod
-    def get_data(blacklist: list[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+    def get_data(blacklist: list[str] | None = None, bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         pass
 
 
@@ -93,7 +93,7 @@ class BleCommunicationAsync:
 
     @staticmethod
     @abc.abstractmethod
-    async def get_data(blacklist: list[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
+    async def get_data(blacklist: list[str] | None = None, bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
         raise NotImplementedError("must implement get_data()")
         # https://github.com/python/mypy/issues/5070
         # if False: yield is a mypy fix for

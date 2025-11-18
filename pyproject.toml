@@ -60,7 +60,12 @@ line-length = 120
 [tool.ruff.lint]
 select = [
     "A",     # flake8-builtins
+    "ARG",   # flake8-unused-arguments - catch unused args
+    "ASYNC", # flake8-async - async/await best practices
+    "B",     # flake8-bugbear - common bugs and design problems
+    "C4",    # flake8-comprehensions - better list/dict comprehensions
     "C90",   # maccabe
+    "DTZ",   # flake8-datetimez - datetime best practices
     "E",     # pycodestyle errors
     "F",     # pyflakes
     "G",     # flake8-logging-format
@@ -72,8 +77,8 @@ select = [
     "Q",     # flake8-quotes
     "RUF",   # ruff-specific rules
     "SIM",   # flake8-simplify
-    "W",     # pycodestyle warnings
     "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
 ]
 ignore = [
     "PLR2004", # Magic value used in comparison

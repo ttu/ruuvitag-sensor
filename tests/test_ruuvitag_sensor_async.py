@@ -1,22 +1,27 @@
 import asyncio
+from collections.abc import AsyncGenerator
 from unittest.mock import patch
 
 import pytest
 
 from ruuvitag_sensor.adapters.dummy import BleCommunicationAsyncDummy, BleCommunicationDummy
 from ruuvitag_sensor.ruuvi import RuuviTagSensor
+from ruuvitag_sensor.ruuvi_types import MacAndRawData
 from ruuvitag_sensor.ruuvitag import RuuviTagAsync
 
 
 @pytest.mark.asyncio
 class TestRuuviTagSensorAsync:
-    async def _get_first_data(self, mac, bt_device):
+    async def _get_first_data(self, _mac, _bt_device):
         await asyncio.sleep(0)
         # https://ruu.vi/#AjwYAMFc
         data = "043E2A0201030157168974A5F41E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"
         return data[26:]
 
-    async def _get_data(self, blacklist=[], bt_device="") -> tuple[str, str]:
+    async def _get_data(self, _blacklist=None, _bt_device="") -> AsyncGenerator[MacAndRawData, None]:
+        if _blacklist is None:
+            _blacklist = []
+
         tag_data = [
             ("EB:A5:D1:02:CE:68", "1c1bFF99040513844533c43dffe0ffd804189ff645fcffeba5d102ce68"),
             ("CD:D4:FA:52:7A:F2", "1c1bFF990405128a423bc45fffd8ff98040cafd6497a83cdd4fa527af2"),
@@ -58,9 +63,9 @@ class TestRuuviTagSensorAsync:
         """Tests to see if exception is raised for non-Bleak enabled request.
 
         Async communication is supported only for BLE devices of subclass `BleCommunicationAsync`. This
-        test forces a non-compatible BLE device type (BleCommunicationDummy subclass) to raise Exception.
+        test forces a non-compatible BLE device type (BleCommunicationDummy subclass) to raise RuntimeError.
         """
-        with pytest.raises(Exception):
+        with pytest.raises(RuntimeError, match="Async BLE adapter required"):
             _ = await RuuviTagSensor.find_ruuvitags_async()
 
     @patch("ruuvitag_sensor.ruuvi.ble", BleCommunicationAsyncDummy())

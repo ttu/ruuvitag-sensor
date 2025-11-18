@@ -53,7 +53,7 @@ location = args.location
 
 
 # let's trap ctrl-c, SIGINT and come down nicely
-def signal_handler(signal, frame):
+def signal_handler(_signal, _frame):
     print("\nterminating gracefully.")
     client.disconnect()
     sys.exit(0)
@@ -63,7 +63,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 # The callback for when the client receives a CONNACK response from the MQTT server.
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, _userdata, _flags, rc):
     print(f"Connected to MQTT broker with result code {rc!s}")
 
     # Subscribing in on_connect() means that if we lose the connection and

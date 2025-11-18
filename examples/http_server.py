@@ -12,7 +12,7 @@ Requires:
 
 import json
 from concurrent.futures import ProcessPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
 from multiprocessing import Manager
 
 from flask import Flask, abort
@@ -32,7 +32,7 @@ def run_get_data_background(macs, queue):
     """
 
     def callback(data):
-        data[1]["time"] = str(datetime.now())
+        data[1]["time"] = str(datetime.now(timezone.utc))
         queue.put(data)
 
     RuuviTagSensor.get_data(callback, macs)

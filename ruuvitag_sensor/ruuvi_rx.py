@@ -1,7 +1,7 @@
 import asyncio
 import time
 from concurrent.futures import ProcessPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
 from multiprocessing import Manager
 from multiprocessing.managers import DictProxy
 from queue import Queue
@@ -23,7 +23,7 @@ async def _run_get_data_background_async(macs: list[str], queue: Queue, shared_d
             if not shared_data["run_flag"]:
                 break
 
-            data[1]["time"] = datetime.utcnow().isoformat()  # type: ignore
+            data[1]["time"] = datetime.now(timezone.utc).isoformat()  # type: ignore
             queue.put(data)
     finally:
         await data_iter.aclose()
@@ -40,7 +40,7 @@ def _run_get_data_background(macs: list[str], queue: Queue, shared_data: DictPro
         if not shared_data["run_flag"]:
             run_flag.running = False
 
-        data[1]["time"] = datetime.utcnow().isoformat()
+        data[1]["time"] = datetime.now(timezone.utc).isoformat()
         queue.put(data)
 
     RuuviTagSensor.get_data(add_data, macs, run_flag, bt_device)
@@ -63,7 +63,7 @@ class RuuviTagReactive:
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs: list[str] = [], bt_device: str = ""):
+    def __init__(self, macs: list[str] | None = None, bt_device: str = ""):
         """
         Start background process for get_data and async task for notifying all subscribed observers
 
@@ -71,6 +71,8 @@ class RuuviTagReactive:
             macs (list): MAC addresses
             bt_device (string): Bluetooth device id
         """
+        if macs is None:
+            macs = []
 
         self._run_flag = RunFlag()
         self._subjects: list[Subject] = []

@@ -137,7 +137,7 @@ class RuuviTagSensor:
 
     @staticmethod
     def get_data_for_sensors(
-        macs: list[str] = [], search_duration_sec: int = 5, bt_device: str = ""
+        macs: list[str] | None = None, search_duration_sec: int = 5, bt_device: str = ""
     ) -> dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
@@ -149,6 +149,9 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
+        if macs is None:
+            macs = []
+
         throw_if_not_sync_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
@@ -165,7 +168,7 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_data_for_sensors_async(
-        macs: list[str] = [], search_duration_sec: int = 5, bt_device: str = ""
+        macs: list[str] | None = None, search_duration_sec: int = 5, bt_device: str = ""
     ) -> dict[Mac, SensorData]:
         """
         Get latest data for sensors in the MAC address list.
@@ -177,6 +180,9 @@ class RuuviTagSensor:
         Returns:
             dict: MAC and state of found sensors
         """
+        if macs is None:
+            macs = []
+
         throw_if_not_async_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
@@ -200,7 +206,9 @@ class RuuviTagSensor:
         return data
 
     @staticmethod
-    async def get_data_async(macs: list[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndSensorData, None]:
+    async def get_data_async(
+        macs: list[str] | None = None, bt_device: str = ""
+    ) -> AsyncGenerator[MacAndSensorData, None]:
         """
         Get data for all ruuvitag sensors or sensors in the MAC's list.
 
@@ -210,6 +218,9 @@ class RuuviTagSensor:
         Returns:
             AsyncGenerator: MAC and State of RuuviTag sensor data (tuple)
         """
+        if macs is None:
+            macs = []
+
         throw_if_not_async_adapter(ble)
 
         mac_blacklist = Manager().list()
@@ -232,8 +243,8 @@ class RuuviTagSensor:
     @staticmethod
     def get_data(
         callback: Callable[[MacAndSensorData], None],
-        macs: list[str] = [],
-        run_flag: RunFlag = RunFlag(),
+        macs: list[str] | None = None,
+        run_flag: RunFlag | None = None,
         bt_device: str = "",
     ) -> None:
         """
@@ -245,6 +256,11 @@ class RuuviTagSensor:
             run_flag (object): RunFlag object. Function executes while run_flag.running
             bt_device (string): Bluetooth device id
         """
+        if macs is None:
+            macs = []
+        if run_flag is None:
+            run_flag = RunFlag()
+
         throw_if_not_sync_adapter(ble)
 
         log.info("Get latest data for sensors. Stop with Ctrl+C.")
@@ -256,8 +272,8 @@ class RuuviTagSensor:
     @staticmethod
     def get_datas(
         callback: Callable[[MacAndSensorData], None],
-        macs: list[str] = [],
-        run_flag: RunFlag = RunFlag(),
+        macs: list[str] | None = None,
+        run_flag: RunFlag | None = None,
         bt_device: str = "",
     ) -> None:
         """
@@ -265,15 +281,20 @@ class RuuviTagSensor:
         This method will be removed in a future version.
         Use get_data-method instead.
         """
-        warn("This method will be removed in a future version, use get_data() instead", FutureWarning)
+        if macs is None:
+            macs = []
+        if run_flag is None:
+            run_flag = RunFlag()
+
+        warn("This method will be removed in a future version, use get_data() instead", FutureWarning, stacklevel=2)
         throw_if_not_sync_adapter(ble)
         return RuuviTagSensor.get_data(callback, macs, run_flag, bt_device)
 
     @staticmethod
     def _get_ruuvitag_data(
-        macs: list[str] = [],
+        macs: list[str] | None = None,
         search_duration_sec: int | None = None,
-        run_flag: RunFlag = RunFlag(),
+        run_flag: RunFlag | None = None,
         bt_device: str = "",
     ) -> Generator[MacAndSensorData, None, None]:
         """
@@ -288,6 +309,10 @@ class RuuviTagSensor:
         Yields:
             tuple: MAC and State of RuuviTag sensor data
         """
+        if macs is None:
+            macs = []
+        if run_flag is None:
+            run_flag = RunFlag()
 
         mac_blacklist = Manager().list()
         start_time = time.time()
@@ -313,8 +338,10 @@ class RuuviTagSensor:
 
     @staticmethod
     def _parse_data(
-        ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: list[str] = []
+        ble_data: MacAndRawData, mac_blacklist: ListProxy, allowed_macs: list[str] | None = None
     ) -> MacAndSensorData | None:
+        if allowed_macs is None:
+            allowed_macs = []
         (mac, payload) = ble_data
         (data_format, data) = DataFormats.convert_data(payload)
 
@@ -424,7 +451,7 @@ class RuuviTagSensor:
             await asyncio.wait_for(collect_history(), timeout=timeout)
             return history_data
 
-        except asyncio.TimeoutError:
-            raise TimeoutError(f"History download timed out after {timeout} seconds")
+        except asyncio.TimeoutError as err:
+            raise TimeoutError(f"History download timed out after {timeout} seconds") from err
         except Exception as e:
             raise RuntimeError(f"Failed to download history: {e!s}") from e
