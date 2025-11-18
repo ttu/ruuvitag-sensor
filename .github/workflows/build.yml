@@ -31,7 +31,7 @@ jobs:
     - name: ruff lint
       run: ruff check ./ruuvitag_sensor
     - name: mypy
-      run: mypy ./ruuvitag_sensor
+      run: mypy .
     - name: ruff format
       run: ruff format --check
     - name: Tests
