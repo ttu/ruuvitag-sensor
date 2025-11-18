@@ -27,8 +27,8 @@ data = [
 
 class DevBleakScanner:
     def __init__(self, callback, _):
-        self.callback: Callable[[BLEDevice, AdvertisementData], Awaitable[None]] | None = callback
-        self.running: bool = False
+        self.callback: Callable[[BLEDevice, AdvertisementData], Awaitable[None]] | None = callback  # type: ignore[annotation-unchecked]
+        self.running: bool = False  # type: ignore[annotation-unchecked]
 
     async def start(self):
         self.running = True

@@ -39,11 +39,11 @@ def wait_for_finish(run_flag, name):
 #
 print_header("UrlDecoder.decode_data")
 
-decoder = UrlDecoder()
-data = decoder.decode_data("AjwYAMFc")
-print(data)
+url_decoder = UrlDecoder()
+url_data = url_decoder.decode_data("AjwYAMFc")
+print(url_data)
 
-if not data["temperature"]:
+if not url_data or not url_data["temperature"]:
     raise Exception("FAILED")
 
 print("OK")
@@ -54,11 +54,11 @@ print("OK")
 #
 print_header("UrlDecoder.decode_data")
 
-decoder = Df3Decoder()
-data = decoder.decode_data("03291A1ECE1EFC18F94202CA0B5300000000BB")
-print(data)
+df3_decoder = Df3Decoder()
+df3_data = df3_decoder.decode_data("03291A1ECE1EFC18F94202CA0B5300000000BB")
+print(df3_data)
 
-if not data["temperature"]:
+if not df3_data or not df3_data["temperature"]:
     raise Exception("FAILED")
 
 print("OK")
@@ -69,10 +69,10 @@ print("OK")
 #
 print_header("RuuviTagSensor.get_data_for_sensors")
 
-data = RuuviTagSensor.get_data_for_sensors(search_duration_sec=15)
-print(data)
+data_for_sensors = RuuviTagSensor.get_data_for_sensors(search_duration_sec=15)
+print(data_for_sensors)
 
-if not data:
+if not data_for_sensors:
     raise Exception("FAILED")
 
 print("OK")
@@ -83,10 +83,11 @@ print("OK")
 #
 print_header("RuuviTagSensor.get_data_for_sensors with macs")
 
-data = RuuviTagSensor.get_data_for_sensors(next(iter(data.keys())), search_duration_sec=15)
-print(data)
+macs = list(data_for_sensors.keys())
+data_with_macs = RuuviTagSensor.get_data_for_sensors(macs, search_duration_sec=15)
+print(data_with_macs)
 
-if not data:
+if not data_with_macs:
     raise Exception("FAILED")
 
 print("OK")
@@ -97,7 +98,7 @@ print("OK")
 #
 print_header("RuuviTag.update")
 
-tag = RuuviTag(next(iter(data.keys())))
+tag = RuuviTag(macs[0])
 tag.update()
 print(tag.state)
 
