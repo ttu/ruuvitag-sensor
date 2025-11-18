@@ -70,7 +70,7 @@ def test_df3_decoder():
     print("OK")
 
 
-async def test_get_data_for_sensors_async() -> list[str]:
+async def test_get_data_for_sensors_async() -> str:
     #
     # RuuviTagSensor.get_data_for_sensors_async
     #
@@ -101,7 +101,7 @@ async def test_get_data_for_sensors_async_with_macs(mac: list[str]):
     print("OK")
 
 
-async def test_ruuvitagasync_update(mac: list[str]):
+async def test_ruuvitagasync_update(mac: str):
     #
     # RuuviTagAsync.update
     #
@@ -125,7 +125,7 @@ async def test_get_data_async():
 
     # TODO: throw exception after 15 seconds
 
-    async for data in RuuviTagSensor.get_data_async():
+    async for _data in RuuviTagSensor.get_data_async():
         break
 
     print("OK")

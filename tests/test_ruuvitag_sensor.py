@@ -39,7 +39,10 @@ class TestRuuviTagSensor:
         assert mac == org_mac
         assert state == {}
 
-    def get_data(self, _blacklist=[], _bt_device=""):
+    def get_data(self, _blacklist=None, _bt_device=""):
+        if _blacklist is None:
+            _blacklist = []
+
         tag_data = [
             ("AA:2C:6A:1E:59:3D", "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"),
             ("BB:2C:6A:1E:59:3D", "some other device"),

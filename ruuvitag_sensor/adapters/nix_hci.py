@@ -102,7 +102,7 @@ class BleCommunicationNix(BleCommunication):
             return
 
     @staticmethod
-    def get_data(blacklist: list[str] = [], bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+    def get_data(blacklist: list[str] | None = None, bt_device: str = "") -> Generator[MacAndRawData, None, None]:
         procs = BleCommunicationNix.start(bt_device)
         data = None
         for line in BleCommunicationNix.get_lines(procs[1]):
@@ -144,8 +144,8 @@ class BleCommunicationNix(BleCommunication):
 
                 found_mac = line[14:26]
                 reversed_mac = "".join(reversed([found_mac[i : i + 2] for i in range(0, len(found_mac), 2)]))
-                mac = ":".join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2]))
-                if mac in blacklist:
+                mac = ":".join(a + b for a, b in zip(reversed_mac[::2], reversed_mac[1::2], strict=True))
+                if blacklist and mac in blacklist:
                     log.debug("MAC blacklisted: %s", mac)
                     continue
                 data = line[26:]

@@ -67,12 +67,12 @@ class BleCommunicationBleak(BleCommunicationAsync):
         return formatted
 
     @staticmethod
-    async def get_data(blacklist: list[str] = [], bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
+    async def get_data(blacklist: list[str] | None = None, bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
         async def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
             # On macOS device address is not a MAC address, but a system specific ID
             # https://github.com/hbldh/bleak/issues/140
             mac: str = device.address if re.match(MAC_REGEX, device.address.lower()) else ""
-            if mac and mac in blacklist:
+            if blacklist and mac in blacklist:
                 log.debug("MAC blacklised: %s", mac)
                 return
 

@@ -62,6 +62,7 @@ select = [
     "A",     # flake8-builtins
     "ARG",   # flake8-unused-arguments - catch unused args
     "ASYNC", # flake8-async - async/await best practices
+    "B",     # flake8-bugbear - common bugs and design problems
     "C4",    # flake8-comprehensions - better list/dict comprehensions
     "C90",   # maccabe
     "DTZ",   # flake8-datetimez - datetime best practices

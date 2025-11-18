@@ -63,7 +63,7 @@ class RuuviTagReactive:
                     subject.on_next(data)
             time.sleep(0.1)
 
-    def __init__(self, macs: list[str] = [], bt_device: str = ""):
+    def __init__(self, macs: list[str] | None = None, bt_device: str = ""):
         """
         Start background process for get_data and async task for notifying all subscribed observers
 
@@ -71,6 +71,8 @@ class RuuviTagReactive:
             macs (list): MAC addresses
             bt_device (string): Bluetooth device id
         """
+        if macs is None:
+            macs = []
 
         self._run_flag = RunFlag()
         self._subjects: list[Subject] = []

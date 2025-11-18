@@ -12,7 +12,10 @@ class BleCommunicationDummy(BleCommunication):
         return "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"
 
     @staticmethod
-    def get_data(_blacklist: list[str] = [], _bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+    def get_data(_blacklist: list[str] | None = None, _bt_device: str = "") -> Generator[MacAndRawData, None, None]:
+        if _blacklist is None:
+            _blacklist = []
+
         dummy_data = [
             ("DU:MM:YD:AT:A9:3D", "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"),
             ("NO:TS:UP:PO:RT:ED", "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"),
@@ -29,7 +32,12 @@ class BleCommunicationAsyncDummy(BleCommunicationAsync):
         return "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"
 
     @staticmethod
-    async def get_data(_blacklist: list[str] = [], _bt_device: str = "") -> AsyncGenerator[MacAndRawData, None]:
+    async def get_data(
+        _blacklist: list[str] | None = None, _bt_device: str = ""
+    ) -> AsyncGenerator[MacAndRawData, None]:
+        if _blacklist is None:
+            _blacklist = []
+
         dummy_data = [
             ("DU:MM:YD:AT:A9:3D", "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"),
             ("NO:TS:UP:PO:RT:ED", "1E0201060303AAFE1616AAFE10EE037275752E76692F23416A7759414D4663CD"),
