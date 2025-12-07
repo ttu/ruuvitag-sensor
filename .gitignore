@@ -93,4 +93,14 @@ venv_py/
 # Pytest
 .pytest_cache
 
+# Mypy
+.mypy_cache
+
+# Ruff
+.ruff_cache
+
+# Editors and AI assistants
 .vscode
+.cursor
+.claude
+.idea
