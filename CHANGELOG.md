@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [4.0.0] - 2025-12-08
 * CHANGE: Support only Python 3.10 and newer
 * ADD: Support for Ruuvi Air (Data Formats 6 and E1)
 * CHANGE: Data Format can be specified as int or string

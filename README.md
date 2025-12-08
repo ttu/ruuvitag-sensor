@@ -16,9 +16,9 @@ RuuviTag Sensor Python Package
 * RuuviTag sensor or Ruuvi Air
     * Setup [guide](https://ruuvi.com/quick-start/)
     * Supports [Data Format 2, 3, 4, 5, 6 and E1](https://docs.ruuvi.com/)
+      * __Data Format 5:__ Used by RuuviTag sensors. See [RuuviTag Data Formats](#ruuvi-tag-data-formats) for more information.
+      * __Data Format 6 and E1:__ Used by Ruuvi Air. See [Ruuvi Air Data Formats](#ruuvi-air-data-formats) for more information.
       * __NOTE:__ Data Formats 2, 3 and 4 are _deprecated_ and should not be used.
-      * __Data Format 6:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM2.5, VOC, NOx, luminosity)
-      * __Data Format E1:__ Used by Ruuvi Air for air quality monitoring (CO₂, PM1.0, PM2.5, PM4.0, PM10.0, VOC, NOx, luminosity)
 * [Bleak](https://github.com/hbldh/bleak) communication module (Windows, macOS and Linux)
     * Default adapter for all supported operating systems.
     * Bleak supports
@@ -40,6 +40,7 @@ RuuviTag Sensor Python Package
 
 
 __NOTE: Major version changes__ 
+* Version 4.0 supports only Python 3.10 and newer, adds support for Ruuvi Air sensors and allows Data Format to be specified as int or string.
 * Version 3.0 changed default BLE adapter for all platforms to Bleak with async-methods. To use `Bluez`and sync-methods, check the installation [instructions](#BlueZ).
 * Version 2.0 contains method renames. When using a version prior to 2.0, check the documentation and examples from [documentation](https://ttu.github.io/ruuvitag-sensor/#/1.2.1/) or in GitHub, switch to the correct release tag from _switch branches/tags_.
 

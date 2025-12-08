@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ruuvitag_sensor"
-version = "3.1.0"
+version = "4.0.0"
 authors = [
   { name="Tomi Tuhkanen", email="tomi.tuhkanen@iki.fi" },
 ]
 description = "Find RuuviTag sensors and get decoded data from selected sensors"
 readme = "README.md"
-license = { file="LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python",
@@ -19,7 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Development Status :: 5 - Production/Stable",
