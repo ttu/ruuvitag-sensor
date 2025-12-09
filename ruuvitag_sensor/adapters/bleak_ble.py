@@ -5,6 +5,7 @@ import re
 import sys
 from collections.abc import AsyncGenerator
 from datetime import datetime, timezone
+from enum import Enum
 
 from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
@@ -42,6 +43,15 @@ def _get_scanner(detection_callback: AdvertisementDataCallback, bt_device: str =
 queue = asyncio.Queue[tuple[str, str]]()
 
 log = logging.getLogger(__name__)
+
+
+class HistoryNotificationAction(str, Enum):
+    """Action types for history notification processing."""
+
+    IGNORE = "ignore"  # Heartbeat data, should be ignored
+    END = "end"  # End marker received
+    ERROR = "error"  # Error packet received
+    DATA = "data"  # Normal history data
 
 
 class BleCommunicationBleak(BleCommunicationAsync):
@@ -153,24 +163,16 @@ class BleCommunicationBleak(BleCommunicationAsync):
             data_queue: asyncio.Queue[bytearray | None] = asyncio.Queue()
 
             def notification_handler(_, data: bytearray):
-                # Ignore heartbeat data that starts with 0x05
-                if data and data[0] == 0x05:
-                    log.debug("Ignoring heartbeat data")
+                action, processed_data = self._process_history_notification(data)
+
+                if action == HistoryNotificationAction.IGNORE:
                     return
-                log.debug("Received data: %s", data)
-                # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF ...)
-                if len(data) >= 3 and all(b == 0xFF for b in data[3:]):
-                    log.debug("Received end-of-logs marker")
-                    data_queue.put_nowait(data)
+
+                log.debug("Received data: %s", processed_data)
+                data_queue.put_nowait(processed_data)
+
+                if action in (HistoryNotificationAction.END, HistoryNotificationAction.ERROR):
                     data_queue.put_nowait(None)
-                    return
-                # Check for error message. Header is 0xF0 (0x30 30 F0 FF FF FF FF FF FF FF FF)
-                if len(data) >= 11 and data[2] == 0xF0:
-                    log.debug("Device reported error in log reading")
-                    data_queue.put_nowait(data)
-                    data_queue.put_nowait(None)
-                    return
-                data_queue.put_nowait(data)
 
             await client.start_notify(tx_char, notification_handler)
 
@@ -260,3 +262,46 @@ class BleCommunicationBleak(BleCommunicationAsync):
         )
 
         return command
+
+    @staticmethod
+    def _process_history_notification(data: bytearray) -> tuple[HistoryNotificationAction, bytearray | None]:
+        """
+        Process history notification data and determine the action to take.
+
+        Args:
+            data: Raw notification data from BLE characteristic
+
+        Returns:
+            Tuple of (action_type, data):
+            - action_type: One of HistoryNotificationAction constants
+            - data: The processed data (or None if action is IGNORE)
+
+        Reference: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
+        """
+        # Ignore heartbeat data that starts with 0x05
+        if data and data[0] == 0x05:
+            log.debug("Ignoring heartbeat data")
+            return HistoryNotificationAction.IGNORE, None
+
+        # Check for error message first (before end marker check)
+        # From docs: Error message has header type 0xF0 with payload 0xFF
+        # Example: 0x30 30 F0 FF FF FF FF FF FF FF FF
+        if len(data) >= 11 and data[2] == 0xF0:
+            log.debug("Device reported error in log reading")
+            return HistoryNotificationAction.ERROR, data
+
+        # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF ...)
+        # From docs: End marker is 0x3A 3A 10 0xFFFFFFFF FFFFFFFF (all 0xFF)
+        # Must check that first 3 bytes match the pattern and rest are 0xFF
+        if (
+            len(data) >= 3
+            and data[0] == 0x3A
+            and data[1] == 0x3A
+            and data[2] == 0x10
+            and all(b == 0xFF for b in data[3:])
+        ):
+            log.debug("Received end-of-logs marker")
+            return HistoryNotificationAction.END, data
+
+        # Normal history data
+        return HistoryNotificationAction.DATA, data

@@ -66,7 +66,9 @@ Full installation guide for [Raspberry PI & Raspbian](https://github.com/ttu/ruu
 
 ## Usage
 
-### Fetch broadcast data from RuuviTags
+### Fetch broadcast data from RuuviTags and Ruuvi Air
+
+Both use `RuuviTagSensor`-class to fetch data.
 
 The package provides 3 ways to fetch broadcasted data from sensors:
 
@@ -74,7 +76,7 @@ The package provides 3 ways to fetch broadcasted data from sensors:
 2. Synchronously with callback
 3. Observable streams with ReactiveX
 
-RuuviTag sensors can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
+RuuviTag sensors and Ruuvi Air can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
 
 ```py
 ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
@@ -83,6 +85,8 @@ RuuviTag sensors can be identified using MAC addresses. Methods return a tuple c
 ### Fetch stored history data from RuuviTags internal memory
 
 4. Fetch history data with async/await
+
+History data is only supported by RuuviTag sensors with firmware version 3.30.0 or newer.
 
 Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). RuuviTag sends each measurement type as a separate entry.
 
