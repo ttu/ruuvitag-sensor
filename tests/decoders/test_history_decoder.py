@@ -1,10 +1,9 @@
 from datetime import datetime, timezone
-from unittest import TestCase
 
 from ruuvitag_sensor.decoder import HistoryDecoder
 
 
-class TestHistoryDecoder(TestCase):
+class TestHistoryDecoder:
     def test_history_decode_docs_temperature(self):
         # Data from: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
         # 0x3A 30 10 5D57FEAD 000000098D

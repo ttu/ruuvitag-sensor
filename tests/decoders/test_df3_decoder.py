@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.decoder import Df3Decoder
 
 
-class TestDf3Decoder(TestCase):
+class TestDf3Decoder:
     def test_df3decode_is_valid(self):
         decoder = Df3Decoder()
         data = decoder.decode_data("03291A1ECE1EFC18F94202CA0B5300000000BB")

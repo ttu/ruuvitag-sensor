@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.adapters.bleak_ble import BleCommunicationBleak, HistoryNotificationAction
 
 
-class TestHistoryNotificationProcessing(TestCase):
+class TestHistoryNotificationProcessing:
     def test_ignore_heartbeat_data(self):
         """Test that heartbeat data (starting with 0x05) is ignored."""
         adapter = BleCommunicationBleak()

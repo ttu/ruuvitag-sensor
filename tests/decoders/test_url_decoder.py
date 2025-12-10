@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.decoder import UrlDecoder
 
 
-class TestUrlDecoder(TestCase):
+class TestUrlDecoder:
     def test_decode_is_valid(self):
         decoder = UrlDecoder()
         data = decoder.decode_data("AjwYAMFc")

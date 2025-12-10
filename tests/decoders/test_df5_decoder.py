@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.decoder import Df5Decoder, parse_mac
 
 
-class TestDf5Decoder(TestCase):
+class TestDf5Decoder:
     def test_df5decode_is_valid(self):
         decoder = Df5Decoder()
         data_format = "05"

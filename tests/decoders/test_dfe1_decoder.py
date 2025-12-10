@@ -1,9 +1,7 @@
-from unittest import TestCase
-
 from ruuvitag_sensor.decoder import DfE1Decoder, get_decoder
 
 
-class TestDfE1Decoder(TestCase):
+class TestDfE1Decoder:
     def test_dfE1_decode_valid_data(self):
         """Test Data Format E1 decoder with valid data test vector from official docs"""
         decoder = DfE1Decoder()
