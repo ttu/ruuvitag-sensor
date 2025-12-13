@@ -690,17 +690,14 @@ class HistoryDecoder:
                     log.info("History data unexpected length: %d bytes (expected 11)", len(hex_values))
                 return None
 
-            # Verify this is a history log entry
-            if hex_values[0] != "3a":  # ':'
+            if hex_values[0] != "3a":
                 log.info("Invalid command byte: 0x%02X (expected 0x3A)", data[0])
                 return None
 
-            # Check for error header
             if self._is_error_packet(hex_values):
                 log.info("Device reported error in log reading")
                 return None
 
-            # Check for end marker packet
             if self._is_end_marker(hex_values):
                 log.debug("End marker packet received")
                 return None
@@ -841,7 +838,6 @@ class AirHistoryDecoder:
             return None
 
         try:
-            # Verify data format (byte 4)
             if record_data[4] != 0xE1:
                 log.debug("Invalid data format: 0x%02X (expected 0xE1)", record_data[4])
                 return None
@@ -879,12 +875,10 @@ class AirHistoryDecoder:
             log.debug("Packet too short: %d bytes", len(data))
             return []
 
-        # Check for end marker
         if self._is_end_marker(data):
             log.debug("End marker received")
             return []
 
-        # Verify packet header
         if data[0] != 0x3B or data[1] != 0x3B or data[2] != 0x20:
             log.debug("Invalid packet header: 0x%02X 0x%02X 0x%02X", data[0], data[1], data[2])
             return []
@@ -900,7 +894,6 @@ class AirHistoryDecoder:
             log.debug("No records in packet")
             return []
 
-        # Extract and decode each record
         records = []
         header_size = 5
         for i in range(num_records):

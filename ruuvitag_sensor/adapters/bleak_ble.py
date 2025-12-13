@@ -235,7 +235,6 @@ class BleCommunicationBleak(BleCommunicationAsync):
         self, packet_buffer: bytearray, queue: asyncio.Queue[bytearray | None]
     ) -> Callable[[BleakGATTCharacteristic, bytearray], None]:
         def handler(_, data: bytearray) -> None:
-            # Ignore heartbeat data that starts with 0x05
             if data and data[0] == 0x05:
                 log.debug("Ignoring heartbeat data")
                 return
@@ -253,7 +252,6 @@ class BleCommunicationBleak(BleCommunicationAsync):
         self, queue: asyncio.Queue[bytearray | None]
     ) -> Callable[[BleakGATTCharacteristic, bytearray], None]:
         def handler(_, data: bytearray) -> None:
-            # Ignore heartbeat data that starts with 0x05
             if data and data[0] == 0x05:
                 log.debug("Ignoring heartbeat data")
                 return

@@ -31,13 +31,13 @@ def _dechunk(raw: str) -> tuple[str, str]:
 
 class DataFormats:
     """
-    RuuviTag broadcasted raw data handling for each data format
+    RuuviTag and Ruuvi Air broadcasted raw data handling for each data format
     """
 
     @staticmethod
     def convert_data(raw: str) -> DataFormatAndRawSensorData:  # noqa: PLR0911, PLR0912, C901
         """
-        Validate that data is from RuuviTag and get correct data part.
+        Validate that data is from RuuviTag or Ruuvi Air and get correct data part.
 
         There is a special case where this function will return
         None for the data format, and '' for the data. This indicates
@@ -58,7 +58,7 @@ class DataFormats:
 
             # The remaining data is a list of length:type:data chunks.
             # We look for a chunk with vendor specific data (type 0xff),
-            # used by formats 3 and 5, or a chunk with serivice data (type 0x16)
+            # used by formats 3 and 5, or a chunk with service data (type 0x16)
             # used by formats 2 and 4.
             #
             # Firmware 3.x also sends advertisements that contain chunks
@@ -78,7 +78,7 @@ class DataFormats:
             # Data might be from RuuviTag, but received data was invalid
             # e.g. it's possible that Bluetooth stack received only partial data
             # Set the format to None, and data to '', this allows the
-            # caller to determine that we did indeed see a Ruuvitag.
+            # caller to determine that we did indeed see a RuuviTag.
             log.debug("Error parsing advertisement data: %s", ex)
             return (None, "")
         except Exception:
@@ -112,9 +112,9 @@ class DataFormats:
                     return (2, url_data)
                 return (None, None)
             case _ if candidate.startswith("095275757669"):
-                # This is a Ruuvitag, but this advertisement does not contain any data.
+                # This is a RuuviTag, but this advertisement does not contain any data.
                 # Set the format to None, and data to '', this allows the
-                # caller to determine that we did indeed see a Ruuvitag.
+                # caller to determine that we did indeed see a RuuviTag.
                 return (None, "")
             case _:
                 return (None, None)
@@ -127,7 +127,7 @@ class DataFormats:
     def _get_data_format_2and4(raw: str) -> RawSensorData:
         """
         Validate that data is from RuuviTag and is Data Format 2 or 4.
-        Convert hexadcimal data to string.
+        Convert hexadecimal data to string.
         Encoded data part is after ruu.vi/#
 
         Returns:

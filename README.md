@@ -136,7 +136,7 @@ macs = ["AA:2C:6A:1E:59:3D", "CC:2C:6A:1E:59:3D"]
 
 
 async def main():
-    # Get data only for defineded MACs. Exit after 10 found results
+    # Get data only for defined MACs. Exit after 10 found results
     datas = []
     async for found_data in RuuviTagSensor.get_data_async(macs):
         print(f"MAC: {found_data[0]}")

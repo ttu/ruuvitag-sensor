@@ -142,7 +142,7 @@ class RuuviTagSensor:
         macs: list[str] | None = None, search_duration_sec: int = 5, bt_device: str = ""
     ) -> dict[Mac, SensorData]:
         """
-        Get latest data for sensors in the MAC address list.
+        Get latest data for RuuviTag and Ruuvi Air sensors in the MAC address list.
 
         Args:
             macs (array): MAC addresses
@@ -173,7 +173,7 @@ class RuuviTagSensor:
         macs: list[str] | None = None, search_duration_sec: int = 5, bt_device: str = ""
     ) -> dict[Mac, SensorData]:
         """
-        Get latest data for sensors in the MAC address list.
+        Get latest data for RuuviTag and Ruuvi Air sensors in the MAC address list.
 
         Args:
             macs (array): MAC addresses
@@ -212,13 +212,13 @@ class RuuviTagSensor:
         macs: list[str] | None = None, bt_device: str = ""
     ) -> AsyncGenerator[MacAndSensorData, None]:
         """
-        Get data for all ruuvitag sensors or sensors in the MAC's list.
+        Get data for all RuuviTag and Ruuvi Air sensors or sensors in the MAC's list.
 
         Args:
             macs (list): MAC addresses
             bt_device (string): Bluetooth device id
         Returns:
-            AsyncGenerator: MAC and State of RuuviTag sensor data (tuple)
+            AsyncGenerator: MAC and State of sensor data (tuple)
         """
         if macs is None:
             macs = []
@@ -250,7 +250,7 @@ class RuuviTagSensor:
         bt_device: str = "",
     ) -> None:
         """
-        Get data for all ruuvitag sensors or sensors in the MAC's list.
+        Get data for all RuuviTag and Ruuvi Air sensors or sensors in the MAC's list.
 
         Args:
             callback (func): callback function to be called when new data is received
@@ -309,7 +309,7 @@ class RuuviTagSensor:
                                Default new RunFlag
             bt_device (string): Bluetooth device id
         Yields:
-            tuple: MAC and State of RuuviTag sensor data
+            tuple: MAC and State of sensor data
         """
         if macs is None:
             macs = []
@@ -321,15 +321,12 @@ class RuuviTagSensor:
         data_iter = ble.get_data(mac_blacklist, bt_device)
 
         for ble_data in data_iter:
-            # Check duration
             if search_duration_sec and time.time() - start_time > search_duration_sec:
                 data_iter.close()
                 break
-            # Check running flag
             if not run_flag.running:
                 data_iter.close()
                 break
-            # Check MAC whitelist if advertised MAC available
             if ble_data[0] and macs and ble_data[0] not in macs:
                 log.debug("MAC not whitelisted: %s", ble_data[0])
                 continue
@@ -414,11 +411,9 @@ class RuuviTagSensor:
         """
         throw_if_not_async_adapter(ble)
 
-        # Validate device_type
         if device_type not in {"ruuvitag", "ruuvi_air"}:
             raise ValueError(f"Invalid device_type: {device_type}. Must be 'ruuvitag' or 'ruuvi_air'")
 
-        # Create appropriate decoder
         decoder = HistoryDecoder() if device_type == "ruuvitag" else AirHistoryDecoder()
 
         try:
@@ -470,11 +465,9 @@ class RuuviTagSensor:
         """
         throw_if_not_async_adapter(ble)
 
-        # Validate device_type
         if device_type not in {"ruuvitag", "ruuvi_air"}:
             raise ValueError(f"Invalid device_type: {device_type}. Must be 'ruuvitag' or 'ruuvi_air'")
 
-        # Create appropriate decoder
         decoder = HistoryDecoder() if device_type == "ruuvitag" else AirHistoryDecoder()
 
         try:
