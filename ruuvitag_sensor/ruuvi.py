@@ -9,12 +9,14 @@ from warnings import warn
 
 from ruuvitag_sensor.adapters import get_ble_adapter, throw_if_not_async_adapter, throw_if_not_sync_adapter
 from ruuvitag_sensor.data_formats import DataFormats
-from ruuvitag_sensor.decoder import HistoryDecoder, get_decoder, parse_mac
+from ruuvitag_sensor.decoder import AirHistoryDecoder, HistoryDecoder, get_decoder, parse_mac
 from ruuvitag_sensor.ruuvi_types import (
     DataFormatAndRawSensorData,
+    DeviceType,
     Mac,
     MacAndRawData,
     MacAndSensorData,
+    SensorAirHistoryData,
     SensorData,
     SensorHistoryData,
 )
@@ -381,57 +383,86 @@ class RuuviTagSensor:
 
     @staticmethod
     async def get_history_async(
-        mac: str, start_time: datetime | None = None, max_items: int | None = None
-    ) -> AsyncGenerator[SensorHistoryData, None]:
+        mac: str,
+        start_time: datetime | None = None,
+        max_items: int | None = None,
+        device_type: DeviceType = "ruuvitag",
+    ) -> AsyncGenerator[SensorHistoryData | SensorAirHistoryData, None]:
         """
-        Get history data from a RuuviTag as an async stream. Requires firmware version 3.30.0 or newer.
-        Each history entry contains one measurement type (temperature, humidity, or pressure) with
-        Unix timestamp (integer).
+        Get history data from a RuuviTag or Ruuvi Air as an async stream.
+
+        For RuuviTag: Each history entry contains one measurement type (temperature, humidity, or pressure)
+        with Unix timestamp (integer). Requires firmware version 3.30.0 or newer.
+
+        For Ruuvi Air: Each history entry contains all sensor measurements (temperature, humidity, pressure,
+        PM values, CO₂, VOC, NOx) with Unix timestamp (integer).
 
         Args:
-            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            mac (str): MAC address or UUID of the device. On macOS use UUID instead.
             start_time (Optional[datetime]): If provided, only get data from this time onwards. Time should be in UTC.
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
+            device_type (DeviceType): Device type - "ruuvi_air" for Ruuvi Air,
+                "ruuvitag" for RuuviTag (default: "ruuvitag")
 
         Yields:
-            SensorHistoryData: Individual history measurements
+            SensorHistoryData or SensorAirHistoryData: Individual history measurements.
+                Note: Ruuvi Air may transmit multiple records per BLE packet, but this method yields one decoded
+                record at a time.
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
         """
         throw_if_not_async_adapter(ble)
 
-        decoder = HistoryDecoder()
-        data_iter = ble.get_history_data(mac, start_time, max_items)
+        # Validate device_type
+        if device_type not in {"ruuvitag", "ruuvi_air"}:
+            raise ValueError(f"Invalid device_type: {device_type}. Must be 'ruuvitag' or 'ruuvi_air'")
+
+        # Create appropriate decoder
+        decoder = HistoryDecoder() if device_type == "ruuvitag" else AirHistoryDecoder()
+
         try:
+            data_iter = ble.get_history_data(mac, start_time, max_items, device_type=device_type)
             async for data in data_iter:
-                history_data = decoder.decode_data(data)
-                if history_data:
-                    yield history_data
+                if decoded := decoder.decode_data(data):
+                    if isinstance(decoded, list):
+                        for record in decoded:
+                            yield record
+                    else:
+                        yield decoded
         finally:
             await data_iter.aclose()
 
     @staticmethod
     async def download_history(
-        mac: str, start_time: datetime | None = None, timeout: int = 300, max_items: int | None = None
-    ) -> list[SensorHistoryData]:
+        mac: str,
+        start_time: datetime | None = None,
+        timeout: int = 300,
+        max_items: int | None = None,
+        device_type: DeviceType = "ruuvitag",
+    ) -> list[SensorHistoryData | SensorAirHistoryData]:
         """
-        Download complete history data from a RuuviTag. Requires firmware version 3.30.0 or newer.
+        Download complete history data from a RuuviTag or Ruuvi Air.
         This method collects all history entries and returns them as a list.
-        Each history entry contains one measurement type (temperature, humidity, or pressure) with
-        Unix timestamp (integer).
 
-        Note: The RuuviTag sends each measurement type (temperature, humidity, pressure) as separate entries.
+        For RuuviTag: Each history entry contains one measurement type (temperature, humidity, or pressure)
+        with Unix timestamp (integer). Requires firmware version 3.30.0 or newer.
+        Note: The RuuviTag sends each measurement type as separate entries.
         If you need to combine measurements by timestamp, you'll need to post-process the data.
 
+        For Ruuvi Air: Each history entry contains all sensor measurements (temperature, humidity, pressure,
+        PM values, CO₂, VOC, NOx) with Unix timestamp (integer).
+
         Args:
-            mac (str): MAC address of the RuuviTag. On macOS use UUID instead.
+            mac (str): MAC address or UUID of the device. On macOS use UUID instead.
             start_time (Optional[datetime]): If provided, only get data from this time onwards. Time should be in UTC.
             timeout (int): Maximum time in seconds to wait for history download (default: 300)
             max_items (Optional[int]): Maximum number of history entries to fetch. If None, gets all available data
+            device_type (DeviceType): Device type - "ruuvi_air" for Ruuvi Air,
+                "ruuvitag" for RuuviTag (default: "ruuvitag")
 
         Returns:
-            List[SensorHistoryData]: List of historical measurements
+            List[SensorHistoryData] or List[SensorAirHistoryData]: List of historical measurements
 
         Raises:
             RuntimeError: If connection fails or device doesn't support history
@@ -439,14 +470,21 @@ class RuuviTagSensor:
         """
         throw_if_not_async_adapter(ble)
 
+        # Validate device_type
+        if device_type not in {"ruuvitag", "ruuvi_air"}:
+            raise ValueError(f"Invalid device_type: {device_type}. Must be 'ruuvitag' or 'ruuvi_air'")
+
+        # Create appropriate decoder
+        decoder = HistoryDecoder() if device_type == "ruuvitag" else AirHistoryDecoder()
+
         try:
-            history_data: list[SensorHistoryData] = []
-            decoder = HistoryDecoder()
+            history_data: list[SensorHistoryData | SensorAirHistoryData] = []
 
             async def collect_history():
-                async for data in ble.get_history_data(mac, start_time, max_items):
+                async for data in ble.get_history_data(mac, start_time, max_items, device_type=device_type):
                     if decoded := decoder.decode_data(data):
-                        history_data.append(decoded)  # noqa: PERF401
+                        # HistoryDecoder returns single record or None, AirHistoryDecoder returns list
+                        history_data.extend(decoded if isinstance(decoded, list) else [decoded])
 
             await asyncio.wait_for(collect_history(), timeout=timeout)
             return history_data

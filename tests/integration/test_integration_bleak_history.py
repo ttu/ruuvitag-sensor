@@ -68,6 +68,7 @@ HistoryTestCase = tuple[
                         2430 & 0xFF,  # Temperature low byte
                     ]
                 ),
+                bytearray([0x05, 0x01, 0x02, 0x03, 0x04]),  # Heartbeat between packets (should be ignored)
                 bytearray(  # Humidity packet (0x31)
                     [
                         0x3A,  # Command byte
@@ -98,6 +99,52 @@ HistoryTestCase = tuple[
                         1000 & 0xFF,  # Pressure low byte
                     ]
                 ),
+                # Second round of readings
+                bytearray(  # Temperature packet (0x30)
+                    [
+                        0x3A,  # Command byte
+                        0x30,  # Temperature packet type
+                        0x11,  # Header
+                        (1700000060 >> 24) & 0xFF,
+                        (1700000060 >> 16) & 0xFF,
+                        (1700000060 >> 8) & 0xFF,
+                        1700000060 & 0xFF,
+                        0x00,  # Reserved
+                        0x00,  # Reserved
+                        (2500 >> 8) & 0xFF,  # Temperature high byte (25.00°C)
+                        2500 & 0xFF,  # Temperature low byte
+                    ]
+                ),
+                bytearray(  # Humidity packet (0x31)
+                    [
+                        0x3A,  # Command byte
+                        0x31,  # Humidity packet type
+                        0x11,  # Header
+                        (1700000061 >> 24) & 0xFF,
+                        (1700000061 >> 16) & 0xFF,
+                        (1700000061 >> 8) & 0xFF,
+                        1700000061 & 0xFF,
+                        0x00,  # Reserved
+                        0x00,  # Reserved
+                        (5000 >> 8) & 0xFF,  # Humidity high byte (50.00%)
+                        5000 & 0xFF,  # Humidity low byte
+                    ]
+                ),
+                bytearray(  # Pressure packet (0x32)
+                    [
+                        0x3A,  # Command byte
+                        0x32,  # Pressure packet type
+                        0x11,  # Header
+                        (1700000062 >> 24) & 0xFF,
+                        (1700000062 >> 16) & 0xFF,
+                        (1700000062 >> 8) & 0xFF,
+                        1700000062 & 0xFF,
+                        0x00,  # Reserved
+                        0x00,  # Reserved
+                        (1013 >> 8) & 0xFF,  # Pressure high byte (1013 hPa)
+                        1013 & 0xFF,  # Pressure low byte
+                    ]
+                ),
                 bytearray([0x3A, 0x3A, 0x10] + [0xFF] * 8),  # End marker
             ],
             [
@@ -118,6 +165,24 @@ HistoryTestCase = tuple[
                     humidity=None,
                     pressure=1000.0,
                     timestamp=1700000002,
+                ),
+                SensorHistoryData(
+                    temperature=25.00,
+                    humidity=None,
+                    pressure=None,
+                    timestamp=1700000060,
+                ),
+                SensorHistoryData(
+                    temperature=None,
+                    humidity=50.00,
+                    pressure=None,
+                    timestamp=1700000061,
+                ),
+                SensorHistoryData(
+                    temperature=None,
+                    humidity=None,
+                    pressure=1013.0,
+                    timestamp=1700000062,
                 ),
             ],
         ),

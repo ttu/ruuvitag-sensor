@@ -79,23 +79,29 @@ The package provides 3 ways to fetch broadcasted data from sensors:
 RuuviTag sensors and Ruuvi Air can be identified using MAC addresses. Methods return a tuple containing MAC and sensor data payload.
 
 ```py
-('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
+  ('D2:A3:6E:C8:E0:25', {'data_format': 5, 'humidity': 47.62, 'temperature': 23.58, 'pressure': 1023.68, 'acceleration': 993.2331045630729, 'acceleration_x': -48, 'acceleration_y': -12, 'acceleration_z': 992, 'tx_power': 4, 'battery': 2197, 'movement_counter': 0, 'measurement_sequence_number': 88, 'mac': 'd2a36ec8e025', 'rssi': -80})
 ```
 
-### Fetch stored history data from RuuviTags internal memory
+### Fetch stored history data from internal memory
 
 4. Fetch history data with async/await
 
-History data is only supported by RuuviTag sensors with firmware version 3.30.0 or newer.
+History data is supported by:
+- RuuviTag sensors with firmware version 3.30.0 or newer
+- Ruuvi Air devices
 
-Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). RuuviTag sends each measurement type as a separate entry.
+RuuviTag: Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). RuuviTag sends each measurement type as a separate entry.
 
 ```py
-[
-    {'temperature': 22.22, 'humidity': None, 'pressure': None, 'timestamp': 1738476581}
-    {'temperature': None, 'humidity': 38.8, 'pressure': None, 'timestamp': 1738476581},
-    {'temperature': None, 'humidity': None, 'pressure': 35755.0, 'timestamp': 1738476581},
-]
+  {'temperature': 22.22, 'humidity': None, 'pressure': None, 'timestamp': 1738476581}
+  {'temperature': None, 'humidity': 38.8, 'pressure': None, 'timestamp': 1738476581}
+  {'temperature': None, 'humidity': None, 'pressure': 35755.0, 'timestamp': 1738476581}
+```
+
+Ruuvi Air: Each history entry contains all sensor measurements (temperature, humidity, pressure, PM values, CO₂, VOC, NOx) with a Unix timestamp (integer).
+
+```py
+  {'temperature': 22.22, 'humidity': 38.8, 'pressure': 101325.0, 'pm_1': 3.1, 'pm_2_5': 5.4, 'pm_4': 6.2, 'pm_10': 7.0, 'co2': 450, 'voc': 50, 'nox': 25, 'measurement_sequence_number': 123456, 'timestamp': 1738476581}
 ```
 
 
@@ -230,21 +236,29 @@ Check the official documentation of [ReactiveX](https://rxpy.readthedocs.io/en/l
 
 __NOTE:__ History data functionality works only with `Bleak`-adapter.
 
-RuuviTags with firmware version 3.30.0 or newer support retrieving historical measurements. The package provides two methods to access this data:
+RuuviTags (firmware version 3.30.0+) and Ruuvi Air support retrieving historical measurements. The package provides two methods to access this data:
 
 1. `get_history_async`: Stream history entries as they arrive
 2. `download_history`: Download all history entries at once
 
-Each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). RuuviTag sends each measurement type as a separate entry.
+`device_type` must be specified for history, as history is fetched over a GATT connection and RuuviTag and Ruuvi Air use different log-read protocols and payload layouts
 
-Example history entry:
+- RuuviTag (`ruuvitag`, default): single-record notifications (temperature/humidity/pressure one at a time).
+- Ruuvi Air (`ruuvi_air`): the device may send multiple records per BLE packet, but the library yields/returns one decoded record at a time.
+
+For RuuviTag, each history entry contains one measurement type (temperature, humidity, or pressure) with a Unix timestamp (integer). RuuviTag sends each measurement type as a separate entry.
+
 ```py
-{
-    'temperature': 22.22,  # Only one measurement type per entry
-    'humidity': None,
-    'pressure': None,
-    'timestamp': 1738476581  # Unix timestamp (integer)
-}
+  {'temperature': 22.22, 'humidity': None, 'pressure': None, 'timestamp': 1738476581}
+  {'temperature': None, 'humidity': 38.8, 'pressure': None, 'timestamp': 1738476581}
+  {'temperature': None, 'humidity': None, 'pressure': 35755.0, 'timestamp': 1738476581}
+```
+
+
+For Ruuvi Air, each history entry contains all sensor measurements (E1) with a Unix timestamp.
+
+```py
+  {'temperature': 22.22, 'humidity': 38.8, 'pressure': 101325.0, 'pm_1': 3.1, 'pm_2_5': 5.4, 'pm_4': 6.2, 'pm_10': 7.0, 'co2': 450, 'voc': 50, 'nox': 25, 'measurement_sequence_number': 123456, 'timestamp': 1738476581}
 ```
 
 ```py
@@ -258,11 +272,15 @@ async def main():
     # Get history from the last 10 minutes
     start_time = datetime.now(timezone.utc) - timedelta(minutes=10)
     
-    # Stream entries as they arrive
+    # Stream entries as they arrive (RuuviTag default)
     async for entry in RuuviTagSensor.get_history_async(mac="AA:BB:CC:DD:EE:FF", start_time=start_time):
         print(f"Time: {entry['timestamp']} - {entry}")
+
+    # Stream entries as they arrive (Ruuvi Air)
+    async for entry in RuuviTagSensor.get_history_async(mac="AB:CD:EF:12:34:56", start_time=start_time, device_type="ruuvi_air"):
+        print(f"Time: {entry['timestamp']} - {entry}")
         
-    # Or download all entries at once
+    # Or download all entries at once (RuuviTag default)
     history = await RuuviTagSensor.download_history(mac="AA:BB:CC:DD:EE:FF", start_time=start_time)
     for entry in history:
         print(f"Time: {entry['timestamp']} - {entry}")
@@ -377,10 +395,10 @@ RuuviTag sensors support multiple data formats. Example data from sensors with d
 
 ```python
 {
-'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None, 'rssi': None },
-'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0', 'rssi': None },
-'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3, 'rssi': None },
-'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70, 'rssi': -65 }
+  'CA:F7:44:DE:EB:E1': { 'data_format': 2, 'temperature': 22.0, 'humidity': 28.0, 'pressure': 991.0, 'identifier': None, 'rssi': None },
+  'F4:A5:74:89:16:57': { 'data_format': 4, 'temperature': 23.24, 'humidity': 29.0, 'pressure': 991.0, 'identifier': '0', 'rssi': None },
+  'A3:GE:2D:91:A4:1F': { 'data_format': 3, 'battery': 2899, 'pressure': 1027.66, 'humidity': 20.5, 'acceleration': 63818.215675463696, 'acceleration_x': 200.34, 'acceleration_y': 0.512, 'acceleration_z': -200.42, 'temperature': 26.3, 'rssi': None },
+  'CB:B8:33:4C:88:4F': { 'data_format': 5, 'battery': 2.995, 'pressure': 1000.43, 'mac': 'cbb8334c884f', 'measurement_sequence_number': 2467, 'acceleration_z': 1028, 'acceleration': 1028.0389097694697, 'temperature': 22.14, 'acceleration_y': -8, 'acceleration_x': 4, 'humidity': 53.97, 'tx_power': 4, 'movement_counter': 70, 'rssi': -65 }
 }
 ```
 
@@ -400,7 +418,7 @@ Example data from a Ruuvi Air sensor:
 
 ```python
 {
-'4C:88:4F:AA:BB:CC': { 'data_format': 6, 'temperature': 29.5, 'humidity': 55.3, 'pressure': 1011.02, 'pm_2_5': 11.2, 'co2': 201, 'voc': 10, 'nox': 2, 'luminosity': 13026.67, 'measurement_sequence_number': 205, 'calibration_in_progress': False, 'mac': '4c884f' }
+  '4C:88:4F:AA:BB:CC': { 'data_format': 6, 'temperature': 29.5, 'humidity': 55.3, 'pressure': 1011.02, 'pm_2_5': 11.2, 'co2': 201, 'voc': 10, 'nox': 2, 'luminosity': 13026.67, 'measurement_sequence_number': 205, 'calibration_in_progress': False, 'mac': '4c884f' }
 }
 ```
 
@@ -412,7 +430,7 @@ Example data from a Ruuvi Air sensor:
 
 ```python
 {
-'CB:B8:33:4C:88:4F', {'data_format': 'E1', 'humidity': 55.3, 'temperature': 29.5, 'pressure': 1011.02, 'pm_1': 10.1, 'pm_2_5': 11.2, 'pm_4': 121.3, 'pm_10': 455.4, 'co2': 201, 'voc': 20, 'nox': 4, 'luminosity': 13027.0, 'measurement_sequence_number': 14601710, 'calibration_in_progress': True, 'mac': 'CB:B8:33:4C:88:4F'}
+  'CB:B8:33:4C:88:4F', {'data_format': 'E1', 'humidity': 55.3, 'temperature': 29.5, 'pressure': 1011.02, 'pm_1': 10.1, 'pm_2_5': 11.2, 'pm_4': 121.3, 'pm_10': 455.4, 'co2': 201, 'voc': 20, 'nox': 4, 'luminosity': 13027.0, 'measurement_sequence_number': 14601710, 'calibration_in_progress': True, 'mac': 'CB:B8:33:4C:88:4F'}
 }
 ```
 

@@ -95,3 +95,29 @@ class TestHistoryDecoder:
         ]
         for error_data in error_cases:
             assert decoder.decode_data(error_data) is None, f"Should be error for data: {error_data!r}"
+
+    def test_history_decode_detects_ruuvi_air_data(self):
+        """Test that HistoryDecoder detects and logs helpful error for Ruuvi Air data."""
+        decoder = HistoryDecoder()
+
+        # Simulate Ruuvi Air packet data (various formats that might be received)
+        # This is what would be received from a Ruuvi Air device when using wrong device_type
+        air_data_cases = [
+            # Multi-record packet header starting with 0x3B
+            bytearray(b"\x3b\x3b\x20\x01\x26" + b"\x00" * 38),
+            # Single record with 0xE1 format at byte 4 (inside packet)
+            bytearray(b"\x00\x00\x00\x00\xe1" + b"\x00" * 33),
+            # Raw 38-byte record starting with 0xE1
+            bytearray(
+                b"\xe1\x118/l\xcbD\x00\x02\x00\x04\x00\x06\x00\x07\x02Y$\x00\xff\xff\xff\xff\xff\xff0G\xfe\xb8\xff\xff\xff\xff\xff"
+            ),
+            # Raw 34-byte record starting with 0xE1 (actual case from real device)
+            bytearray(
+                b"\xe1\x113.\x90\xcc\x10\x00\x05\x00\n\x00\x0f\x00\x11\x02/*\x00\xff\xff\xff\xff\xff\xff0n\x86\xb8"
+            ),
+        ]
+
+        # Process all test cases and verify they all return None
+        for air_data in air_data_cases:
+            result = decoder.decode_data(air_data)
+            assert result is None

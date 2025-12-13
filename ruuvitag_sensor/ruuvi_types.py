@@ -1,4 +1,6 @@
-from typing import TypedDict
+from typing import Literal, TypedDict
+
+DeviceType = Literal["ruuvitag", "ruuvi_air"]
 
 
 class SensorDataBase(TypedDict):
@@ -63,6 +65,21 @@ class SensorHistoryData(TypedDict):
     humidity: float | None
     temperature: float | None
     pressure: float | None
+    timestamp: int
+
+
+class SensorAirHistoryData(TypedDict):
+    humidity: float | None
+    temperature: float | None
+    pressure: float | None
+    pm_1: float | None
+    pm_2_5: float | None
+    pm_4: float | None
+    pm_10: float | None
+    co2: int | None
+    voc: int | None
+    nox: int | None
+    measurement_sequence_number: int | None
     timestamp: int
 
 

@@ -3,7 +3,7 @@ import logging
 import os
 import re
 import sys
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Callable
 from datetime import datetime, timezone
 from enum import Enum
 
@@ -136,18 +136,24 @@ class BleCommunicationBleak(BleCommunicationAsync):
         return data or ""
 
     async def get_history_data(
-        self, mac: str, start_time: datetime | None = None, max_items: int | None = None
+        self,
+        mac: str,
+        start_time: datetime | None = None,
+        max_items: int | None = None,
+        device_type: str = "ruuvitag",
     ) -> AsyncGenerator[bytearray, None]:
         """
-        Get history data from a RuuviTag using GATT connection.
+        Get history data from a RuuviTag or Ruuvi Air using GATT connection.
 
         Args:
-            mac (str): MAC address of the RuuviTag
+            mac (str): MAC address or UUID of the device
             start_time (datetime, optional): Start time for history data. Time should be in UTC.
             max_items (int, optional): Maximum number of history entries to fetch
+            device_type (str): Device type - "ruuvi_air" for Ruuvi Air,
+                "ruuvitag" for RuuviTag (default: "ruuvitag")
 
         Yields:
-            bytearray: Raw history data entries
+            bytearray: Raw history data entries (packets for Ruuvi Air, single records for RuuviTag)
 
         Raises:
             RuntimeError: If connection fails or required services not found
@@ -158,43 +164,28 @@ class BleCommunicationBleak(BleCommunicationAsync):
             client = await self._connect_gatt(mac)
             log.debug("Connected to device %s", mac)
 
+            is_ruuvi_air = device_type == "ruuvi_air"
+
+            # Try to negotiate larger MTU for Ruuvi Air (recommended: 247+ bytes)
+            if is_ruuvi_air:
+                await self._try_set_ruuvi_air_mtu(client)
+
             tx_char, rx_char = self._get_history_service_characteristics(client)
 
             data_queue: asyncio.Queue[bytearray | None] = asyncio.Queue()
-
-            def notification_handler(_, data: bytearray):
-                action, processed_data = self._process_history_notification(data)
-
-                if action == HistoryNotificationAction.IGNORE:
-                    return
-
-                log.debug("Received data: %s", processed_data)
-                data_queue.put_nowait(processed_data)
-
-                if action in (HistoryNotificationAction.END, HistoryNotificationAction.ERROR):
-                    data_queue.put_nowait(None)
-
+            # Buffer for assembling split Ruuvi Air packets
+            packet_buffer = bytearray()
+            notification_handler = self._create_history_notification_handler(is_ruuvi_air, packet_buffer, data_queue)
             await client.start_notify(tx_char, notification_handler)
 
-            command = self._create_send_history_command(start_time)
+            command = self._create_send_history_command(start_time, use_air_format=is_ruuvi_air)
 
-            log.debug("Sending command: %s", command)
+            log.debug("Sending command: %s", command.hex())
             await client.write_gatt_char(rx_char, command)
             log.debug("Sent history command to device")
 
-            items_received = 0
-            while True:
-                try:
-                    data = await asyncio.wait_for(data_queue.get(), timeout=10.0)
-                    if data is None:
-                        break
-                    yield data
-                    items_received += 1
-                    if max_items and items_received >= max_items:
-                        break
-                except asyncio.TimeoutError:
-                    log.error("Timeout waiting for history data")
-                    break
+            async for packet in self._iter_history_queue(data_queue, max_items=max_items):
+                yield packet
 
         except Exception as e:
             log.error("Failed to get history data from device %s: %r", mac, e)
@@ -221,6 +212,143 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         return client  # Satisfy linter - this line will never be reached
 
+    async def _try_set_ruuvi_air_mtu(self, client: BleakClient, mtu: int = 247) -> None:
+        """Best-effort MTU negotiation for Ruuvi Air history transfers."""
+        try:
+            if hasattr(client, "set_mtu"):
+                await client.set_mtu(mtu)  # type: ignore[attr-defined]
+                log.debug("MTU set to %d", mtu)
+        except Exception as e:
+            log.debug("Could not set MTU: %s (continuing with default)", e)
+
+    def _create_history_notification_handler(
+        self,
+        is_ruuvi_air: bool,
+        packet_buffer: bytearray,
+        queue: asyncio.Queue[bytearray | None],
+    ) -> Callable[[BleakGATTCharacteristic, bytearray], None]:
+        if is_ruuvi_air:
+            return self._create_ruuvi_air_history_notification_handler(packet_buffer, queue)
+        return self._create_ruuvitag_history_notification_handler(queue)
+
+    def _create_ruuvi_air_history_notification_handler(
+        self, packet_buffer: bytearray, queue: asyncio.Queue[bytearray | None]
+    ) -> Callable[[BleakGATTCharacteristic, bytearray], None]:
+        def handler(_, data: bytearray) -> None:
+            # Ignore heartbeat data that starts with 0x05
+            if data and data[0] == 0x05:
+                log.debug("Ignoring heartbeat data")
+                return
+
+            packet_buffer.extend(data)
+            for packet in self._extract_ruuvi_air_history_packets(packet_buffer):
+                action, processed_data = self._process_history_notification(packet, True)
+                if self._enqueue_history_notification(action, processed_data, queue):
+                    packet_buffer.clear()
+                    break
+
+        return handler
+
+    def _create_ruuvitag_history_notification_handler(
+        self, queue: asyncio.Queue[bytearray | None]
+    ) -> Callable[[BleakGATTCharacteristic, bytearray], None]:
+        def handler(_, data: bytearray) -> None:
+            # Ignore heartbeat data that starts with 0x05
+            if data and data[0] == 0x05:
+                log.debug("Ignoring heartbeat data")
+                return
+
+            action, processed_data = self._process_history_notification(data, False)
+            if action == HistoryNotificationAction.IGNORE:
+                return
+
+            log.debug("Received data: %s", processed_data)
+            self._enqueue_history_notification(action, processed_data, queue)
+
+        return handler
+
+    async def _iter_history_queue(
+        self,
+        queue: asyncio.Queue[bytearray | None],
+        *,
+        max_items: int | None,
+        timeout_sec: float = 10.0,
+    ) -> AsyncGenerator[bytearray, None]:
+        items_received = 0
+        while True:
+            try:
+                data = await asyncio.wait_for(queue.get(), timeout=timeout_sec)
+            except asyncio.TimeoutError:
+                log.error("Timeout waiting for history data")
+                return
+
+            if data is None:
+                return
+
+            yield data
+            items_received += 1
+            if max_items and items_received >= max_items:
+                return
+
+    @staticmethod
+    def _enqueue_history_notification(
+        action: HistoryNotificationAction,
+        processed_data: bytearray | None,
+        queue: asyncio.Queue[bytearray | None],
+    ) -> bool:
+        """Enqueue processed history data and signal end/error with a None sentinel."""
+        if action == HistoryNotificationAction.IGNORE:
+            return False
+        queue.put_nowait(processed_data)
+        if action in (HistoryNotificationAction.END, HistoryNotificationAction.ERROR):
+            queue.put_nowait(None)
+            return True
+        return False
+
+    @staticmethod
+    def _extract_ruuvi_air_history_packets(buffer: bytearray) -> list[bytearray]:
+        """
+        Extract complete Ruuvi Air history packets from a buffer.
+
+        Ruuvi Air multi-record response packet framing (log write, multi-record):
+          0..2: 0x3B 0x3B 0x20
+          3:    num_records
+          4:    record_length (expected 38 bytes)
+          5..:  records (num_records * record_length)
+
+        Packets may arrive split across BLE notifications, so we accumulate into a buffer and slice
+        out complete frames when enough bytes are present.
+        """
+        header = b"\x3b\x3b\x20"
+        packets: list[bytearray] = []
+
+        while True:
+            pos = buffer.find(header)
+            if pos == -1:
+                # Keep last 2 bytes in case header spans notifications.
+                if len(buffer) > 2:
+                    del buffer[:-2]
+                return packets
+            if pos > 0:
+                del buffer[:pos]
+
+            if len(buffer) < 5:
+                return packets
+
+            num_records = buffer[3]
+            record_length = buffer[4]
+            if record_length == 0:
+                # Invalid; drop one byte and attempt to resync.
+                del buffer[0]
+                continue
+
+            expected_size = 5 + (num_records * record_length)
+            if len(buffer) < expected_size:
+                return packets
+
+            packets.append(bytearray(buffer[:expected_size]))
+            del buffer[:expected_size]
+
     def _get_history_service_characteristics(
         self, client: BleakClient
     ) -> tuple[BleakGATTCharacteristic, BleakGATTCharacteristic]:
@@ -241,67 +369,111 @@ class BleCommunicationBleak(BleCommunicationAsync):
 
         return tx_char, rx_char
 
-    def _create_send_history_command(self, start_time: datetime | None = None):
+    def _create_send_history_command(self, start_time: datetime | None = None, use_air_format: bool = False):
+        """
+        Create the 11-byte log read command.
+
+        Args:
+            start_time: Start time for history data. If None, uses 0 (all data).
+            try_air_format: If True, use Ruuvi Air format (0x3B 0x3B 0x21),
+                           otherwise use RuuviTag format (0x3A 0x3A 0x11).
+
+        Returns:
+            bytearray: 11-byte command
+        """
         end_time = int(datetime.now(timezone.utc).timestamp())
         start_time_to_use = int(start_time.timestamp()) if start_time else 0
 
+        if use_air_format:
+            # Ruuvi Air format: 0x3B 0x3B 0x21 (multi-record read)
+            dest = 0x3B
+            src = 0x3B
+            op = 0x21
+        else:
+            # RuuviTag format: 0x3A 0x3A 0x11 (single-record read)
+            dest = 0x3A
+            src = 0x3A
+            op = 0x11
+
         command = bytearray(
             [
-                0x3A,
-                0x3A,
-                0x11,  # Header for temperature query
-                (end_time >> 24) & 0xFF,  # End timestamp byte 1 (most significant)
-                (end_time >> 16) & 0xFF,  # End timestamp byte 2
-                (end_time >> 8) & 0xFF,  # End timestamp byte 3
-                end_time & 0xFF,  # End timestamp byte 4
-                (start_time_to_use >> 24) & 0xFF,  # Start timestamp byte 1 (most significant)
-                (start_time_to_use >> 16) & 0xFF,  # Start timestamp byte 2
-                (start_time_to_use >> 8) & 0xFF,  # Start timestamp byte 3
-                start_time_to_use & 0xFF,  # Start timestamp byte 4
+                dest,
+                src,
+                op,
+                (end_time >> 24) & 0xFF,  # Current time byte 1 (most significant)
+                (end_time >> 16) & 0xFF,  # Current time byte 2
+                (end_time >> 8) & 0xFF,  # Current time byte 3
+                end_time & 0xFF,  # Current time byte 4
+                (start_time_to_use >> 24) & 0xFF,  # Start time byte 1 (most significant)
+                (start_time_to_use >> 16) & 0xFF,  # Start time byte 2
+                (start_time_to_use >> 8) & 0xFF,  # Start time byte 3
+                start_time_to_use & 0xFF,  # Start time byte 4
             ]
         )
 
         return command
 
     @staticmethod
-    def _process_history_notification(data: bytearray) -> tuple[HistoryNotificationAction, bytearray | None]:
+    def _process_history_notification(
+        data: bytearray, is_ruuvi_air: bool = False
+    ) -> tuple[HistoryNotificationAction, bytearray | None]:
         """
         Process history notification data and determine the action to take.
 
         Args:
             data: Raw notification data from BLE characteristic
+            is_ruuvi_air: True if device is Ruuvi Air, False for RuuviTag
 
         Returns:
             Tuple of (action_type, data):
             - action_type: One of HistoryNotificationAction constants
             - data: The processed data (or None if action is IGNORE)
 
-        Reference: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
+        Reference:
+        - RuuviTag: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
+        - Ruuvi Air: https://github.com/ruuvi/docs/blob/8161abb9a08840fceb409aab69d6a7c12d3d5511/communication/bluetooth-connection/nordic-uart-service-nus/read-logged-history-ruuvi-air.md
         """
+        action = HistoryNotificationAction.DATA
+        processed: bytearray | None = data
+
         # Ignore heartbeat data that starts with 0x05
         if data and data[0] == 0x05:
             log.debug("Ignoring heartbeat data")
-            return HistoryNotificationAction.IGNORE, None
-
+            action = HistoryNotificationAction.IGNORE
+            processed = None
+        elif is_ruuvi_air:
+            # Ruuvi Air protocol
+            if len(data) < 5:
+                log.debug("Packet too short: %d bytes", len(data))
+                action = HistoryNotificationAction.IGNORE
+                processed = None
+            # Verify packet header (destination=0x3B, source=0x3B, operation=0x20)
+            elif data[0] != 0x3B or data[1] != 0x3B or data[2] != 0x20:
+                log.debug("Invalid Ruuvi Air packet header: 0x%02X 0x%02X 0x%02X", data[0], data[1], data[2])
+                action = HistoryNotificationAction.IGNORE
+                processed = None
+            # Check for end marker: num_records = 0
+            elif data[3] == 0x00:
+                log.debug("Received end-of-logs marker (Ruuvi Air)")
+                action = HistoryNotificationAction.END
+        # RuuviTag protocol
         # Check for error message first (before end marker check)
         # From docs: Error message has header type 0xF0 with payload 0xFF
         # Example: 0x30 30 F0 FF FF FF FF FF FF FF FF
-        if len(data) >= 11 and data[2] == 0xF0:
+        elif len(data) >= 11 and data[2] == 0xF0:
             log.debug("Device reported error in log reading")
-            return HistoryNotificationAction.ERROR, data
-
+            action = HistoryNotificationAction.ERROR
         # Check for end-of-logs marker (0x3A 0x3A 0x10 0xFF ...)
         # From docs: End marker is 0x3A 3A 10 0xFFFFFFFF FFFFFFFF (all 0xFF)
         # Must check that first 3 bytes match the pattern and rest are 0xFF
-        if (
+        elif (
             len(data) >= 3
             and data[0] == 0x3A
             and data[1] == 0x3A
             and data[2] == 0x10
             and all(b == 0xFF for b in data[3:])
         ):
-            log.debug("Received end-of-logs marker")
-            return HistoryNotificationAction.END, data
+            log.debug("Received end-of-logs marker (RuuviTag)")
+            action = HistoryNotificationAction.END
 
-        # Normal history data
-        return HistoryNotificationAction.DATA, data
+        return action, processed
