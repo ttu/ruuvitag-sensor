@@ -19,7 +19,7 @@ class HistoryDecoder:
     - Third byte: Header byte (skipped or error)
     - Next 4 bytes: Clock time (seconds since unix epoch)
     - Next 2 bytes: Reserved (always 0x00)
-    - Next 2 bytes: Sensor data (uint16, little-endian)
+    - Next 2 bytes: Sensor data (uint16, big-endian)
         Temperature: 0.01°C units
         Humidity: 0.01% units
         Pressure: Raw value in hPa
@@ -48,7 +48,7 @@ class HistoryDecoder:
         """Return temperature in celsius"""
         if data[1] != "30":  # '0' for temperature
             return None
-        # Temperature is in 0.01°C units, little-endian
+        # Temperature is in 0.01°C units, big-endian
         temp_bytes = bytes.fromhex("".join(data[9:11]))
         temp_raw = int.from_bytes(temp_bytes, "big")
         return round(temp_raw * 0.01, 2)
@@ -57,7 +57,7 @@ class HistoryDecoder:
         """Return humidity %"""
         if data[1] != "31":  # '1' for humidity
             return None
-        # Humidity is in 0.01% units, little-endian
+        # Humidity is in 0.01% units, big-endian
         humidity_bytes = bytes.fromhex("".join(data[9:11]))
         humidity_raw = int.from_bytes(humidity_bytes, "big")
         return round(humidity_raw * 0.01, 2)
@@ -66,7 +66,7 @@ class HistoryDecoder:
         """Return air pressure hPa"""
         if data[1] != "32":  # '2' for pressure
             return None
-        # Pressure is in hPa units, little-endian
+        # Pressure is in hPa units, big-endian
         pressure_bytes = bytes.fromhex("".join(data[9:11]))
         pressure_raw = int.from_bytes(pressure_bytes, "big")
         return float(pressure_raw)
@@ -134,7 +134,7 @@ class HistoryDecoder:
                         "timestamp": self._get_timestamp(hex_values),
                     }
                 case _:
-                    log.info("Invalid packet type: %d - %s", packet_type, data)
+                    log.info("Invalid packet type: %s - %s", packet_type, data)
                     return None
 
         except Exception:

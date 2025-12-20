@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * ADD: Support for fetching history data from Ruuvi Air
+* FIX: Calculate acceleration magnitude correctly with zero values in DF5 decoder
 
 ## [4.0.0] - 2025-12-08
 * CHANGE: Support only Python 3.10 and newer
