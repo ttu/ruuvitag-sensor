@@ -95,7 +95,11 @@ class Df5Decoder:
             rssi = data[48:]
 
             acc_x, acc_y, acc_z = self._get_acceleration(byte_data)
-            acc = math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z) if acc_x and acc_y and acc_z else None
+            acc = (
+                math.sqrt(acc_x * acc_x + acc_y * acc_y + acc_z * acc_z)
+                if acc_x is not None and acc_y is not None and acc_z is not None
+                else None
+            )
 
             # NOTE: Value parsing methods can return None, but it shouldn't happen with the
             # production firmware. Therefore properties are not optional on SensorData-type.
