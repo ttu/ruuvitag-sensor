@@ -104,3 +104,8 @@ venv_py/
 .cursor
 .claude
 .idea
+
+# Personal AI agent configurations
+AGENTS.local.md
+AGENTS-*.local.md
+.agents.local.md
