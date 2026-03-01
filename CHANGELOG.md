@@ -1,6 +1,9 @@
 ## Changelog
 
 ### [Unreleased]
+
+
+## [4.1.0] - 2026-03-01
 * ADD: Support for fetching history data from Ruuvi Air
 * FIX: Calculate acceleration magnitude correctly with zero values in DF5 decoder
 
