@@ -30,7 +30,7 @@ keywords = ["RuuviTag", "BLE", "Bluetooth", "IoT", "Sensor"]
 dependencies = [
     "reactivex",
     "ptyprocess;platform_system=='Linux'",
-    "bleak",
+    "bleak>=3.0.0",
 ]
 
 [project.optional-dependencies]
