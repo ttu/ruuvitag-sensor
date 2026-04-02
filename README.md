@@ -624,6 +624,29 @@ __NOTE:__ On macOS, only Data Format 5 works, as macOS doesn't advertise MAC add
 
 __NOTE:__ On Windows, Bleson requires _Python 3.6_. Unfortunately on Windows, Bleson doesn't send any payload for the advertised package, so it is still unusable.
 
+### Bluetoothctl
+
+Bluetoothctl is an alternative to BlueZ for Linux. It can be used to scan for Bluetooth devices and retrieve data from them.
+
+Install Bluetoothctl.
+
+```sh
+$ sudo apt-get install bluetooth
+```
+
+Enable Bluetoothctl with the `RUUVI_BLE_ADAPTER` environment variable.
+
+```sh
+$ export RUUVI_BLE_ADAPTER="bluetoothctl"
+```
+
+Or use `os.environ`. __NOTE:__ this must be set before importing `ruuvitag_sensor`.
+
+```py
+import os
+
+os.environ["RUUVI_BLE_ADAPTER"] = "bluetoothctl"
+```
 
 ## Python 3.9
 
