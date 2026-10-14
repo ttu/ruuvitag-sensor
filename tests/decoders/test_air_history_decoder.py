@@ -16,10 +16,10 @@ class TestAirHistoryDecoder:
         # Pressure: 100000 Pa = (100000 - 50000) = 50000 = 0xC350 (uint16_t BE)
         # PM2.5: 10.0 µg/m³ = 10.0 * 10 = 100 = 0x0064 (uint16_t BE)
         # CO₂: 450 ppm = 0x01C2 (uint16_t BE)
-        # VOC: 50 (byte 21 = 0x32, flags bit 6 = 0)
-        # NOx: 25 (byte 22 = 0x19, flags bit 7 = 0)
+        # VOC: 50 -> byte 21 = 50 >> 1 = 0x19, flags bit 6 = 0
+        # NOx: 25 -> byte 22 = 25 >> 1 = 0x0C, flags bit 7 = 1
         # Sequence: 12345 = 0x003039 (uint24_t BE)
-        # Flags: 0x00 (no extended bits)
+        # Flags: 0x80 (NOx LSB set)
 
         record_data = bytearray(
             [
@@ -54,10 +54,10 @@ class TestAirHistoryDecoder:
                 # CO₂ (uint16_t BE, 450 = 0x01C2)
                 0x01,
                 0xC2,
-                # VOC (uint8_t, 50 = 0x32)
-                0x32,
-                # NOx (uint8_t, 25 = 0x19)
+                # VOC bits [8:1] (50 >> 1 = 25 = 0x19)
                 0x19,
+                # NOx bits [8:1] (25 >> 1 = 12 = 0x0C)
+                0x0C,
                 # Reserved (bytes 23-28)
                 0x00,
                 0x00,
@@ -70,7 +70,7 @@ class TestAirHistoryDecoder:
                 0x30,
                 0x39,
                 # Flags (byte 32)
-                0x00,
+                0x80,
                 # Reserved (bytes 33-37)
                 0x00,
                 0x00,
@@ -378,8 +378,8 @@ class TestAirHistoryDecoder:
         decoder = AirHistoryDecoder()
 
         timestamp = 1733760000
-        # VOC: byte 21 = 0xF4 (244), flags bit 6 = 1 -> 244 | (1 << 8) = 244 | 256 = 500
-        # NOx: byte 22 = 0xFA (250), flags bit 7 = 1 -> 250 | (1 << 8) = 250 | 256 = 506
+        # VOC: byte 21 = 0x01, flags bit 6 = 1 -> (1 << 1) | 1 = 3
+        # NOx: byte 22 = 0x02, flags bit 7 = 1 -> (2 << 1) | 1 = 5
         record_data = bytearray(
             [
                 (timestamp >> 24) & 0xFF,
@@ -403,8 +403,8 @@ class TestAirHistoryDecoder:
                 0x78,
                 0x01,
                 0xC2,
-                0xF4,  # VOC byte (bits [7:0] = 244)
-                0xFA,  # NOx byte (bits [7:0] = 250)
+                0x01,  # VOC value bits [8:1]
+                0x02,  # NOx value bits [8:1]
                 0x00,
                 0x00,
                 0x00,
@@ -414,7 +414,7 @@ class TestAirHistoryDecoder:
                 0x00,
                 0x30,
                 0x39,
-                0xC0,  # Flags: bit 6 = 1 (VOC bit 9), bit 7 = 1 (NOx bit 9)
+                0xC0,  # Flags: bit 6 = VOC LSB, bit 7 = NOx LSB
                 0x00,
                 0x00,
                 0x00,
@@ -427,18 +427,16 @@ class TestAirHistoryDecoder:
 
         records = decoder.decode_data(packet)
         assert len(records) == 1
-        # VOC: 0xF4 | (1 << 8) = 244 | 256 = 500
-        assert records[0]["voc"] == 500
-        # NOx: 0xFA | (1 << 8) = 250 | 256 = 506
-        assert records[0]["nox"] == 506
+        assert records[0]["voc"] == 3
+        assert records[0]["nox"] == 5
 
     def test_decode_invalid_voc_nox(self):
         """Test decoding record with invalid VOC/NOx values."""
         decoder = AirHistoryDecoder()
 
         timestamp = 1733760000
-        # VOC: 0xFF (255) with bit 9 = 1 -> 511 (invalid)
-        # NOx: 0xFF (255) with bit 9 = 1 -> 511 (invalid)
+        # VOC: (0xFF << 1) | 1 = 511 (invalid)
+        # NOx: (0xFF << 1) | 1 = 511 (invalid)
         record_data = bytearray(
             [
                 (timestamp >> 24) & 0xFF,

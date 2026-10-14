@@ -163,23 +163,23 @@ def create_air_history_record(  # noqa: PLR0912, PLR0913, PLR0915, C901 - Test h
     # VOC (byte 21) and NOx (byte 22)
     flags = 0
     if voc is not None:
-        if voc >= 512:  # Invalid
+        if voc >= 0x1FF:  # Invalid
             record[21] = 0xFF
             flags |= 0x40  # Set bit 6
         else:
-            record[21] = voc & 0xFF
-            flags |= ((voc >> 8) & 0x01) << 6
+            record[21] = (voc >> 1) & 0xFF
+            flags |= (voc & 0x01) << 6
     else:
         record[21] = 0xFF
         flags |= 0x40
 
     if nox is not None:
-        if nox >= 512:  # Invalid
+        if nox >= 0x1FF:  # Invalid
             record[22] = 0xFF
             flags |= 0x80  # Set bit 7
         else:
-            record[22] = nox & 0xFF
-            flags |= ((nox >> 8) & 0x01) << 7
+            record[22] = (nox >> 1) & 0xFF
+            flags |= (nox & 0x01) << 7
     else:
         record[22] = 0xFF
         flags |= 0x80

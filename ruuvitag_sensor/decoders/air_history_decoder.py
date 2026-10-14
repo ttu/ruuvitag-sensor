@@ -32,11 +32,11 @@ class AirHistoryDecoder:
     - Bytes 15-16: PM4.0 (uint16_t BE, x 10)
     - Bytes 17-18: PM10.0 (uint16_t BE, x 10)
     - Bytes 19-20: CO₂ (uint16_t BE, ppm)
-    - Byte 21: VOC (uint8_t, bit 9 in flags)
-    - Byte 22: NOx (uint8_t, bit 9 in flags)
+    - Byte 21: VOC value bits [8:1] (uint8_t), value bit [0] (LSB) in flags bit 6
+    - Byte 22: NOx value bits [8:1] (uint8_t), value bit [0] (LSB) in flags bit 7
     - Bytes 23-28: Reserved
     - Bytes 29-31: Sequence counter (uint24_t BE)
-    - Byte 32: Flags (extended bits for 9-bit values)
+    - Byte 32: Flags (least-significant extension bits for 9-bit values)
     - Bytes 33-37: Reserved
     """
 
@@ -81,11 +81,11 @@ class AirHistoryDecoder:
         return None if co2_raw == 0xFFFF else co2_raw
 
     def _get_9bit_value(self, record_data: bytearray, byte_offset: int, flag_bit: int) -> int | None:
-        """Extract 9-bit value from record (8 bits in byte + 1 bit in flags)."""
+        """Extract 9-bit value: byte holds bits [8:1], selected flag holds bit [0] (LSB)."""
         flags = record_data[32] if len(record_data) > 32 else 0
         value_byte = record_data[byte_offset]
-        value_bit9 = (flags >> flag_bit) & 0x01
-        value = value_byte | (value_bit9 << 8)
+        value_lsb = (flags >> flag_bit) & 0x01
+        value = (value_byte << 1) | value_lsb
         return None if value == 0x1FF else value
 
     def _get_sequence(self, record_data: bytearray) -> int | None:
