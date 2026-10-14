@@ -1,3 +1,5 @@
+import pytest
+
 from ruuvitag_sensor.decoder import AirHistoryDecoder
 
 
@@ -373,13 +375,32 @@ class TestAirHistoryDecoder:
         assert len(records) == 1
         assert records[0]["humidity"] is None
 
-    def test_decode_voc_nox_with_flags(self):
-        """Test decoding VOC and NOx with 9-bit values using flags."""
+    @pytest.mark.parametrize(
+        ("voc_byte", "nox_byte", "flags", "expected_voc", "expected_nox"),
+        [
+            # Flags bits are LSBs: (0x01 << 1) | 1 = 3, (0x02 << 1) | 1 = 5
+            (0x01, 0x02, 0xC0, 3, 5),
+            # Spec maximum 500: (0xFA << 1) | 0
+            (0xFA, 0xFA, 0x00, 500, 500),
+            # (0xFE << 1) | 0 = 508
+            (0xFE, 0xFE, 0x00, 508, 508),
+            # (0xFE << 1) | 1 = 509
+            (0xFE, 0xFE, 0xC0, 509, 509),
+            # (0xFF << 1) | 0 = 510, highest value below the invalid marker
+            (0xFF, 0xFF, 0x00, 510, 510),
+            # Flags bits are independent: only VOC LSB set
+            (0xFE, 0xFE, 0x40, 509, 508),
+            # Flags bits are independent: only NOx LSB set
+            (0xFE, 0xFE, 0x80, 508, 509),
+            # (0xFF << 1) | 1 = 511 is invalid
+            (0xFF, 0xFF, 0xC0, None, None),
+        ],
+    )
+    def test_decode_voc_nox(self, voc_byte, nox_byte, flags, expected_voc, expected_nox):
+        """Test decoding 9-bit VOC/NOx values: byte holds bits [8:1], flags bit holds bit [0] (LSB)."""
         decoder = AirHistoryDecoder()
 
         timestamp = 1733760000
-        # VOC: byte 21 = 0x01, flags bit 6 = 1 -> (1 << 1) | 1 = 3
-        # NOx: byte 22 = 0x02, flags bit 7 = 1 -> (2 << 1) | 1 = 5
         record_data = bytearray(
             [
                 (timestamp >> 24) & 0xFF,
@@ -403,8 +424,8 @@ class TestAirHistoryDecoder:
                 0x78,
                 0x01,
                 0xC2,
-                0x01,  # VOC value bits [8:1]
-                0x02,  # NOx value bits [8:1]
+                voc_byte,  # VOC value bits [8:1]
+                nox_byte,  # NOx value bits [8:1]
                 0x00,
                 0x00,
                 0x00,
@@ -414,7 +435,7 @@ class TestAirHistoryDecoder:
                 0x00,
                 0x30,
                 0x39,
-                0xC0,  # Flags: bit 6 = VOC LSB, bit 7 = NOx LSB
+                flags,  # Flags: bit 6 = VOC LSB, bit 7 = NOx LSB
                 0x00,
                 0x00,
                 0x00,
@@ -427,65 +448,8 @@ class TestAirHistoryDecoder:
 
         records = decoder.decode_data(packet)
         assert len(records) == 1
-        assert records[0]["voc"] == 3
-        assert records[0]["nox"] == 5
-
-    def test_decode_invalid_voc_nox(self):
-        """Test decoding record with invalid VOC/NOx values."""
-        decoder = AirHistoryDecoder()
-
-        timestamp = 1733760000
-        # VOC: (0xFF << 1) | 1 = 511 (invalid)
-        # NOx: (0xFF << 1) | 1 = 511 (invalid)
-        record_data = bytearray(
-            [
-                (timestamp >> 24) & 0xFF,
-                (timestamp >> 16) & 0xFF,
-                (timestamp >> 8) & 0xFF,
-                timestamp & 0xFF,
-                0xE1,
-                0x12,
-                0xFC,
-                0x53,
-                0x94,
-                0xC3,
-                0x50,
-                0x00,
-                0x32,
-                0x00,
-                0x64,
-                0x00,
-                0x50,
-                0x00,
-                0x78,
-                0x01,
-                0xC2,
-                0xFF,  # VOC byte
-                0xFF,  # NOx byte
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x30,
-                0x39,
-                0xC0,  # Flags: bit 6 = 1, bit 7 = 1
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-            ]
-        )
-
-        packet = bytearray([0x3B, 0x3B, 0x20, 0x01, 0x26]) + record_data
-
-        records = decoder.decode_data(packet)
-        assert len(records) == 1
-        assert records[0]["voc"] is None  # 511 is invalid
-        assert records[0]["nox"] is None  # 511 is invalid
+        assert records[0]["voc"] == expected_voc
+        assert records[0]["nox"] == expected_nox
 
     def test_decode_invalid_sequence(self):
         """Test decoding record with invalid sequence counter."""
