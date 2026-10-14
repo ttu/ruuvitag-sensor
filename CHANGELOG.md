@@ -1,6 +1,8 @@
 ## Changelog
 
 ### [Unreleased]
+* CHANGE: Require Bleak 3.0 or newer
+* FIX: Decode Ruuvi Air history VOC/NOx 9-bit values with Flags bit as LSB
 
 
 ## [4.1.0] - 2026-03-01
