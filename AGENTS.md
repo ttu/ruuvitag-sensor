@@ -9,7 +9,7 @@ Guidelines for AI assistants working on **ruuvitag-sensor** — a Python library
 ## Project Overview
 
 - **Package:** `ruuvitag_sensor` (v4.0.0, Production/Stable)
-- **Language:** Python 3.10+ (supports 3.10–3.14)
+- **Language:** Python 3.10+ (supports 3.10–3.15)
 - **Build:** setuptools + wheel (`pyproject.toml`)
 - **Dependencies:** `bleak` (BLE), `reactivex` (RxPY), `ptyprocess` (Linux only)
 - **Dev deps:** `pytest`, `pytest-asyncio`, `ruff`, `mypy`
@@ -205,7 +205,7 @@ pytest -k "not integration"            # Skip integration tests (need real BLE)
 
 GitHub Actions (`.github/workflows/build.yml`):
 - **Trigger:** Push, PR, weekly (Monday)
-- **Matrix:** Python 3.10, 3.11, 3.12, 3.13, 3.14 on Ubuntu
+- **Matrix:** Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15 on Ubuntu
 - **Steps:** Install deps → `ruff check` → `mypy` → `ruff format --check` → `pytest -v`
 
 ---
