@@ -188,7 +188,7 @@ HistoryTestCase = tuple[
         ),
     ],
 )
-@patch("ruuvitag_sensor.ruuvi.ble", new_callable=lambda: BleCommunicationBleak())
+@patch("ruuvitag_sensor.ruuvi.ble", new_callable=BleCommunicationBleak)
 @patch("ruuvitag_sensor.adapters.bleak_ble.BleakClient")
 async def test_get_history_async(mock_bleak_client, _mock_ble, test_case: HistoryTestCase):
     notification_data, expected_history = test_case

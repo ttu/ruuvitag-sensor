@@ -66,7 +66,7 @@ AirHistoryTestCase = tuple[
 ]
 
 
-def create_air_history_record(  # noqa: PLR0912, PLR0913, PLR0915, C901 - Test helper needs many params/branches to construct test data
+def create_air_history_record(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917, C901 - Test helper needs many params/branches to construct test data
     timestamp: int,
     temperature: float | None = None,
     humidity: float | None = None,
@@ -463,7 +463,7 @@ def create_air_history_record(  # noqa: PLR0912, PLR0913, PLR0915, C901 - Test h
         ),
     ],
 )
-@patch("ruuvitag_sensor.ruuvi.ble", new_callable=lambda: BleCommunicationBleak())
+@patch("ruuvitag_sensor.ruuvi.ble", new_callable=BleCommunicationBleak)
 @patch("ruuvitag_sensor.adapters.bleak_ble.BleakClient")
 async def test_get_air_history_async(mock_bleak_client, _mock_ble, test_case: AirHistoryTestCase):
     notification_data, expected_history = test_case
@@ -533,7 +533,7 @@ async def test_get_air_history_async(mock_bleak_client, _mock_ble, test_case: Ai
 
 
 @pytest.mark.asyncio
-@patch("ruuvitag_sensor.ruuvi.ble", new_callable=lambda: BleCommunicationBleak())
+@patch("ruuvitag_sensor.ruuvi.ble", new_callable=BleCommunicationBleak)
 @patch("ruuvitag_sensor.adapters.bleak_ble.BleakClient")
 async def test_download_air_history(mock_bleak_client, _mock_ble):
     """Test download_air_history method."""

@@ -18,7 +18,7 @@ ruuvi_rx.get_subject().pipe(ops.filter(lambda x: x[0] == "F4:A5:74:89:16:57")).s
 
 # Print only last updated every 10 seconds for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(ops.filter(lambda x: x[0] == "F4:A5:74:89:16:57"), ops.sample(interval_in_s)).subscribe(
-    lambda data: print(data)
+    print
 )
 
 # Print only last updated every 10 seconds for every foud sensor
@@ -29,7 +29,7 @@ ruuvi_rx.get_subject().pipe(ops.group_by(lambda x: x[0])).subscribe(
 # Print all from the last 10 seconds for F4:A5:74:89:16:57
 ruuvi_rx.get_subject().pipe(
     ops.filter(lambda x: x[0] == "F4:A5:74:89:16:57"), ops.buffer_with_time(interval_in_s)
-).subscribe(lambda data: print(data))
+).subscribe(print)
 
 # Execute subscribe only once for F4:A5:74:89:16:57
 # when temperature goes over 80 degrees
