@@ -37,8 +37,8 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-asyncio",
-    "ruff>=0.14.0,<0.15.0",
-    "mypy>=1.0.0,<2.0.0"
+    "ruff>=0.16.0,<0.18.0",
+    "mypy>=1.0.0,<3.0.0"
 ]
 
 [project.urls]

@@ -109,8 +109,8 @@ def assert_sensor_data_equal(actual: dict, expected: dict, float_tolerance: floa
         ),
     ],
 )
-@patch("ruuvitag_sensor.ruuvi.ble", new_callable=lambda: BleCommunicationBleak())
-@patch("ruuvitag_sensor.adapters.bleak_ble.queue", new_callable=lambda: asyncio.Queue())
+@patch("ruuvitag_sensor.ruuvi.ble", new_callable=BleCommunicationBleak)
+@patch("ruuvitag_sensor.adapters.bleak_ble.queue", new_callable=asyncio.Queue)
 @patch("ruuvitag_sensor.adapters.bleak_ble._get_scanner")
 async def test_get_data_async_with_data_format(mock_get_scanner, _test_queue, _mock_ble, test_data):
     raw_data, expected, advertised_mac = test_data
