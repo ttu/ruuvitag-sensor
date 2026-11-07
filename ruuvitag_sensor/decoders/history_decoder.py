@@ -48,9 +48,9 @@ class HistoryDecoder:
         """Return temperature in celsius"""
         if data[1] != "30":  # '0' for temperature
             return None
-        # Temperature is in 0.01°C units, big-endian
-        temp_bytes = bytes.fromhex("".join(data[9:11]))
-        temp_raw = int.from_bytes(temp_bytes, "big")
+        # Temperature is a signed 32-bit value in 0.01°C units, big-endian
+        temp_bytes = bytes.fromhex("".join(data[7:11]))
+        temp_raw = int.from_bytes(temp_bytes, "big", signed=True)
         return round(temp_raw * 0.01, 2)
 
     def _get_humidity(self, data: list[str]) -> float | None:
