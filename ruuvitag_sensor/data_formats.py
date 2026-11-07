@@ -107,7 +107,7 @@ class DataFormats:
             case _ if candidate.startswith("16AAFE"):
                 # TODO: Check from raw data correct data format
                 # Now this returns 2 also for Data Format 4
-                url_data = DataFormats._get_data_format_2and4(DataFormats._parse_raw(raw))
+                url_data = DataFormats._get_data_format_2and4(raw)
                 if url_data is not None:
                     return (2, url_data)
                 return (None, None)
@@ -118,10 +118,6 @@ class DataFormats:
                 return (None, "")
             case _:
                 return (None, None)
-
-    @staticmethod
-    def _parse_raw(raw: str) -> str:
-        return raw
 
     @staticmethod
     def _get_data_format_2and4(raw: str) -> RawSensorData:
@@ -145,63 +141,5 @@ class DataFormats:
                 return data[(index + 8) :]
 
             return None
-        except Exception:
-            return None
-
-    @staticmethod
-    def _get_data_format_3(raw: str) -> RawSensorData:
-        """
-        Validate that data is from RuuviTag and is Data Format 3
-
-        Returns:
-            string: Sensor data
-        """
-        # Search of FF990403 (Manufacturer Specific Data (FF) /
-        # Ruuvi Innovations ltd (9904) / Format 3 (03))
-        try:
-            if "FF990403" not in raw:
-                return None
-
-            payload_start = raw.index("FF990403") + 6
-            return raw[payload_start:]
-        except Exception:
-            return None
-
-    @staticmethod
-    def _get_data_format_5(raw: str) -> RawSensorData:
-        """
-        Validate that data is from RuuviTag and is Data Format 5
-
-        Returns:
-            string: Sensor data
-        """
-        # Search of FF990405 (Manufacturer Specific Data (FF) /
-        # Ruuvi Innovations ltd (9904) / Format 5 (05))
-        try:
-            if "FF990405" not in raw:
-                return None
-
-            payload_start = raw.index("FF990405") + 6
-            return raw[payload_start:]
-        except Exception:
-            return None
-
-    @staticmethod
-    def _get_data_format_e1(raw: str) -> RawSensorData:
-        """
-        Validate that data is from Ruuvi Air and is Data Format E1
-
-        Returns:
-            string: Sensor data
-        """
-        # Search of ff9904e1 (Manufacturer Specific Data (FF) /
-        # Ruuvi Innovations ltd / Data format E1 (Extended v1)
-        try:
-            raw = raw.lower()
-            if "ff9904e1" not in raw:
-                return None
-
-            payload_start = raw.index("ff9904e1") + 6
-            return raw[payload_start:]
         except Exception:
             return None

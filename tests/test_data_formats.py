@@ -13,6 +13,21 @@ class TestDataFormats:
             assert data_format == encoded[0]
             assert result == encoded[1]
 
+    def test_convert_data_valid_data_format_5(self):
+        # DF5 payload is followed by the RSSI byte (BC)
+        test_cases = [
+            (
+                "1F0201061BFF990405138A5F92C4F3FFE4FFDC0414C4F6EC29BBE62EB92E73E5BC",
+                "05138A5F92C4F3FFE4FFDC0414C4F6EC29BBE62EB92E73E5BC",
+            ),
+            (
+                "1F0201061BFF990405138A5F61C4F0FFE4FFDC0414C5B6EC29B3E62EB92E73E5BC",
+                "05138A5F61C4F0FFE4FFDC0414C5B6EC29B3E62EB92E73E5BC",
+            ),
+        ]
+        for x, result in test_cases:
+            assert DataFormats.convert_data(x) == (5, result)
+
     def test_convert_data_not_valid_binary(self):
         data = b"\x99\x04\x03P\x15]\xceh\xfd\x88\x03\x05\x00\x1b\x0c\x13\x00\x00\x00\x00"
         encoded = DataFormats.convert_data(data)
@@ -23,24 +38,6 @@ class TestDataFormats:
         encoded = DataFormats.convert_data("not_valid")
         assert encoded[0] is None
         assert encoded[1] is None
-
-    def test_get_data_format_3_valid_data(self):
-        test_cases = [
-            "1502010611FF990403651652CAE900080018041C0C8BC6",
-            "1502010611FF990403411540C84AFC72FE2FFFC50B89C6",
-        ]
-        for x in test_cases:
-            encoded = DataFormats._get_data_format_3(x)
-            assert encoded is not None
-
-    def test_get_data_format_5_valid_data(self):
-        test_cases = [
-            "1F0201061BFF990405138A5F92C4F3FFE4FFDC0414C4F6EC29BBE62EB92E73E5BC",
-            "1F0201061BFF990405138A5F61C4F0FFE4FFDC0414C5B6EC29B3E62EB92E73E5BC",
-        ]
-        for x in test_cases:
-            encoded = DataFormats._get_data_format_5(x)
-            assert encoded is not None
 
     def test_get_data_format_e1_valid_data(self):
         # Test cases based on Ruuvi Air Data Format E1 specification
