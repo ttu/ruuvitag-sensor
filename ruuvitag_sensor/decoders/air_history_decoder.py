@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 
+from ruuvitag_sensor.decoders.utils import decode_9bit
 from ruuvitag_sensor.ruuvi_types import SensorAirHistoryData
 
 log = logging.getLogger(__name__)
@@ -80,14 +81,6 @@ class AirHistoryDecoder:
         co2_raw = int.from_bytes(record_data[19:21], byteorder="big")
         return None if co2_raw == 0xFFFF else co2_raw
 
-    def _get_9bit_value(self, record_data: bytearray, byte_offset: int, flag_bit: int) -> int | None:
-        """Extract 9-bit value: byte holds bits [8:1], selected flag holds bit [0] (LSB)."""
-        flags = record_data[32] if len(record_data) > 32 else 0
-        value_byte = record_data[byte_offset]
-        value_lsb = (flags >> flag_bit) & 0x01
-        value = (value_byte << 1) | value_lsb
-        return None if value == 0x1FF else value
-
     def _get_sequence(self, record_data: bytearray) -> int | None:
         """Extract sequence counter from record (bytes 29-31, uint24_t BE)."""
         seq_raw = int.from_bytes(record_data[29:32], byteorder="big")
@@ -122,8 +115,8 @@ class AirHistoryDecoder:
                 "pm_4": self._get_pm_value(record_data, 15),
                 "pm_10": self._get_pm_value(record_data, 17),
                 "co2": self._get_co2(record_data),
-                "voc": self._get_9bit_value(record_data, 21, 6),
-                "nox": self._get_9bit_value(record_data, 22, 7),
+                "voc": decode_9bit(record_data[21], record_data[32], 6),
+                "nox": decode_9bit(record_data[22], record_data[32], 7),
                 "measurement_sequence_number": self._get_sequence(record_data),
             }
 

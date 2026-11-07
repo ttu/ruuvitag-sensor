@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import struct
 
+from ruuvitag_sensor.decoders.utils import decode_9bit
 from ruuvitag_sensor.ruuvi_types import ByteData, SensorDataE1
 
 log = logging.getLogger(__name__)
@@ -66,28 +67,12 @@ class DfE1Decoder:
     def _get_voc_index(self, data: ByteData) -> int | None:
         """Return VOC index (unitless, 9-bit)"""
         # VOC: bits [8:1] are in data[9], bit [0] (LSB) is FLAGS bit 6
-        # As per spec: "9 bit unsigned, least significant bit in Flags byte"
-        voc_high_bits = data[9]  # bits [8:1]
-        voc_lsb = (data[14] >> 6) & 0x01  # bit [0]
-        voc = (voc_high_bits << 1) | voc_lsb
-
-        if voc == 511:  # 0x1FF
-            return None
-
-        return voc
+        return decode_9bit(data[9], data[14], 6)
 
     def _get_nox_index(self, data: ByteData) -> int | None:
         """Return NOx index (unitless, 9-bit)"""
         # NOx: bits [8:1] are in data[10], bit [0] (LSB) is FLAGS bit 7
-        # As per spec: "9 bit unsigned, least significant bit in Flags byte"
-        nox_high_bits = data[10]  # bits [8:1]
-        nox_lsb = (data[14] >> 7) & 0x01  # bit [0]
-        nox = (nox_high_bits << 1) | nox_lsb
-
-        if nox == 511:  # 0x1FF
-            return None
-
-        return nox
+        return decode_9bit(data[10], data[14], 7)
 
     def _get_luminosity_lux(self, data: ByteData) -> float | None:
         """Return Luminosity Lux"""
