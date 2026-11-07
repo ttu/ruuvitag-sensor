@@ -18,6 +18,12 @@ class TestHistoryDecoder:
             data["timestamp"] == datetime(2019, 8, 17, 13, 18, 37, tzinfo=timezone.utc).timestamp()
         )  # datetime(2019, 8, 13, 13, 18, 37)
 
+    def test_history_decode_negative_temperature(self):
+        # Value is a signed 32-bit int in 0.01 C: -5.00 C = -500 = 0xFFFFFE0C
+        sample_bytes = bytearray.fromhex("3a30105D57FEADFFFFFE0C")
+        data = HistoryDecoder().decode_data(sample_bytes)
+        assert data["temperature"] == -5.0
+
     def test_history_decode_docs_humidity(self):
         # Data from: https://docs.ruuvi.com/communication/bluetooth-connection/nordic-uart-service-nus/log-read
         # 0x3A 31 10 5D57FEAD 000000098D
