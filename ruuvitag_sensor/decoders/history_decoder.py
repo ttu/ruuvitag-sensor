@@ -18,11 +18,10 @@ class HistoryDecoder:
     - Second byte: Packet type (0x30 = temperature, 0x31 = humidity, 0x32 = pressure)
     - Third byte: Header byte (skipped or error)
     - Next 4 bytes: Clock time (seconds since unix epoch)
-    - Next 2 bytes: Reserved (always 0x00)
-    - Next 2 bytes: Sensor data (uint16, big-endian)
-        Temperature: 0.01°C units
-        Humidity: 0.01% units
-        Pressure: Raw value in hPa
+    - Next 4 bytes: Sensor data (32-bit, big-endian)
+        Temperature: signed int32, 0.01°C units
+        Humidity: 0.01% units (only the low 2 bytes are read, as uint16)
+        Pressure: raw value in hPa (only the low 2 bytes are read, as uint16)
 
     Special case:
     - End marker packet has command byte 0x3A followed by 0x3A
