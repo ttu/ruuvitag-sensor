@@ -12,7 +12,7 @@ Requires:
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from multiprocessing import Manager
 from multiprocessing.managers import DictProxy
 from queue import Queue
@@ -33,7 +33,7 @@ async def run_get_data_background(macs_to_fetch: list[str], queue: Queue):
     Background process from RuuviTag Sensors
     """
     async for sensor_data in RuuviTagSensor.get_data_async(macs_to_fetch):
-        sensor_data[1]["time"] = str(datetime.now(timezone.utc))  # type: ignore
+        sensor_data[1]["time"] = str(datetime.now(UTC))  # type: ignore
         queue.put(sensor_data)
 
 
