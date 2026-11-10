@@ -432,7 +432,7 @@ class RuuviTagSensor:
     async def download_history(
         mac: str,
         start_time: datetime | None = None,
-        timeout: int = 300,
+        timeout: int = 300,  # noqa: ASYNC109
         max_items: int | None = None,
         device_type: DeviceType = "ruuvitag",
     ) -> list[SensorHistoryData | SensorAirHistoryData]:
@@ -482,7 +482,7 @@ class RuuviTagSensor:
             await asyncio.wait_for(collect_history(), timeout=timeout)
             return history_data
 
-        except asyncio.TimeoutError as err:
+        except TimeoutError as err:
             raise TimeoutError(f"History download timed out after {timeout} seconds") from err
         except Exception as e:
             raise RuntimeError(f"Failed to download history: {e!s}") from e

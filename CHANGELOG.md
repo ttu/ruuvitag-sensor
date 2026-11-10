@@ -2,6 +2,7 @@
 
 ### [Unreleased]
 * CHANGE: Require Bleak 3.0 or newer
+* CHANGE: Support only Python 3.11 and newer
 * FIX: Decode Ruuvi Air history VOC/NOx 9-bit values with Flags bit as LSB
 * FIX: Decode RuuviTag history temperature as signed 32-bit value (below-zero temperatures were decoded as ~650 °C)
 

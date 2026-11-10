@@ -4,8 +4,8 @@ import os
 import re
 import sys
 from collections.abc import AsyncGenerator, Callable
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 
 from bleak import BleakClient, BleakGATTCharacteristic, BleakScanner
 from bleak.backends.scanner import AdvertisementData, AdvertisementDataCallback, BLEDevice
@@ -45,7 +45,7 @@ queue = asyncio.Queue[tuple[str, str]]()
 log = logging.getLogger(__name__)
 
 
-class HistoryNotificationAction(str, Enum):
+class HistoryNotificationAction(StrEnum):
     """Action types for history notification processing."""
 
     IGNORE = "ignore"  # Heartbeat data, should be ignored
@@ -204,7 +204,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
             try:
                 await client.connect()
                 return client
-            except Exception as e:  # noqa: PERF203
+            except Exception as e:
                 if attempt == max_retries - 1:
                     raise
                 log.debug("Connection attempt %s failed: %s - Retrying...", attempt + 1, str(e))
@@ -276,7 +276,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         while True:
             try:
                 data = await asyncio.wait_for(queue.get(), timeout=timeout_sec)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 log.error("Timeout waiting for history data")
                 return
 
@@ -379,7 +379,7 @@ class BleCommunicationBleak(BleCommunicationAsync):
         Returns:
             bytearray: 11-byte command
         """
-        end_time = int(datetime.now(timezone.utc).timestamp())
+        end_time = int(datetime.now(UTC).timestamp())
         start_time_to_use = int(start_time.timestamp()) if start_time else 0
 
         if use_air_format:
