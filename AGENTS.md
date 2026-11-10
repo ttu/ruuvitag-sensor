@@ -9,7 +9,7 @@ Guidelines for AI assistants working on **ruuvitag-sensor** — a Python library
 ## Project Overview
 
 - **Package:** `ruuvitag_sensor` (v4.0.0, Production/Stable)
-- **Language:** Python 3.10+ (supports 3.10–3.15)
+- **Language:** Python 3.11+ (supports 3.11–3.15)
 - **Build:** setuptools + wheel (`pyproject.toml`)
 - **Dependencies:** `bleak` (BLE), `reactivex` (RxPY), `ptyprocess` (Linux only)
 - **Dev deps:** `pytest`, `pytest-asyncio`, `ruff`, `mypy`
@@ -137,7 +137,7 @@ Adapter selection logic is in `adapters/__init__.py:get_ble_adapter()`. Bleak su
 - **Line length:** 120 characters
 - **Formatting:** `ruff format` (double quotes, spaces)
 - **Linting:** `ruff check` with extensive rule set (A, ARG, ASYNC, B, C4, C90, DTZ, E, F, G, I, PERF, PIE, PL, PTH, Q, RUF, SIM, UP, W)
-- **Type checking:** `mypy` (Python 3.10 target, ignores missing imports)
+- **Type checking:** `mypy` (Python 3.11 target, ignores missing imports)
 - **Ignored rules:** `PLR2004` (magic values in comparisons), `RUF006` (asyncio.create_task refs)
 
 **Run before committing:**
@@ -205,7 +205,7 @@ pytest -k "not integration"            # Skip integration tests (need real BLE)
 
 GitHub Actions (`.github/workflows/build.yml`):
 - **Trigger:** Push, PR, weekly (Monday)
-- **Matrix:** Python 3.10, 3.11, 3.12, 3.13, 3.14, 3.15 on Ubuntu
+- **Matrix:** Python 3.11, 3.11, 3.12, 3.13, 3.14, 3.15 on Ubuntu
 - **Steps:** Install deps → `ruff check` → `mypy` → `ruff format --check` → `pytest -v`
 
 ---
